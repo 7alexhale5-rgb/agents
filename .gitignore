@@ -1,0 +1,34 @@
+# Secrets — never in git
+**/.env
+**/.env.local
+**/*.secret
+
+# Runtime / generated — versioned tree never includes these
+**/scratch/
+**/memory/state.db
+**/memory/trajectories/
+**/memory/*.sqlite*
+**/workspace/
+
+# Hermes runtime drop-ins (in case anyone runs hermes from inside a profile dir)
+**/.hermes/
+
+# Kill-switches are local; only the *.template form is tracked
+**/PAUSED
+!**/PAUSED.template
+
+# Tenants are per-client, never committed
+tenants/*/
+!tenants/_provisioning/
+!tenants/README.md
+
+# Honcho local data
+honcho/workspaces/*/
+!honcho/workspaces/README.md
+
+# Python / Node / OS
+**/__pycache__/
+**/.pytest_cache/
+**/node_modules/
+**/.DS_Store
+*.log

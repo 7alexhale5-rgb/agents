@@ -1,0 +1,69 @@
+# Honcho self-host — dialectic memory backend for Hermes profiles
+# Reference: https://github.com/plastic-labs/honcho (AGPL-3.0)
+#
+# Phase 1.5 (laptop) — runs on localhost:8765, isolated from VPS Langfuse Postgres
+# Phase 4 (prod)     — moves to VPS port 8766, sibling to Langfuse 5432
+#
+# DO NOT bundle this into a tenant deliverable — Honcho is AGPL.
+# Run as a separate process accessed over HTTP. Per ADR-001 hard constraint #5.
+
+services:
+  honcho-db:
+    image: pgvector/pgvector:pg16
+    container_name: honcho-db
+    environment:
+      POSTGRES_USER: honcho
+      POSTGRES_PASSWORD: ${HONCHO_DB_PASSWORD}
+      POSTGRES_DB: honcho
+    ports:
+      - "127.0.0.1:8764:5432"   # bind to localhost only — never expose Postgres publicly
+    volumes:
+      - honcho-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U honcho -d honcho"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  honcho-api:
+    image: ghcr.io/plastic-labs/honcho:latest
+    container_name: honcho-api
+    depends_on:
+      honcho-db:
+        condition: service_healthy
+    environment:
+      DB_CONNECTION_URI: postgres://honcho:${HONCHO_DB_PASSWORD}@honcho-db:5432/honcho
+      LLM_ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      LLM_OPENAI_API_KEY: ${OPENAI_API_KEY}
+      LLM_GEMINI_API_KEY: ${GEMINI_API_KEY}
+      AUTH_USE_AUTH: "true"
+      AUTH_JWT_SECRET: ${HONCHO_JWT_SECRET}
+      SENTRY_DSN: ${HONCHO_SENTRY_DSN}
+      LOG_LEVEL: info
+    ports:
+      - "127.0.0.1:8765:8000"   # API on localhost:8765 — never public; Hermes attaches over loopback
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  honcho-deriver:
+    image: ghcr.io/plastic-labs/honcho:latest
+    container_name: honcho-deriver
+    depends_on:
+      honcho-db:
+        condition: service_healthy
+    environment:
+      DB_CONNECTION_URI: postgres://honcho:${HONCHO_DB_PASSWORD}@honcho-db:5432/honcho
+      LLM_ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      LLM_OPENAI_API_KEY: ${OPENAI_API_KEY}
+      LOG_LEVEL: info
+    command: ["python", "-m", "src.deriver"]
+    restart: unless-stopped
+
+volumes:
+  honcho-db-data:
+    name: honcho-db-data

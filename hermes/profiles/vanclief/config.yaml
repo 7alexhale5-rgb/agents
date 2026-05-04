@@ -1,0 +1,81 @@
+profile: vanclief
+
+agent:
+  max_iterations: 32
+  iteration_budget_tokens: 200000
+
+model:
+  default_provider: openrouter
+  default_model: nvidia/nemotron-nano-9b-v2
+  routing:
+    drafting: mistralai/mistral-medium-latest
+    reasoning: anthropic/claude-sonnet-4-6
+    strategic: anthropic/claude-opus-4-7
+
+memory:
+  built_in:
+    enabled: true
+    fts5_enabled: true
+  honcho:
+    enabled: false   # flips true in Phase 1.5
+    url: http://localhost:8765
+    workspace: vanclief
+
+mcp_servers:
+  4d-senses:
+    command: node
+    args: ["/Users/alexhale/Projects/agents/mcp-servers/4d-senses/index.js"]
+    include: [smell_recent, pain_active, intuition_for_pattern, vision_latest, status]
+  obsidian:
+    command: npx
+    args: ["-y", "@modelcontextprotocol/server-filesystem", "/Users/alexhale/Projects/personal-vault"]
+    exclude: [delete]   # never delete from the vault
+  # Phase 4.5: laik MCP attaches here
+
+skills:
+  install:
+    - 4d-senses
+    - obsidian-vault
+    - eval-runner          # Promptfoo + golden datasets
+    - research-stack       # deep, council, perspectives, last30days
+    - voyager-skill-writer
+    - pr-description-writer
+    - humanizer
+    - doc-coauthoring
+    - daily-digest         # base for Sunday Brief
+  global:
+    - env-doctor
+    - cost-watch
+
+channels:
+  obsidian:
+    enabled: true
+    write_path: /Users/alexhale/Projects/personal-vault/Areas/agents/vanclief/
+  slack:
+    enabled: false   # flips true once a #prettyfly-brief channel is created
+    channel: prettyfly-brief
+  telegram:
+    enabled: false   # only on-demand pages — set true after a Telegram bot is paired
+
+approval:
+  mode: explicit_for_outbound
+  outbound_channels: [slack, telegram, public_blog]
+  pii_redaction: true
+
+scheduling:
+  cron:
+    sunday_brief: "0 18 * * 0"             # 18:00 ET Sunday
+    monthly_research_drop: "0 9 1-7 * 0"   # 09:00 ET on the first Sunday of each month
+    weekly_world_model_audit: "0 16 * * 0" # 16:00 ET Sunday — runs before brief composition
+
+guardrails:
+  spend_cap_per_day_usd: 10        # higher than personal because monthly drops use Opus
+  alert_threshold_pct: 80
+  read_only_by_default: true
+  no_modify_other_profiles: true
+  codex_review_required_for_pr_drafts: true
+
+logging:
+  trajectory_jsonl: true
+  langfuse_project: hermes-vanclief
+  audit_log_append_only: /Users/alexhale/Projects/agents/_meta/eval-suites/audit-log.md

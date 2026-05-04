@@ -1,0 +1,20 @@
+[project]
+name = "mcp-laik"
+version = "0.1.0"
+description = "MCP server wrapping LAIK (Local AI Kit) — exposes per-tenant hybrid RAG, SQL tools, and propose-not-execute mutations to any Hermes profile."
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+dependencies = [
+  "mcp>=1.0.0",
+  "pydantic>=2.0",
+  "httpx>=0.27",
+  # LAIK is consumed via PYTHONPATH (see README); not pinned as a dep so the wrapper
+  # follows whatever LAIK version the operator has installed at ~/Projects/local-ai-kit/
+]
+
+[project.scripts]
+mcp-laik = "server:main"
+
+[tool.uv]
+package = false  # this is a script, not a publishable package

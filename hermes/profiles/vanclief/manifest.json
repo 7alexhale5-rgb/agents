@@ -1,0 +1,53 @@
+{
+  "sku": "vanclief",
+  "name": "VanClief — AI-Expert / Continuous Improvement Engine",
+  "version": "0.1.0",
+  "category": "meta",
+  "department": "research",
+  "tagline": "Audits the agent fleet, ingests new AI research, ships the Sunday Weekly Brief and Monthly Research Drop.",
+  "tier": "meta-head",
+  "depends_on": ["4d-senses", "obsidian"],
+  "depends_on_phase_1_5": ["4d-senses", "obsidian", "honcho-memory"],
+  "depends_on_phase_4_5": ["4d-senses", "obsidian", "honcho-memory", "laik"],
+  "channels": ["obsidian", "slack", "telegram"],
+  "model_routing": {
+    "drafting": "mistral:medium",
+    "reasoning": "anthropic:claude-sonnet-4-6",
+    "strategic": "anthropic:claude-opus-4-7",
+    "research_firehose": "openrouter:nvidia/nemotron-nano-9b-v2"
+  },
+  "memory_axes": ["working", "episodic", "procedural"],
+  "memory_axes_phase_1_5": [
+    "working",
+    "episodic",
+    "semantic_via_honcho",
+    "procedural"
+  ],
+  "guardrails": [
+    "read_only_by_default",
+    "no_money_movement",
+    "money_pipeline_readonly",
+    "no_modify_other_profiles",
+    "codex_review_required_for_pr_drafts",
+    "outbound_human_approval"
+  ],
+  "ladder_test": {
+    "abstraction": "meta-fleet-audit",
+    "replaces": ["manual fleet review", "nothing comparable in market"],
+    "migration_cost_minutes": 0,
+    "next_model_kills_it": false,
+    "publishable": false,
+    "publishable_after": "1 audit cycle catches a real regression + 4 Sunday Briefs + 1 Research Drop"
+  },
+  "sla": {
+    "uptime": 99.0,
+    "p95_latency_seconds": 60,
+    "weekly_brief_deadline_local": "Sunday 18:00 ET",
+    "monthly_drop_deadline_local": "First Sunday of month 09:00 ET",
+    "eval_pass_rate_floor": 0.85
+  },
+  "publish": false,
+  "internal_only": true,
+  "scale_tier_bundle": true,
+  "lite_pro_tiers_get": "weekly_brief_only"
+}

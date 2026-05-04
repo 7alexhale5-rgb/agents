@@ -33,7 +33,7 @@ services:
       honcho-db:
         condition: service_healthy
     environment:
-      DB_CONNECTION_URI: postgres://honcho:${HONCHO_DB_PASSWORD}@honcho-db:5432/honcho
+      DB_CONNECTION_URI: postgresql+psycopg://honcho:${HONCHO_DB_PASSWORD}@honcho-db:5432/honcho
       LLM_ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
       LLM_OPENAI_API_KEY: ${OPENAI_API_KEY}
       LLM_GEMINI_API_KEY: ${GEMINI_API_KEY}
@@ -57,7 +57,7 @@ services:
       honcho-db:
         condition: service_healthy
     environment:
-      DB_CONNECTION_URI: postgres://honcho:${HONCHO_DB_PASSWORD}@honcho-db:5432/honcho
+      DB_CONNECTION_URI: postgresql+psycopg://honcho:${HONCHO_DB_PASSWORD}@honcho-db:5432/honcho
       LLM_ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
       LLM_OPENAI_API_KEY: ${OPENAI_API_KEY}
       LOG_LEVEL: info

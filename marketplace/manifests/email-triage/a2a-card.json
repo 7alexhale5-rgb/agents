@@ -1,0 +1,66 @@
+{
+  "$schema": "https://a2a-protocol.org/schemas/agent-card.v1.json",
+  "name": "PrettyFly Email Triage",
+  "version": "0.1.0",
+  "description": "Categorizes inbound email into respond / deferred / unsubscribe / delete. Drafts unsubscribes for one-tap approval. Produces a daily digest of the 5 emails that matter.",
+  "vendor": {
+    "name": "PrettyFly.ai",
+    "url": "https://prettyflyforai.com",
+    "contact": "hello@prettyflyforai.com"
+  },
+  "capabilities": [
+    {
+      "id": "triage_inbox",
+      "name": "Triage Inbox",
+      "description": "Read the user's last-24h inbox; categorize each message; archive deferred; queue unsubscribes.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "tenant_slug": { "type": "string" },
+          "lookback_hours": { "type": "integer", "default": 24 }
+        },
+        "required": ["tenant_slug"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "respond": { "type": "array" },
+          "deferred_count": { "type": "integer" },
+          "unsubscribe_drafts": { "type": "array" },
+          "deleted_count": { "type": "integer" }
+        }
+      },
+      "approval_required": false
+    },
+    {
+      "id": "send_unsubscribe",
+      "name": "Send a queued unsubscribe",
+      "description": "Send one of the drafted unsubscribes after the tenant taps approve.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "tenant_slug": { "type": "string" },
+          "draft_id": { "type": "string" }
+        },
+        "required": ["tenant_slug", "draft_id"]
+      },
+      "approval_required": true,
+      "approval_protocol": "human-in-the-loop"
+    }
+  ],
+  "channels": ["a2a/json-rpc-2.0"],
+  "endpoint": "https://agents.prettyflyforai.com/a2a/email-triage",
+  "tier_eligibility": ["starter", "pro", "scale"],
+  "byok_required": ["anthropic_or_openai_or_openrouter", "gmail_oauth"],
+  "sla": {
+    "uptime": 0.99,
+    "p95_latency_seconds": 30,
+    "eval_pass_rate_floor": 0.85
+  },
+  "guardrails": [
+    "outbound_email_approval",
+    "pii_redaction",
+    "no_auto_unsubscribe",
+    "spend_cap_per_day"
+  ]
+}

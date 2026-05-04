@@ -1,0 +1,21 @@
+{
+  "name": "@prettyfly/mcp-4d-senses",
+  "version": "1.0.0",
+  "description": "MCP server wrapping Alex's 4D senses (smell / pain / intuition / vision / rhythm / sight) so any Hermes profile can consult them as tools.",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "mcp-4d-senses": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "smoke": "node smoke.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

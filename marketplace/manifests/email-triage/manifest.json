@@ -1,0 +1,52 @@
+{
+  "sku": "email-triage",
+  "name": "Email Triage — Starter Inbox Agent",
+  "version": "0.1.0",
+  "category": "personal",
+  "department": "personal",
+  "tagline": "Wakes up before you do. Deletes the junk. Unsubscribes from the useless. Hands you the 5 emails that matter.",
+  "tier": "starter",
+  "depends_on": ["composio-bridge", "4d-senses"],
+  "channels": ["gmail", "slack_digest", "telegram_digest"],
+  "model_routing": {
+    "default": "openrouter:nemotron-free",
+    "drafting": "mistral:medium",
+    "reasoning": "anthropic:claude-sonnet-4-6"
+  },
+  "memory_axes": ["working", "episodic", "procedural"],
+  "memory_axes_pro_and_above": [
+    "working",
+    "episodic",
+    "semantic_via_honcho",
+    "procedural"
+  ],
+  "ladder_test": {
+    "abstraction": "inbox-curation",
+    "replaces": ["sanebox", "spark-priority-inbox", "manual-morning-triage"],
+    "migration_cost_minutes": 25,
+    "next_model_kills_it": false,
+    "publishable": true
+  },
+  "guardrails": [
+    "outbound_email_approval",
+    "no_money_movement",
+    "pii_redaction",
+    "spend_cap_per_day"
+  ],
+  "byok_keys": ["anthropic_or_openai_or_openrouter", "gmail_oauth"],
+  "trial_pool_usd": 5,
+  "trial_nag_at_usd": 3,
+  "onboarding_questions": 6,
+  "first_sample_task": "triage-last-50-emails-with-explanation",
+  "sla": {
+    "uptime": 99.0,
+    "p95_latency_seconds": 30,
+    "eval_pass_rate_floor": 0.85
+  },
+  "compatible_with": ["@prettyfly/personal-pack", "@prettyfly/full-org"],
+  "pricing_ref": "./pricing.yaml",
+  "a2a_card": "./a2a-card.json",
+  "publish": false,
+  "pilot_tenant": "alex-personal-gmail",
+  "pilot_target_days": 14
+}

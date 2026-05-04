@@ -1,0 +1,30 @@
+{"vars": {"subject": "Your Verizon bill is ready", "from": "no-reply@verizon.com", "body": "Your monthly bill of $89.45 is now available."}, "expected_category": "deferred", "expected_urgency": 1}
+{"vars": {"subject": "Following up on the contract", "from": "marc@acmelaw.com", "body": "Hi Alex — circling back on the LLC operating agreement we discussed Tuesday. Can you sign by Friday? Need it for the Monday close."}, "expected_category": "respond", "expected_urgency": 4}
+{"vars": {"subject": "Don't miss our Memorial Day SALE 🎉🎉🎉", "from": "marketing@randomstore.com", "body": "Get 20% off everything this weekend!"}, "expected_category": "delete", "expected_urgency": 1}
+{"vars": {"subject": "Weekly newsletter: 5 things in AI", "from": "hello@somenewsletter.com", "body": "This week in AI: Anthropic, OpenAI, ..."}, "expected_category": "unsubscribe", "expected_urgency": 1}
+{"vars": {"subject": "Your Stripe receipt", "from": "receipts@stripe.com", "body": "Receipt for $99.00 — thanks!"}, "expected_category": "deferred", "expected_urgency": 1}
+{"vars": {"subject": "Mom: are you coming Sunday?", "from": "mom@gmail.com", "body": "Just checking — Sunday dinner at 6?"}, "expected_category": "respond", "expected_urgency": 5}
+{"vars": {"subject": "Tax return — needs your signature", "from": "cpa@firmcpa.com", "body": "Your 2025 1040 is ready. Please sign by 4/15."}, "expected_category": "respond", "expected_urgency": 5}
+{"vars": {"subject": "Calendar invite — coffee with John", "from": "noreply@calendar.google.com", "body": "John has invited you to a meeting."}, "expected_category": "deferred", "expected_urgency": 2}
+{"vars": {"subject": "[Invitation] LinkedIn — Sara wants to connect", "from": "invitations@linkedin.com", "body": "Sara Chen wants to connect with you on LinkedIn."}, "expected_category": "deferred", "expected_urgency": 2}
+{"vars": {"subject": "$3,200 deposit pending", "from": "alerts@ach.example.com", "body": "A $3,200.00 ACH deposit is pending in your account."}, "expected_category": "respond", "expected_urgency": 4}
+{"vars": {"subject": "RE: Investor update Q2", "from": "lp@familyoffice.com", "body": "Got it. Will review and revert."}, "expected_category": "respond", "expected_urgency": 3}
+{"vars": {"subject": "Order shipped 📦", "from": "shipping@amazon.com", "body": "Your order has shipped."}, "expected_category": "deferred", "expected_urgency": 1}
+{"vars": {"subject": "URGENT: re-verify your bank account NOW", "from": "support@phishingbank.fake", "body": "Click here to verify."}, "expected_category": "delete", "expected_urgency": 1}
+{"vars": {"subject": "Quick question on the Excerpa PR", "from": "anthony@yehovah.builders", "body": "Does the migration script handle the empty contact case?"}, "expected_category": "respond", "expected_urgency": 4}
+{"vars": {"subject": "Unsubscribe successful", "from": "noreply@somelist.com", "body": "You have been unsubscribed."}, "expected_category": "delete", "expected_urgency": 1}
+{"vars": {"subject": "Daily digest: 12 new posts in r/agentic", "from": "noreply@reddit.com", "body": "12 new posts in your subscribed subreddits."}, "expected_category": "unsubscribe", "expected_urgency": 1}
+{"vars": {"subject": "FYI: pricing update on Anthropic Sonnet", "from": "billing@anthropic.com", "body": "Effective May 15, Sonnet pricing changes."}, "expected_category": "respond", "expected_urgency": 3}
+{"vars": {"subject": "Your weekly Spotify Wrapped", "from": "no-reply@spotify.com", "body": "Here's what you listened to this week!"}, "expected_category": "delete", "expected_urgency": 1}
+{"vars": {"subject": "Booking confirmation — flight to ATL", "from": "delta@delta.com", "body": "Your flight on June 15 is confirmed."}, "expected_category": "deferred", "expected_urgency": 2}
+{"vars": {"subject": "Marc — quick chat tomorrow?", "from": "marc@koho.consulting", "body": "Free at 2pm? Want to align on Friday's demo."}, "expected_category": "respond", "expected_urgency": 4}
+{"vars": {"subject": "Domain renewal: prettyflyforai.com expires in 30 days", "from": "renewals@registrar.com", "body": "Renew now to avoid loss of service."}, "expected_category": "respond", "expected_urgency": 4}
+{"vars": {"subject": "[GitHub] PR #67 was approved", "from": "noreply@github.com", "body": "Your PR was approved."}, "expected_category": "deferred", "expected_urgency": 2}
+{"vars": {"subject": "Slack: 5 new messages in #consultops", "from": "feedback@slack.com", "body": "5 new messages."}, "expected_category": "delete", "expected_urgency": 1}
+{"vars": {"subject": "ConsultOps Marc: lead routing failed for prospect 1234", "from": "alerts@consultops.koho.consulting", "body": "Routing pipeline error for prospect ID 1234."}, "expected_category": "respond", "expected_urgency": 5}
+{"vars": {"subject": "Your domain transfer is complete", "from": "noreply@vercel.com", "body": "The domain transfer is complete."}, "expected_category": "deferred", "expected_urgency": 1}
+{"vars": {"subject": "Webinar replay: Building agentic systems in 2026", "from": "events@somefirm.com", "body": "Watch the replay here."}, "expected_category": "delete", "expected_urgency": 1}
+{"vars": {"subject": "Your Honcho preview deploy is ready", "from": "noreply@honcho.dev", "body": "Preview deploy at honcho-preview-abc.fly.dev"}, "expected_category": "deferred", "expected_urgency": 2}
+{"vars": {"subject": "Hi! Saw your tweet on Hermes", "from": "imran@alif.build", "body": "Loved your thread. Want to chat about how you set up the Antfarm pipeline?"}, "expected_category": "respond", "expected_urgency": 3}
+{"vars": {"subject": "Action required: 2FA code", "from": "noreply@stripe.com", "body": "Your 2FA code is 482910. Expires in 5 min."}, "expected_category": "respond", "expected_urgency": 5}
+{"vars": {"subject": "Free swag for AI builders 🎁", "from": "marketing@swagcompany.com", "body": "Claim your free hoodie!"}, "expected_category": "delete", "expected_urgency": 1}

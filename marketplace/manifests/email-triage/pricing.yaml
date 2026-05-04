@@ -1,0 +1,65 @@
+tiers:
+  starter:
+    monthly_price: 49
+    emails_per_day: 100
+    model_floor: openrouter:free-rotation
+    memory: episodic+procedural
+    channels: [gmail]
+    sla_uptime: 99.0
+    eval_pass_rate_floor: 0.85
+    custom_rules: 3
+    guardrails_required:
+      - outbound_email_approval
+      - pii_redaction
+      - no_auto_unsubscribe
+      - spend_cap_per_day:5usd
+
+  pro:
+    monthly_price: 199
+    emails_per_day: 1000
+    model_floor: mistral:medium
+    memory: episodic+semantic_via_honcho+procedural
+    channels: [gmail, slack, telegram]
+    sla_uptime: 99.5
+    eval_pass_rate_floor: 0.88
+    custom_rules: 10
+    guardrails_required:
+      - outbound_email_approval
+      - pii_redaction
+      - no_auto_unsubscribe
+      - secrets_scanner
+      - spend_cap_per_day:25usd
+
+  scale:
+    monthly_price: 999
+    emails_per_day: unlimited
+    model_floor: anthropic:claude-sonnet-4-6
+    memory: full_5_axes
+    channels: unlimited
+    sla_uptime: 99.9
+    eval_pass_rate_floor: 0.92
+    custom_rules: unlimited
+    custom_skills_included: 5
+    guardrails_required:
+      - outbound_email_approval
+      - pii_redaction
+      - no_auto_unsubscribe
+      - secrets_scanner
+      - behavioral_evals_strict
+      - spend_cap_per_day:200usd
+
+trial:
+  pool_usd: 5
+  nag_at_usd: 3
+  duration_days: 7
+  free_week_before_charge: true   # marketplace test-mode default-on per Alex's brainstorm
+
+byok_keys:
+  - anthropic_or_openai_or_openrouter   # tenant supplies model key
+  - gmail_oauth                          # tenant supplies Gmail OAuth scope
+
+billing:
+  charge_currency: usd
+  charge_cycle: monthly
+  proration: stripe_default
+  refund_window_days: 14

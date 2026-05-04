@@ -1,0 +1,30 @@
+description: email-triage golden dataset regression — runs nightly, pass-rate floor 0.85
+
+prompts:
+  - file://prompts/categorize.txt
+
+providers:
+  - id: openrouter:nvidia/nemotron-nano-9b-v2
+  - id: mistral:mistral-medium-latest
+  - id: anthropic:claude-sonnet-4-6
+
+tests:
+  - file://golden.jsonl
+
+# Pass criteria — keep tight, drift is the enemy
+defaultTest:
+  options:
+    transform: file://transform.js
+  assert:
+    - type: equals
+      transformValue: output.category
+      value: '{{expected_category}}'
+    - type: javascript
+      value: |
+        // urgency must match within 1 level on the 5-point scale
+        Math.abs(output.urgency - context.expected_urgency) <= 1
+
+outputPath: ./reports/{date}.json
+
+# When this fails 3 nights in a row, VanClief drafts a fix PR.
+# When it fails 7 nights, profile auto-pages on-call.

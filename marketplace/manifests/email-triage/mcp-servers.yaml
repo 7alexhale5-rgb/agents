@@ -1,0 +1,34 @@
+# MCP servers required by the email-triage SKU
+# Hermes auto-installs these when a tenant installs the SKU
+
+required:
+  - id: composio-bridge
+    purpose: Gmail OAuth + send/read/archive/trash operations
+    transport: http
+    url_env: COMPOSIO_MCP_URL
+    auth_env: COMPOSIO_API_KEY
+    scopes:
+      - gmail.readonly
+      - gmail.modify    # archive + trash require modify; do NOT request gmail.send (we don't auto-send)
+    tier_eligibility: [starter, pro, scale]
+
+  - id: 4d-senses
+    purpose: Sense-15-intuition for risky-pattern checks on email content (e.g., before drafting an unsubscribe to a known partner)
+    transport: stdio
+    command: node
+    args: ["~/Projects/agents/mcp-servers/4d-senses/index.js"]
+    tier_eligibility: [starter, pro, scale]
+
+optional:
+  - id: honcho-local
+    purpose: Per-tenant peer-card on individual senders (pro+ tier only)
+    transport: http
+    url_env: HONCHO_URL
+    tier_eligibility: [pro, scale]
+
+  - id: hubspot
+    purpose: Pull CRM data for important_people enrichment (scale tier only)
+    transport: http
+    url_env: HUBSPOT_MCP_URL
+    auth_env: HUBSPOT_API_KEY
+    tier_eligibility: [scale]

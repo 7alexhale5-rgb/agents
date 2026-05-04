@@ -1,0 +1,75 @@
+# Hermes runtime config for the personal profile
+# This is the source-of-truth; runtime mirror lives at ~/.hermes/profiles/personal/config.yaml
+# Keep them in sync via scripts/sync-profile.sh push personal
+
+profile: personal
+
+agent:
+  max_iterations: 32
+  iteration_budget_tokens: 200000
+
+model:
+  default_provider: openrouter
+  default_model: nvidia/nemotron-nano-9b-v2  # check OpenRouter weekly free rotation
+  routing:
+    drafting: mistralai/mistral-medium-latest
+    reasoning: anthropic/claude-sonnet-4-6
+    strategic: anthropic/claude-opus-4-7
+
+memory:
+  built_in:
+    enabled: true
+    fts5_enabled: true
+  honcho:
+    enabled: false  # flips to true in Phase 1.5 when Docker is up
+    url: http://localhost:8765
+    workspace: personal
+
+mcp_servers:
+  4d-senses:
+    command: node
+    args: ["~/Projects/agents/mcp-servers/4d-senses/index.js"]
+    include: [smell_recent, pain_active, intuition_for_pattern, vision_latest, status]
+  obsidian:
+    command: npx
+    args: ["-y", "@modelcontextprotocol/server-filesystem", "~/Projects/personal-vault"]
+    exclude: [delete]   # never delete from the vault via MCP
+
+skills:
+  install:
+    - voice-loop
+    - daily-digest
+    - recipe-from-pantry
+    - eliza-reflection
+    - obsidian-vault
+  global:
+    - 4d-senses
+    - env-doctor
+    - cost-watch
+
+channels:
+  telegram:
+    enabled: false  # flips to true once a NEW bot token is paired (NOT gravity-claw's)
+    token_env: TELEGRAM_BOT_TOKEN_PERSONAL
+  voice:
+    enabled: true
+    stt: groq-whisper-turbo
+    tts: google-tts
+
+approval:
+  mode: explicit_for_outbound
+  outbound_channels: [email, slack, linkedin]
+  pii_redaction: true
+
+scheduling:
+  cron:
+    morning_brief: "0 7 * * *"   # 07:00 ET daily
+    evening_reflection: "0 21 * * *" # 21:00 ET daily
+
+guardrails:
+  spend_cap_per_day_usd: 5
+  alert_threshold_pct: 80
+
+logging:
+  trajectory_jsonl: true
+  langfuse_project: hermes-personal

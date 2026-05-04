@@ -32,3 +32,6 @@ honcho/workspaces/*/
 **/node_modules/
 **/.DS_Store
 *.log
+
+# Promptfoo nightly run outputs — regenerated, not source-of-truth
+marketplace/manifests/*/eval-suite/reports/

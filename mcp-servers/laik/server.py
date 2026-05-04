@@ -77,6 +77,26 @@ server: Server = Server("laik")
 DEFAULT_TENANT = os.environ.get("LAIK_TENANT", "consult-ops")
 TENANTS_DIR = LAIK_ROOT / "tenants"
 
+# Profile-to-tenant authorization (Codex review P1, 2026-05-04, server.py:237-239 finding).
+# A profile may only access tenants listed in LAIK_AUTHORIZED_TENANTS (comma-separated).
+# If unset, only DEFAULT_TENANT is allowed. The wrapper REFUSES any other tenant — even if
+# it exists on disk — so a misconfigured personal profile cannot read ConsultOps prod.
+_authorized = os.environ.get("LAIK_AUTHORIZED_TENANTS")
+AUTHORIZED_TENANTS: set[str] = (
+    {t.strip() for t in _authorized.split(",") if t.strip()}
+    if _authorized
+    else {DEFAULT_TENANT}
+)
+
+# Mutation execution gate (Codex review P1, 2026-05-04, server.py:311-317 finding).
+# laik_confirm_mutation collapses propose-not-execute if exposed without a server-validated
+# approval token. Defaults to DISABLED — only operator-authorized via env var
+# LAIK_HUMAN_APPROVAL_TOKEN can confirm. The token is shared out-of-band with the human
+# operator (not the agent) and rotated per session. Even when enabled, the token must
+# accompany every confirm call AND match an approver_id session record (LAIK side).
+HUMAN_APPROVAL_TOKEN = os.environ.get("LAIK_HUMAN_APPROVAL_TOKEN", "").strip()
+EXPOSE_CONFIRM_TOOL = bool(HUMAN_APPROVAL_TOKEN)
+
 
 def list_tenants() -> list[str]:
     if not TENANTS_DIR.exists():
@@ -88,11 +108,24 @@ def list_tenants() -> list[str]:
     ]
 
 
+def _authorize_tenant(tenant: str) -> str | None:
+    """Return None on success, error message on rejection."""
+    if tenant not in list_tenants():
+        return f"unknown tenant: {tenant}. Available: {sorted(list_tenants())}"
+    if tenant not in AUTHORIZED_TENANTS:
+        return (
+            f"tenant '{tenant}' is not authorized for this profile. "
+            f"Allowed: {sorted(AUTHORIZED_TENANTS)}. "
+            "If this is intentional, set LAIK_AUTHORIZED_TENANTS in profile config.yaml."
+        )
+    return None
+
+
 # ---------- tools ----------
 
 @server.list_tools()
 async def list_tools() -> list[Tool]:
-    return [
+    base = [
         Tool(
             name="laik_status",
             description=(
@@ -159,8 +192,8 @@ async def list_tools() -> list[Tool]:
             description=(
                 "Create a mutation_proposal for a write to the tenant's database. THIS DOES NOT "
                 "EXECUTE — it inserts into the mutation_proposals table for human review. The "
-                "operator must call laik_confirm_mutation OR confirm via the LAIK admin UI. "
-                "Returns the proposal_id and confirmation card payload."
+                "human operator must confirm via the LAIK admin UI (NOT via this MCP). Returns the "
+                "proposal_id and confirmation card payload."
             ),
             inputSchema={
                 "type": "object",
@@ -173,38 +206,53 @@ async def list_tools() -> list[Tool]:
                 "required": ["tool_name", "args", "rationale"],
             },
         ),
-        Tool(
-            name="laik_confirm_mutation",
-            description=(
-                "Execute a previously proposed mutation by proposal_id. Proposal must exist, must "
-                "not be expired, and must not have already been confirmed or rejected. Returns "
-                "executed result + audit trail entry."
-            ),
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "tenant": {"type": "string"},
-                    "proposal_id": {"type": "string"},
-                    "approver_id": {"type": "string", "description": "Identity of the approver"},
-                },
-                "required": ["proposal_id", "approver_id"],
-            },
-        ),
-        Tool(
-            name="laik_reject_mutation",
-            description="Reject a previously proposed mutation by proposal_id. Audit trail entry recorded.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "tenant": {"type": "string"},
-                    "proposal_id": {"type": "string"},
-                    "rejecter_id": {"type": "string"},
-                    "reason": {"type": "string"},
-                },
-                "required": ["proposal_id", "rejecter_id"],
-            },
-        ),
     ]
+    # Mutation execution gate: only expose laik_confirm_mutation and laik_reject_mutation
+    # when LAIK_HUMAN_APPROVAL_TOKEN is set in the operator's env (not the agent's).
+    # Default = NOT exposed. Operator confirms via LAIK admin UI instead.
+    if EXPOSE_CONFIRM_TOOL:
+        base.extend(
+            [
+                Tool(
+                    name="laik_confirm_mutation",
+                    description=(
+                        "Execute a previously proposed mutation by proposal_id. Requires the "
+                        "operator's human-approval token (LAIK_HUMAN_APPROVAL_TOKEN), which the "
+                        "agent does not have direct access to. Proposal must exist, not be "
+                        "expired, and not already confirmed/rejected."
+                    ),
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "tenant": {"type": "string"},
+                            "proposal_id": {"type": "string"},
+                            "approver_id": {"type": "string", "description": "Operator identity"},
+                            "approval_token": {
+                                "type": "string",
+                                "description": "Operator's session token (LAIK_HUMAN_APPROVAL_TOKEN). Without it the call rejects.",
+                            },
+                        },
+                        "required": ["proposal_id", "approver_id", "approval_token"],
+                    },
+                ),
+                Tool(
+                    name="laik_reject_mutation",
+                    description="Reject a proposed mutation. Same approval-token gate as confirm.",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "tenant": {"type": "string"},
+                            "proposal_id": {"type": "string"},
+                            "rejecter_id": {"type": "string"},
+                            "approval_token": {"type": "string"},
+                            "reason": {"type": "string"},
+                        },
+                        "required": ["proposal_id", "rejecter_id", "approval_token"],
+                    },
+                ),
+            ]
+        )
+    return base
 
 
 def _err(text: str) -> list[TextContent]:
@@ -235,8 +283,9 @@ async def call_tool(name: str, arguments: dict[str, Any] | None) -> list[TextCon
         return _ok({"tenants": list_tenants()})
 
     tenant = args.get("tenant") or DEFAULT_TENANT
-    if tenant not in list_tenants():
-        return _err(f"unknown tenant: {tenant}. Available: {list_tenants()}")
+    auth_err = _authorize_tenant(tenant)
+    if auth_err:
+        return _err(auth_err)
 
     try:
         HybridRetriever, react_loop, MCPToolbox = _import_laik()
@@ -289,6 +338,21 @@ async def call_tool(name: str, arguments: dict[str, Any] | None) -> list[TextCon
 
     # MCPToolbox-backed tools (list / propose / confirm / reject)
     if name in ("laik_list_tools", "laik_propose_mutation", "laik_confirm_mutation", "laik_reject_mutation"):
+        # Mutation-execution gate: confirm/reject require both the EXPOSE flag AND
+        # a matching approval_token in the call. This is the server-side enforcement
+        # of propose-not-execute (Codex P1, server.py:311-317 finding).
+        if name in ("laik_confirm_mutation", "laik_reject_mutation"):
+            if not EXPOSE_CONFIRM_TOOL:
+                return _err(
+                    f"{name} is disabled — set LAIK_HUMAN_APPROVAL_TOKEN in the operator's env "
+                    "to enable, or confirm/reject via the LAIK admin UI instead."
+                )
+            supplied_token = (args.get("approval_token") or "").strip()
+            if supplied_token != HUMAN_APPROVAL_TOKEN:
+                return _err(
+                    f"{name} rejected — invalid or missing approval_token. "
+                    "The agent should not have access to this token; confirm via LAIK admin UI."
+                )
         toolbox = None
         try:
             toolbox = MCPToolbox(tenant)

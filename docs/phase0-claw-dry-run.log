@@ -1,0 +1,90 @@
+
+┌─────────────────────────────────────────────────────────┐
+│          ⚕ Hermes — OpenClaw Migration                 │
+└─────────────────────────────────────────────────────────┘
+
+
+◆ Migration Settings
+  Source:      /Users/alexhale/.openclaw
+  Target:      /Users/alexhale/.hermes
+  Preset:      full
+  Overwrite:   no (skip conflicts)
+  Secrets:     no
+
+
+✗ OpenClaw appears to be running:
+    * openclaw process(es) (PIDs: 1073)
+  Messaging platforms (Telegram, Discord, Slack) only allow one active session per bot token. If you continue, both OpenClaw and Hermes may try to use the same token, causing disconnects.
+  Recommendation: stop OpenClaw before migrating.
+
+  Non-interactive session — continuing to preview only.
+
+
+◆ Migration Preview — 24 item(s) would be imported
+  No changes have been made yet. Review the list below:
+
+
+◆ Dry Run Results
+  No files were modified. This is a preview of what would happen.
+
+  ✓ Would migrate:
+      memory                 → ~/.hermes/memories/MEMORY.md
+      user-profile           → ~/.hermes/memories/USER.md
+      skill                  → ~/.hermes/skills/openclaw-imports/brainstorm-stack
+      skill                  → ~/.hermes/skills/openclaw-imports/close-day
+      skill                  → ~/.hermes/skills/openclaw-imports/cost-management
+      skill                  → ~/.hermes/skills/openclaw-imports/devils-advocate
+      skill                  → ~/.hermes/skills/openclaw-imports/dispatch
+      skill                  → ~/.hermes/skills/openclaw-imports/focus-interview
+      skill                  → ~/.hermes/skills/openclaw-imports/jr-dev
+      skill                  → ~/.hermes/skills/openclaw-imports/morning-brief
+      skill                  → ~/.hermes/skills/openclaw-imports/planning-awareness
+      skill                  → ~/.hermes/skills/openclaw-imports/project-registry
+      skill                  → ~/.hermes/skills/openclaw-imports/research-stack
+      skill                  → ~/.hermes/skills/openclaw-imports/session-lifecycle
+      skill                  → ~/.hermes/skills/openclaw-imports/supabase-patterns
+      skill                  → ~/.hermes/skills/openclaw-imports/upwork-arbitrage
+      skill-category         → ~/.hermes/skills/openclaw-imports/DESCRIPTION.md
+      shared-skills          → ~/.hermes/skills/openclaw-imports/antfarm-workflows
+      shared-skill-category  → ~/.hermes/skills/openclaw-imports/DESCRIPTION.md
+      personal-skills        → ~/.hermes/skills/openclaw-imports/rls-audit
+      personal-skills        → ~/.hermes/skills/openclaw-imports/staged-review
+      shared-skill-category  → ~/.hermes/skills/openclaw-imports/DESCRIPTION.md
+      daily-memory           → ~/.hermes/memories/MEMORY.md
+      agent-config           → config.yaml agent/compression/terminal
+
+  ⚠ Conflicts (skipped — use --overwrite to force):
+      soul                    Target exists and overwrite is disabled
+      model-config            Model already set and overwrite is disabled
+
+  ─ Skipped:
+      workspace-agents        No workspace target was provided
+      messaging-settings      No Hermes-compatible messaging settings found
+      secret-settings         Secret migration disabled. Re-run with --migrate-secrets to import allowlisted secrets.
+      discord-settings        No Discord settings found
+      slack-settings          No Slack settings found
+      whatsapp-settings       No WhatsApp settings found
+      signal-settings         No Signal settings found
+      provider-keys           Secret migration disabled. Re-run with --migrate-secrets to import provider API keys.
+      tts-config              No TTS configuration found in OpenClaw config
+      command-allowlist       No allowlist patterns found
+      tts-assets              Source directory not found
+      raw-config-skip         Selected Hermes-compatible values were extracted; raw OpenClaw config was not copied.
+      sensitive-skip          Contains secrets, binary state, or product-specific runtime data
+      sensitive-skip          Contains secrets, binary state, or product-specific runtime data
+      sensitive-skip          Contains secrets, binary state, or product-specific runtime data
+      sensitive-skip          Contains secrets, binary state, or product-specific runtime data
+      mcp-servers             No MCP servers found in OpenClaw config
+      cron-jobs               No cron configuration found
+      session-config          No session configuration found
+      full-providers          No model providers found
+      browser-config          No browser configuration found
+      approvals-config        No approvals configuration found
+      memory-backend          No memory backend configuration found
+      ui-identity             No UI/identity configuration found
+      logging-config          No logging/diagnostics configuration found
+
+  Summary: 24 would migrate, 2 conflict(s), 25 skipped
+
+  To execute the migration, run without --dry-run:
+    hermes claw migrate --preset full

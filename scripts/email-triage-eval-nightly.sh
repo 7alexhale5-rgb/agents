@@ -119,7 +119,10 @@ run_provider () {
     '{event_type:"eval_trace", sku:$sku, provider:$provider, date:$date,
       passed:$passed, total:$total, rate:$rate, wilson_lower_ci:$lower,
       manifest_hash:$hash, report_path:$report}')
-  echo "$TRACE_JSON" | python3 "$SCRIPT_DIR/honcho-publish-eval-trace.py" >>"$LOG_FILE" 2>&1 || true
+  # Invoke the publish script directly (its shebang pins /usr/bin/python3 — the
+  # only macOS python3 with PyJWT installed; launchd's PATH resolves a broken
+  # /opt/homebrew/bin/python3 first which silently swallows the trace via || true).
+  echo "$TRACE_JSON" | "$SCRIPT_DIR/honcho-publish-eval-trace.py" >>"$LOG_FILE" 2>&1 || true
 
   return 0
 }

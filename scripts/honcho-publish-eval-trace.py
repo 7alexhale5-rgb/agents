@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 honcho-publish-eval-trace.py — publish a single eval_trace event to the agora.
 

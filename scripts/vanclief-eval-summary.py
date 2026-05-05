@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 vanclief-eval-summary.py — consumer side of the eval_trace bus.
 

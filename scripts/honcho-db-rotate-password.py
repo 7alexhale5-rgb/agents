@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 honcho-db-rotate-password.py — sync honcho-db role password to match honcho-api .env.
 

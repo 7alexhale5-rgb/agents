@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 honcho-substrate-bootstrap.py — Phase 0 substrate operational smoke + bootstrap.
 

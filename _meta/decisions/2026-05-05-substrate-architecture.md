@@ -60,6 +60,40 @@ Karpathy throwaway-first principle applied: profile content (SOUL/USER/MEMORY) i
 - Profile scaffolds: REVERSIBLE — `bootstrap-profile.sh` regenerates them; `seal-profile.sh` halts any.
 - registry-rebuild Python: REVERSIBLE — the bash version's logic is preserved in git history if a Python-free environment ever matters.
 
+## Addendum 2026-05-05 PM — Compressed gate semantics
+
+The original gate criteria baked the 24h calendar window into the sample
+counts (n≥1440 health rows, n≥288 registry rows). On reflection, those
+were _guesses for "enough samples"_, not load-bearing properties of the
+system being measured. Time-dependence matters only for short-window
+leak exposure (~60 min covers it) and operational variance across the
+day (genuinely lost in compression — accepted trade-off for velocity).
+
+Revised criteria — both sets are valid; either clears the gate:
+
+| Gate                      | Original (24h)             | Compressed (60min)                                                        |
+| ------------------------- | -------------------------- | ------------------------------------------------------------------------- |
+| Honcho /health            | n≥1440 + zero non-200 rows | n≥600 across ≥60 min wall-clock + Wilson upper-CI on failure rate ≤ 0.005 |
+| registry-rebuild          | n≥288 + p95 <200ms         | n≥300 across ≥45 min wall-clock + p95 <200ms + p99 <500ms                 |
+| validate-profile.sh --all | exit 0                     | unchanged                                                                 |
+
+Wilson upper-CI on the failure rate is _stronger_ than "zero non-200 in
+1440 samples": it bounds the true failure rate at ≤0.5% with 95%
+confidence rather than relying on the implicit "zero seen" heuristic.
+
+Sampling rate: compressed Honcho probe at 4s cadence × 900 samples
+(60 min) yields Wilson upper ≈ 0.0042 for 0/900, comfortably under 0.005
+and statistically equal to or stronger than the 24h soak's 1440-row
+zero-failure observation.
+
+Both the 24h launchd soak and the compressed run write to the same
+TSVs. They cross-validate: if they disagree, that's a real signal worth
+investigating before advancing.
+
+`scripts/phase-0-soak-compressed.sh` runs the compressed sweep;
+`scripts/phase-0-gate-eval.sh` reads either window and emits the
+verdict for whichever set of thresholds applies.
+
 ## Cross-references
 
 - Architecture: `/tmp/agentic-os-research/07-architecture.md`

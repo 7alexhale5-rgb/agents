@@ -1,0 +1,48 @@
+{
+  "_comment": "Hermes Honcho-plugin canonical config (v1, 2026-05-05). Copy to ~/.hermes/honcho.json on Phase 1 activation. Reflects substrate decisions #1, #2, #11, #12: single workspace prettyfly-os, one peer per profile, AGPL server-side only. Schema: ~/.hermes/hermes-agent/plugins/memory/honcho/README.md",
+
+  "baseUrl": "http://localhost:8765",
+  "workspace": "prettyfly-os",
+  "peerName": "alex",
+  "saveMessages": true,
+  "writeFrequency": "async",
+
+  "hosts": {
+    "hermes.personal": {
+      "enabled": true,
+      "aiPeer": "personal",
+      "recallMode": "hybrid",
+      "sessionStrategy": "per-directory",
+      "dialecticReasoningLevel": "low",
+      "dialecticDepth": 2,
+      "observation": {
+        "user": { "observeMe": true, "observeOthers": true },
+        "ai":   { "observeMe": true, "observeOthers": true }
+      }
+    },
+    "hermes.vanclief": {
+      "enabled": true,
+      "aiPeer": "vanclief",
+      "recallMode": "tools",
+      "sessionStrategy": "per-repo",
+      "dialecticReasoningLevel": "medium",
+      "dialecticDepth": 3,
+      "observation": {
+        "user": { "observeMe": false, "observeOthers": true },
+        "ai":   { "observeMe": true,  "observeOthers": true }
+      },
+      "_comment": "vanclief is read-mostly (per ADR-002): user.observeMe=false because vanclief audits the substrate, doesn't shape it"
+    },
+    "hermes.atlas-ceo":      { "enabled": true, "aiPeer": "atlas-ceo",      "recallMode": "hybrid", "sessionStrategy": "per-directory" },
+    "hermes.ops":            { "enabled": true, "aiPeer": "ops",            "recallMode": "hybrid", "sessionStrategy": "per-directory" },
+    "hermes.codex":          { "enabled": true, "aiPeer": "codex",          "recallMode": "tools",  "sessionStrategy": "per-repo"      },
+    "hermes.consultops":     { "enabled": true, "aiPeer": "consultops",     "recallMode": "hybrid", "sessionStrategy": "per-directory" },
+    "hermes.forge-audit":    { "enabled": true, "aiPeer": "forge-audit",    "recallMode": "hybrid", "sessionStrategy": "per-repo"      },
+    "hermes.lawdbot":        { "enabled": true, "aiPeer": "lawdbot",        "recallMode": "hybrid", "sessionStrategy": "per-session"   },
+    "hermes.mobile":         { "enabled": true, "aiPeer": "mobile",         "recallMode": "hybrid", "sessionStrategy": "per-directory" },
+    "hermes.quill-content":  { "enabled": true, "aiPeer": "quill-content",  "recallMode": "hybrid", "sessionStrategy": "per-directory" },
+    "hermes.sportsbook":     { "enabled": true, "aiPeer": "sportsbook",     "recallMode": "hybrid", "sessionStrategy": "per-directory" },
+    "hermes.viper-outreach": { "enabled": true, "aiPeer": "viper-outreach", "recallMode": "hybrid", "sessionStrategy": "per-directory" },
+    "hermes.yeh-ops":        { "enabled": true, "aiPeer": "yeh-ops",        "recallMode": "hybrid", "sessionStrategy": "per-repo"      }
+  }
+}

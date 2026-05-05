@@ -91,3 +91,27 @@ docker compose stop  # halts all 3 containers, data persists
 docker compose down  # halts + removes containers, data persists in named volume
 docker compose down -v  # halts + removes containers AND data — only use for clean reset
 ```
+
+## Phase 1 — Hermes plugin activation
+
+The Hermes Honcho plugin (bundled at `~/.hermes/hermes-agent/plugins/memory/honcho/`) reads `~/.hermes/honcho.json`. The canonical config lives at `honcho/honcho-hermes-plugin.json.template` in this repo and matches substrate decisions #1, #2, #11, #12: single workspace `prettyfly-os`, one peer per profile, AGPL server-side only.
+
+To activate when a profile is first invoked:
+
+```bash
+# Install Hermes' Honcho SDK requirement
+pip install honcho-ai
+
+# Copy the template into runtime
+cp ~/Projects/agents/honcho/honcho-hermes-plugin.json.template ~/.hermes/honcho.json
+
+# Verify resolved config for the personal profile
+hermes honcho status -p personal
+
+# (when Telegram pairing is also done) start the gateway
+hermes profile use personal
+```
+
+The `hosts` block in the template covers all 13 chartered profiles. Each gets its own `aiPeer` matching the profile name; user peer is shared as `alex`. `recallMode` is `hybrid` for chat profiles and `tools` for read-mostly ones (codex, vanclief). All entries default to async write frequency to keep the agent loop unblocked.
+
+If Honcho rolls a new server-side schema, run `hermes honcho status -p personal` against each host key — mismatches surface there before runtime.

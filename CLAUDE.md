@@ -1,6 +1,6 @@
 # CLAUDE.md — `~/Projects/agents/`
 
-> **Status:** active | **Type:** tooling | **Phase:** 0 complete
+> **Status:** active | **Type:** tooling | **Phase:** 0 in soak (gate eval 2026-05-06 ~14:00 ET)
 
 You've opened the consolidated Hermes monorepo. This file is the Layer-1 router (per JEVanClief's folder-as-workspace pattern). Use it to decide which profile to descend into.
 

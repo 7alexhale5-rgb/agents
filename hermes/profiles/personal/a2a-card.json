@@ -1,0 +1,21 @@
+{
+  "schema": "a2a/v1+ext",
+  "agent_id": "personal",
+  "version": "0.1.0",
+  "description": "Voice-first agent that takes the load off your daily life",
+  "tier": null,
+  "side_effects": [],
+  "eval_suite_uri": null,
+  "cost_envelope": {
+    "budget_usd_per_day": 0,
+    "alert_threshold_pct": 80
+  },
+  "channels": [
+    "telegram",
+    "voice",
+    "obsidian",
+    "cli"
+  ],
+  "skills": [],
+  "stamped_at": "2026-05-05T16:06:50Z"
+}

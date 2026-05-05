@@ -44,7 +44,8 @@ services:
     ports:
       - "127.0.0.1:8765:8000"   # API on localhost:8765 — never public; Hermes attaches over loopback
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:8000/health || exit 1"]
+      # Honcho image is Python-based but ships without curl; use python urllib (stdlib).
+      test: ["CMD-SHELL", "python -c \"import urllib.request,sys; sys.exit(0) if urllib.request.urlopen('http://localhost:8000/health',timeout=5).status==200 else sys.exit(1)\""]
       interval: 30s
       timeout: 10s
       retries: 3

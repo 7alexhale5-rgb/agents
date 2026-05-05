@@ -1,0 +1,16 @@
+{
+  "sku": "consultops",
+  "name": "TBD",
+  "version": "0.1.0",
+  "category": "TBD",
+  "department": "TBD",
+  "tagline": "TBD",
+  "tier": "TBD",
+  "depends_on": [],
+  "channels": [],
+  "memory_axes": ["working", "episodic", "procedural"],
+  "guardrails": ["outbound_human_approval", "pii_redaction"],
+  "sla": { "uptime": 99.0, "p95_latency_seconds": 30 },
+  "publish": false,
+  "internal_only": true
+}

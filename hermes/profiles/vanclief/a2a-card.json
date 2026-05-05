@@ -1,0 +1,20 @@
+{
+  "schema": "a2a/v1+ext",
+  "agent_id": "vanclief",
+  "version": "0.1.0",
+  "description": "Audits the agent fleet, ingests new AI research, ships the Sunday Weekly Brief and Monthly Research Drop.",
+  "tier": null,
+  "side_effects": [],
+  "eval_suite_uri": null,
+  "cost_envelope": {
+    "budget_usd_per_day": 0,
+    "alert_threshold_pct": 80
+  },
+  "channels": [
+    "obsidian",
+    "slack",
+    "telegram"
+  ],
+  "skills": [],
+  "stamped_at": "2026-05-05T16:06:50Z"
+}

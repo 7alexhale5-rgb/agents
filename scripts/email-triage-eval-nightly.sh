@@ -147,10 +147,17 @@ if [ "$FUNDED_COUNT" -eq 0 ]; then
   echo "ALL PROVIDERS UNFUNDED at ${DATE}; refill credits to resume nightly." >> "$LOG_FILE"
 fi
 
-# Karpathy P1 gate (in-run): ≥2 providers, each with lower-CI ≥0.80 and rate ≥0.85
-PASS_GATE=$(echo "$RUN_ROWS" | awk -F'\t' '$3>=0.85 && $6>=0.80 {c++} END {print c+0}')
+# Karpathy P1 gate (in-run): ≥2 DISTINCT providers, each with lower-CI ≥0.80 and rate ≥0.85.
+# Counts unique provider names that pass both thresholds — same provider running twice in one
+# day is one provider. Synthetic/test providers (smoke-test, debug:, test:) are excluded.
+PASS_GATE=$(echo "$RUN_ROWS" | awk -F'\t' '
+  /^smoke-test|^smoke:|^debug:|^test:|^synthetic:/ { next }
+  $3>=0.85 && $6>=0.80 { providers[$2]=1 }
+  END { c=0; for (p in providers) c++; print c }')
 if [ "${PASS_GATE:-0}" -ge 2 ]; then
-  echo "P1 GATE CLEARED: ${PASS_GATE} providers ≥0.85 with lower-CI ≥0.80" >> "$LOG_FILE"
+  echo "P1 GATE CLEARED: ${PASS_GATE} distinct providers ≥0.85 with lower-CI ≥0.80" >> "$LOG_FILE"
+else
+  echo "P1 GATE: ${PASS_GATE:-0} distinct provider(s) passing (need ≥2)" >> "$LOG_FILE"
 fi
 
 echo "" >> "$LOG_FILE"

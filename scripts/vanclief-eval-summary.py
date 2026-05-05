@@ -70,8 +70,17 @@ def fetch_traces(session_id: str):
     return traces
 
 
+SYNTHETIC_PROVIDER_PREFIXES = ("smoke-test", "smoke:", "debug:", "test:", "synthetic:")
+
+
+def is_synthetic(provider: str) -> bool:
+    p = (provider or "").lower()
+    return any(p.startswith(pref) for pref in SYNTHETIC_PROVIDER_PREFIXES)
+
+
 def gate_status(rates, lower_cis, threshold_lower=0.80, threshold_median=0.85):
-    """Per decision #5: Wilson lower-CI ≥ 0.80 AND median rate ≥ 0.85 across ≥ 2 providers."""
+    """Per decision #5: Wilson lower-CI ≥ 0.80 AND median rate ≥ 0.85 across ≥ 2 providers.
+    Caller is responsible for filtering synthetic providers before calling."""
     funded = [(r, lc) for r, lc in zip(rates, lower_cis) if lc >= threshold_lower and r >= threshold_median]
     if len(funded) >= 2:
         return "PASS"
@@ -99,6 +108,7 @@ def summarize(traces, as_json=False):
         lower_cis_for_gate = []
         for provider, traces_list in by_provider.items():
             latest = max(traces_list, key=lambda x: (x.get("date", ""), x.get("manifest_hash", "")))
+            synthetic = is_synthetic(provider)
             providers.append({
                 "provider": provider,
                 "latest_date": latest.get("date"),
@@ -107,9 +117,12 @@ def summarize(traces, as_json=False):
                 "rate": latest.get("rate"),
                 "wilson_lower_ci": latest.get("wilson_lower_ci"),
                 "trace_count": len(traces_list),
+                "synthetic": synthetic,
             })
-            rates_for_gate.append(latest.get("rate", 0.0))
-            lower_cis_for_gate.append(latest.get("wilson_lower_ci", 0.0))
+            # Synthetic providers are excluded from gate computation.
+            if not synthetic:
+                rates_for_gate.append(latest.get("rate", 0.0))
+                lower_cis_for_gate.append(latest.get("wilson_lower_ci", 0.0))
 
         gate = gate_status(rates_for_gate, lower_cis_for_gate)
         summary["skus"][sku] = {
@@ -134,8 +147,14 @@ def summarize(traces, as_json=False):
             for p in sorted(s["providers"], key=lambda x: x["wilson_lower_ci"] or 0, reverse=True):
                 rate = p["rate"]
                 lci = p["wilson_lower_ci"]
-                marker = "✓" if (rate or 0) >= 0.85 and (lci or 0) >= 0.80 else " "
-                print(f"    {marker} {p['provider']}: {p['passed']}/{p['total']} = {rate} (lower-CI {lci}) [{p['trace_count']} trace(s)]")
+                tag = " (synthetic)" if p.get("synthetic") else ""
+                if p.get("synthetic"):
+                    marker = "·"
+                elif (rate or 0) >= 0.85 and (lci or 0) >= 0.80:
+                    marker = "✓"
+                else:
+                    marker = " "
+                print(f"    {marker} {p['provider']}{tag}: {p['passed']}/{p['total']} = {rate} (lower-CI {lci}) [{p['trace_count']} trace(s)]")
 
 
 def main():

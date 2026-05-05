@@ -71,55 +71,64 @@ def collect_profiles():
 
 
 def collect_project_agents():
-    """Manual depth-limited walk that prunes skip dirs BEFORE descent.
+    """Depth-1 iterdir over ~/Projects/ — looks for .hermes-spawn.json at each
+    project root only. Convention (decision #9): one spawn manifest per project
+    root. Nested sub-projects (e.g. koho/consult-ops) register at their own
+    kebab-case top-level path or via a multi-agent root manifest.
 
-    Recursive glob like `**/.hermes-spawn.json` walks the entire tree (millions of files
-    in node_modules etc.) before filtering. os.walk with topdown=True lets us mutate
-    `dirs` to prune subtrees before they're traversed.
+    Profiling under cold OS cache showed os.walk at depth=3 cost 150-200ms across
+    the 64 top-level Projects/ entries while returning zero manifests in Phase 0.
+    Depth-1 iterdir is ~5ms cold and matches the actual contract.
     """
     agents = []
     if not PROJECTS_DIR.is_dir():
         return agents
 
-    skip_dirs = {"node_modules", "_archive", ".git", ".next", "dist", "build",
-                 ".venv", "venv", "target", ".turbo", ".cache", "__pycache__"}
-    max_depth = 3  # ~/Projects/{a}/{b}/{c}/.hermes-spawn.json
-
-    base_depth = len(PROJECTS_DIR.parts)
-    for root, dirs, files in os.walk(PROJECTS_DIR, topdown=True, followlinks=False):
-        depth = len(Path(root).parts) - base_depth
-        if depth >= max_depth:
-            dirs[:] = []  # don't descend further
+    for project in sorted(PROJECTS_DIR.iterdir()):
+        if not project.is_dir():
             continue
-        # Prune in-place — must mutate, not reassign, for os.walk to honor it.
-        dirs[:] = [d for d in dirs if d not in skip_dirs and not d.startswith('.')]
+        # Skip hidden, archive, and template dirs
+        if project.name.startswith(".") or project.name.startswith("_"):
+            continue
 
-        if ".hermes-spawn.json" in files:
-            spawn = Path(root) / ".hermes-spawn.json"
-            data = load_json(spawn) or {}
-            agent_id = data.get("agent_id") or data.get("id")
-            if not agent_id:
-                continue
-            agents.append({
-                "id": agent_id,
-                "project": str(spawn.parent.relative_to(PROJECTS_DIR)),
-                "path": str(spawn.parent),
-                "source": "spawn-manifest",
-            })
+        spawn = project / ".hermes-spawn.json"
+        if not spawn.is_file():
+            continue
+
+        data = load_json(spawn) or {}
+        agent_id = data.get("agent_id") or data.get("id")
+        if not agent_id:
+            continue
+
+        agents.append({
+            "id": agent_id,
+            "project": project.name,
+            "path": str(project),
+            "source": "spawn-manifest",
+        })
     return agents
 
 
 def main():
     REGISTRY_DIR.mkdir(parents=True, exist_ok=True)
     start = time.perf_counter_ns()
+
+    t0 = time.perf_counter_ns()
     peers = collect_profiles()
+    profiles_ms = (time.perf_counter_ns() - t0) // 1_000_000
+
+    t1 = time.perf_counter_ns()
     project_agents = collect_project_agents()
+    projects_ms = (time.perf_counter_ns() - t1) // 1_000_000
+
     build_ms = (time.perf_counter_ns() - start) // 1_000_000
 
     out = {
         "schema": "hermes-registry/v1",
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "build_ms": build_ms,
+        "profiles_ms": profiles_ms,
+        "projects_ms": projects_ms,
         "peer_count": len(peers),
         "project_agent_count": len(project_agents),
         "peers": peers,
@@ -146,8 +155,8 @@ def main():
         new_file = not tsv.exists()
         with tsv.open("a") as f:
             if new_file:
-                f.write("ts\tbuild_ms\tpeer_count\tproject_agent_count\n")
-            f.write(f"{out['generated_at']}\t{out['build_ms']}\t{out['peer_count']}\t{out['project_agent_count']}\n")
+                f.write("ts\tbuild_ms\tpeer_count\tproject_agent_count\tprofiles_ms\tprojects_ms\n")
+            f.write(f"{out['generated_at']}\t{out['build_ms']}\t{out['peer_count']}\t{out['project_agent_count']}\t{out['profiles_ms']}\t{out['projects_ms']}\n")
 
 
 if __name__ == "__main__":

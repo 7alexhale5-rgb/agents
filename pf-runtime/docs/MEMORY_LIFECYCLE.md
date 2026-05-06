@@ -92,8 +92,29 @@ async def post_session_compaction(profile_slug: str, session_id: str):
 | Tier 4 skill load error                | Skip the broken skill; alert `forge-audit`; runtime continues                             |
 | Dream loop large-diff threshold breach | Halt; queue for operator review; alert `forge-audit`                                      |
 
+## Tier 4 read-path isolation (HARD CONTRACT — added 2026-05-06 post-swarm)
+
+**Rule.** `SkillRegistry` reads from `hermes/profiles/{slug}/skills/` ONLY. The shared `~/.hermes/skills/` path is deferred to Phase 5+ (marketplace skill distribution). During Phase 4.7 the SkillRegistry MUST NOT cross profile boundaries; per-profile `skill_gen_autonomy` bounds (per `SKILL_SELF_GEN_BOUNDS.md`) are enforced at this contract.
+
+**Why.** Architecture-finding-1 in the post-Phase-4.7.0 swarm review (plan §3D + §5.7) named cross-profile skill leak as CRITICAL — a heavy persona file landing in the shared path would (a) make skill-novelty thresholds harder to clear (auto-author trigger may never fire) and (b) shift Ragas faithfulness baseline because the agent's generation distribution changes.
+
+**Tier 1 SOUL contract isolation.** Tier 1 has no shared path; `BufferStore` constructors require a non-None `profile_slug` argument and refuse construction otherwise. There is no global write path in any tier. The contract test `tests/profile_isolation_contract.py` asserts this.
+
+**Read-through behavior under the contract.** The `read_through(profile_slug, session_id)` function never enumerates files outside `{repo_root}/hermes/profiles/{profile_slug}/`. Tier 4 specifically calls `SkillRegistry.list_for_profile(profile_slug)` which is a hard glob bounded to that directory — no path-traversal escape, no symlink follow.
+
+**Marketplace exemption (Phase 5+, future).** When/if the marketplace ships, shared skills will go through a separate `MarketplaceSkillRegistry` with its own contract (signed manifests, sandbox, attribution). The bare `SkillRegistry` will remain profile-local. Marketplace skills are NEVER mixed with profile-local skills in the same registry.
+
+**Test gate (sub-phase 4.7.2).** `tests/tier4_isolation.py` runs against the live skills directory and asserts:
+
+1. `SkillRegistry.list_for_profile("personal")` returns ONLY files under `hermes/profiles/personal/skills/`.
+2. A planted decoy file in `~/.hermes/skills/decoy.md` does NOT appear in any per-profile registry call.
+3. A symlink from `hermes/profiles/personal/skills/escape.md` → `/tmp/poison.md` is rejected with `IsolationViolation`.
+4. `BufferStore(profile_slug=None)` raises `ValueError` at construction time.
+
 ## Test gates (sub-phase 4.7.2)
 
 - `tests/memory_consistency_test.py` — 100-message corpus + concurrent skill-gen + dream-loop on `personal` profile. Assert: zero lost writes, read-after-write sees latest, post-compaction tier 2 + tier 3 view consistent.
+- `tests/tier4_isolation.py` — per the Tier 4 read-path contract above.
+- `tests/profile_isolation_contract.py` — `BufferStore(profile_slug=None)` raises; profile A's BufferStore cannot read profile B's rows even via hand-crafted SQL.
 - 24h soak: ≥1 dream-loop firing with non-empty diff, contradiction flagging works on synthetic test data, zero large-diff threshold breaches.
-- Ragas faithfulness ≥ Hermes baseline – 0.02 on 30-question golden set.
+- Ragas faithfulness ≥ Hermes baseline – 0.02 on 30-question golden set. (Note: per swarm eval-audit, for the `personal` profile the metric is `answer_relevance` not `faithfulness` — see plan §6 and `g1-baseline-capture.sh`.)

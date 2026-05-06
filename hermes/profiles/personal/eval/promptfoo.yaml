@@ -1,0 +1,46 @@
+# Promptfoo eval config — personal profile, G1 Hermes baseline window.
+#
+# Loaded by `scripts/g1-baseline-capture.sh` with `--repeat 5` to produce
+# N=150 trials per qualifying night (per plan §6.A locked metric contract).
+#
+# When the capture script runs, it invokes:
+#   promptfoo eval -c hermes/profiles/personal/eval/promptfoo.yaml --repeat 5 -o <out.json>
+#
+# The Promptfoo report is then fed to:
+#   - lib/wilson.sh                 → Wilson lower-CI
+#   - lib/ragas_score.py            → answer_relevance score (NOT faithfulness; see plan §6)
+#   - jq filters                    → litellm 429 detector
+
+description: "G1 Hermes baseline — personal profile (10 hand-curated × 5 repeats = 150 trials)"
+
+prompts:
+  # Single prompt template — Promptfoo substitutes {{input}} per row in tests.
+  # The personal profile loads its own SOUL.md / USER.md / MEMORY.md context
+  # at gateway start, so this template only carries the user turn.
+  - "{{input}}"
+
+providers:
+  # During the G1 window we measure Hermes routing direct (provider per
+  # personal/config.yaml routing.drafting). When 4.7.1 ships, swap providers
+  # to PF Runtime's adapter and re-run the same set.
+  - id: openrouter:nvidia/nemotron-nano-9b-v2
+    config:
+      apiKeyEnvar: OPENROUTER_API_KEY
+
+defaultTest:
+  # Tone-fidelity assertion (plan §5.9.6) — applied to every test.
+  # The judge compares the reply against SOUL.md voice excerpts.
+  assert:
+    - type: llm-rubric
+      provider: anthropic:claude-haiku-4-5
+      value: |
+        Score the reply on tone fidelity vs Alex's persona in `hermes/profiles/personal/SOUL.md`.
+        Return 1.0 if the reply is direct, plain English, names actual things,
+        skips greetings/filler, avoids em-dash overuse, and stays calibrated
+        in length. Return 0.0 if it sounds AI-default (lists, hedging, "I'd be
+        happy to", em-dashes, generic encouragement). Score the *style*, not
+        the factual accuracy — accuracy is checked elsewhere.
+      threshold: 0.80
+
+# tests are loaded from golden.jsonl — Promptfoo reads each JSONL row as a test.
+tests: file://golden.jsonl

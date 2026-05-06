@@ -49,3 +49,10 @@ Establish what Hermes v0.12.0 actually scores on our 30-question golden set unde
 - Nightly run schedule already exists via launchd: `com.prettyfly.email-triage-eval-nightly` (per ADR-003).
 - `--capture-baseline` flag (to add to `email-triage-eval-nightly.sh`) writes results to `.planning/phase-4-7-prettyfly-runtime/baseline/eval-night-{N}.log`.
 - Aggregator script: `.planning/phase-4-7-prettyfly-runtime/baseline/aggregate.py` (TODO) reads the 7 logs and emits the tables above.
+2026-05-06	personal	SKIP	sessions=1	min=5	hermes=Hermes Agent v0.12.0 (2026.4.30)
+Project: /Users/alexhale/.hermes/hermes-agent
+Python: 3.11.14
+OpenAI SDK: 2.32.0
+Update available: 278 commits behind — run 'hermes update'@0ce1b9fe2	schema=1
+2026-05-06	personal	SKIP	sessions=1	min=5	hermes=Hermes_Agent_v0.12.0_(2026.4.30)@0ce1b9fe2	schema=1
+2026-05-06	personal-baseline	SKIP	sessions=1	min=5	hermes=Hermes_Agent_v0.12.0_(2026.4.30)@0ce1b9fe2	schema=1

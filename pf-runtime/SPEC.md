@@ -214,6 +214,40 @@ class MemoryStack:
     async def flush(self, profile_slug: str) -> None: ...  # forces tier-3 batch flush
 ```
 
+### Tier 4 read-path isolation (HARD CONTRACT — added 2026-05-06 post-swarm)
+
+`SkillRegistry` reads from `hermes/profiles/{slug}/skills/` ONLY. The shared `~/.hermes/skills/` path is deferred to Phase 5+ (marketplace skill distribution). During Phase 4.7 the registry MUST NOT cross profile boundaries.
+
+```python
+class SkillRegistry:
+    def __init__(self, profile_slug: str, repo_root: Path):
+        if not profile_slug:
+            raise ValueError("SkillRegistry requires non-empty profile_slug")
+        self.profile_slug = profile_slug
+        self.skills_dir = repo_root / "hermes" / "profiles" / profile_slug / "skills"
+        # NO fallback to ~/.hermes/skills — that path is reserved for Phase 5 marketplace.
+        # NO walk above skills_dir — symlinks pointing outside the directory raise IsolationViolation.
+
+    def list_for_profile(self, profile_slug: str) -> list[Skill]:
+        if profile_slug != self.profile_slug:
+            raise IsolationViolation(
+                f"registry for {self.profile_slug} cannot serve {profile_slug}"
+            )
+        # Glob bounded to self.skills_dir; resolved paths checked for containment.
+        ...
+```
+
+**Enforcement.** Contract test `tests/tier4_isolation.py` asserts:
+
+1. `SkillRegistry.list_for_profile("personal")` returns only files under `hermes/profiles/personal/skills/`.
+2. A planted file in `~/.hermes/skills/decoy.md` does NOT appear in any per-profile registry call.
+3. A symlink from `hermes/profiles/personal/skills/escape.md` → `/tmp/poison.md` raises `IsolationViolation`.
+4. `BufferStore(profile_slug=None)` raises `ValueError` at construction.
+
+The `BufferStore` constructor requires a non-None `profile_slug` argument; this is the matching code-level enforcement for tier 2 isolation. Together with the Tier 4 lock, profile A's prompt cannot retrieve profile B's memory at any tier under the bare `SkillRegistry`.
+
+**Marketplace exemption (Phase 5+).** When marketplace ships, shared skills go through a separate `MarketplaceSkillRegistry` with signed manifests, sandbox, and attribution. The bare `SkillRegistry` remains profile-local; the two registries are never mixed in the same `MemoryStack` instance.
+
 ## CLI surface
 
 ```bash

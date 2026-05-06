@@ -253,10 +253,16 @@ class ToolDispatcher:
 
 ### Gate (4.7.1 → 4.7.2)
 
-1. Token delta ≤ 5% vs Hermes baseline on 30/30 golden questions.
-2. Tool-call sequence identical on 30/30 golden questions (set equality, not list equality — order can differ).
-3. Pre-shadow preflight: 48 hours, zero unhandled exceptions, audit trail complete in Langfuse.
-4. Codex review of `pf-runtime/runtime/` returns ≤1 critical finding.
+> **Amended 2026-05-06 post-swarm review** — replaces the original "≤5% token delta on N=30" criterion. The eval-methodology audit (plan §6) found that gate had ~10% statistical power at N=30, CV=0.4 — a coin flip, not a gate. The amended criterion is honest about what N=30 can detect.
+
+1. **Token gate (two-check)**:
+   1. **Gross-regression screen** (detectable at N=30 with ~60% power): `mean_tokens_pf ≤ 1.20 × mean_tokens_baseline`. A true 20% regression is detectable at this sample size; a true 5% regression is not.
+   2. **Directional CI bound** (one-sided 90% upper): the upper bound of the 90% CI for PF Runtime mean token count is below `1.05 × (baseline_mean + 1.96 × baseline_std)`. Confirms the new mean has not drifted past the baseline's tail.
+   3. Report: `mean_tokens_pf`, `std_tokens_pf`, `mean_tokens_baseline`, `std_tokens_baseline`, `N=30` for each. If tight 5% precision is later required, expand the golden set to N=100+ before gating on it.
+2. **Tool-call sequence identical** on 30/30 golden questions (set equality, not list equality — order can differ). PLUS: **tool-call argument JSON Schema validation** (per plan §5.9.7) — every tool-call's `arguments` field must validate against the tool's registered input schema. Set-equality without schema-validity passes when args are malformed and is not enough.
+3. **Pre-shadow preflight**: 48 hours, zero unhandled exceptions, audit trail complete in Langfuse — AND every emitted span validates against `pf-runtime/docs/TRACE_SCHEMA.md` (per plan §5.9.1).
+4. **Codex review** of `pf-runtime/runtime/` returns ≤1 critical finding.
+5. **Tone fidelity** (added per plan §5.9.6 for the `personal` profile): LLM-judge assertion in Promptfoo that scores replies against 3-5 SOUL.md excerpts as reference style; mean score ≥ 0.80 on the 30-question set. Closes the gap that "PF Runtime giving technically-correct cold-formal replies would pass every other gate."
 
 ### Risks specific to 4.7.1
 

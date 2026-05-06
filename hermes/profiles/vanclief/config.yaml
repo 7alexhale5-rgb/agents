@@ -5,12 +5,11 @@ agent:
   iteration_budget_tokens: 200000
 
 model:
-  default_provider: openrouter
-  default_model: nvidia/nemotron-nano-9b-v2
-  routing:
-    drafting: mistralai/mistral-medium-latest
-    reasoning: anthropic/claude-sonnet-4-6
-    strategic: anthropic/claude-opus-4-7
+  # Hermes runtime reads `default` and `provider` (auxiliary_client.py:1305-1342).
+  # The previous `default_model`/`default_provider`/`routing` keys were silently ignored.
+  default: nvidia/nemotron-3-nano-30b-a3b:free
+  provider: openrouter
+  # Role-based routing (drafting/reasoning/strategic) is a PF Runtime 4.7.2 feature; not in v0.12.0.
 
 memory:
   built_in:

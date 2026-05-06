@@ -9,12 +9,14 @@ agent:
   iteration_budget_tokens: 200000
 
 model:
-  default_provider: openrouter
-  default_model: nvidia/nemotron-nano-9b-v2  # check OpenRouter weekly free rotation
-  routing:
-    drafting: mistralai/mistral-medium-latest
-    reasoning: anthropic/claude-sonnet-4-6
-    strategic: anthropic/claude-opus-4-7
+  # Hermes runtime reads `default` and `provider`, NOT `default_model`/`default_provider`.
+  # Confirmed at agent/auxiliary_client.py:1305-1342. Earlier keys were silently ignored
+  # and every call fell through to the v0.12.0 hardcoded fallback chain.
+  default: nvidia/nemotron-3-nano-30b-a3b:free
+  provider: openrouter
+  # `model.routing` is also unused — Hermes only reads top-level `provider_routing`
+  # (OR's internal preference map). Role-based switching (drafting/reasoning/strategic)
+  # is not wired in v0.12.0; tracking as a PF Runtime 4.7.2 feature.
 
 memory:
   built_in:

@@ -13,7 +13,12 @@
 # Telegram channel is disabled in personal/config.yaml until a NEW bot token is paired).
 #
 # Usage:
-#   scripts/g1-baseline-capture.sh [profile=personal-baseline]
+#   scripts/g1-baseline-capture.sh [profile=personal]
+#
+# Default profile changed from `personal-baseline` to `personal` 2026-05-06:
+# only `personal` has a Slack gateway producing inbound traffic. The
+# `personal-baseline` workspace is reserved for future PF Runtime A/B work
+# (see post-phase-4-7-0/NEXT_PHASE_PLAN.md §1.0).
 #
 # Exit codes:
 #   0 — qualifying row written OR SKIP row written (both expected outcomes)
@@ -24,7 +29,7 @@
 
 set -euo pipefail
 
-PROFILE="${1:-personal-baseline}"
+PROFILE="${1:-personal}"
 DB="$HOME/.hermes/profiles/${PROFILE}/state.db"
 BASELINE_DIR="$HOME/Projects/agents/.planning/phase-4-7-prettyfly-runtime/baseline"
 BASELINE_MD="${BASELINE_DIR}/HERMES_BASELINE.md"

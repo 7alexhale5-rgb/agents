@@ -1,0 +1,95 @@
+[project]
+name = "pf-runtime"
+version = "0.1.0-pre"
+description = "PrettyFly Runtime — bare-metal Python agent runtime (Phase 4.7 of agents/ migration). MIT-licensed, replaces third-party Hermes Agent at cutover."
+license = { text = "MIT" }
+authors = [{ name = "PrettyFly", email = "alex@prettyflyforai.com" }]
+readme = "SPEC.md"
+requires-python = ">=3.11"
+
+# Production deps will populate as sub-phases ship.
+# v0.1-pre = spec + stubs only; no runtime deps yet.
+dependencies = []
+
+[project.optional-dependencies]
+runtime = [
+    "litellm>=1.50",          # ADR-005 model routing
+    "anthropic>=0.40",        # tier-premium fallthrough
+    "asyncpg>=0.30",          # Kanban Postgres (architecture-finding-3)
+    "aiosqlite>=0.20",        # Tier 2 buffer
+    "mcp>=0.1",               # LAIK MCP client (Phase 4.5 boundary)
+    "pydantic>=2.9",
+    "fastapi>=0.115",         # Kanban API
+    "uvicorn[standard]>=0.30",
+    "websockets>=13",
+    "structlog>=24",
+    "langfuse>=2.50",         # observability per ADR-005
+]
+channels = [
+    "slack-bolt>=1.21",       # Slack Socket Mode (ADR-004)
+    "python-telegram-bot>=21",
+    "aioimaplib>=2.0",
+    "aiosmtplib>=3.0",
+    "discord.py>=2.4",
+]
+dev = [
+    "ruff>=0.7",
+    "mypy>=1.13",
+    "bandit>=1.7",
+    "pip-audit>=2.7",
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=5.0",
+]
+
+# ----- ruff (lint + format) -----
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["runtime-state", "stubs/*.pyi", ".planning"]
+
+[tool.ruff.lint]
+select = [
+    "E", "F", "W",     # pycodestyle + pyflakes
+    "I",               # isort
+    "B",               # flake8-bugbear
+    "UP",              # pyupgrade
+    "SIM",             # flake8-simplify
+    "ASYNC",           # flake8-async
+    "S",               # flake8-bandit (lint-time)
+    "RUF",             # ruff-specific
+]
+ignore = [
+    "E501",            # line length handled by formatter
+    "S101",            # assert in tests is fine
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "S105", "S106"]
+
+# ----- mypy (type-check) -----
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_configs = true
+warn_unreachable = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+no_implicit_optional = true
+exclude = ["runtime-state", "stubs", ".planning"]
+
+[[tool.mypy.overrides]]
+module = ["slack_bolt.*", "discord.*", "aioimaplib.*", "aiosmtplib.*"]
+ignore_missing_imports = true
+
+# ----- pytest -----
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["../tests"]
+python_files = ["test_*.py", "*_test.py", "*_contract.py", "*_consistency.py"]
+addopts = "-ra --strict-markers --tb=short"
+
+# ----- bandit (security lint) -----
+[tool.bandit]
+exclude_dirs = ["tests", "runtime-state", ".planning"]
+skips = ["B101"]  # assert in tests

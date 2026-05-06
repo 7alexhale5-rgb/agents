@@ -1,8 +1,10 @@
 # ADR-001 — Adopt Hermes Agent as the unified runtime
 
 **Date:** 2026-05-04
-**Status:** Accepted
+**Status:** Accepted (amended 2026-05-06 by ADR-006)
 **Phase:** 0 complete
+
+> **Amended by ADR-006 (2026-05-06):** Hermes v0.12.0 is reframed from "unified runtime" to "frozen reference implementation through Phase 4.7 cutover." This ADR's reasoning is correct for Phase 0 — Hermes gave us conventions (`SOUL.md` / `MEMORY.md` / `USER.md` / `CLAUDE.md`), the OpenClaw migrator (24 items migrated cleanly), and a working 13-profile cutover path. We keep all of those. ADR-006 commits to building **PrettyFly Runtime** at `~/Projects/agents/pf-runtime/` and replacing the runtime layer at Phase 4.7 (between LAIK-as-MCP fusion at 4.5 and gravity-claw retirement at 5). See `_meta/decisions/2026-05-06-prettyfly-runtime-bare-metal.md` for full reasoning.
 
 ## Context
 

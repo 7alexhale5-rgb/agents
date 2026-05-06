@@ -1,0 +1,12 @@
+date	provider	pass_rate	passed	total	lower_ci
+2026-05-04	mistral:mistral-medium-latest	0.9000	135	150	0.8416
+2026-05-04	mistral:mistral-medium-latest	0.9000	135	150	0.8416
+2026-05-05	mistral:mistral-medium-latest	0.9000	135	150	0.8416
+2026-05-05	openai:chat:nvidia/llama-3.1-nemotron-nano-8b-v1	0.5200	78	150	0.4406
+2026-05-05	mistral:mistral-medium-latest	0.9000	135	150	0.8416
+2026-05-05	openai:chat:nvidia/llama-3.1-nemotron-nano-8b-v1	0.4733	71	150	0.3951
+2026-05-05	mistral:mistral-medium-latest	0.9000	135	150	0.8416
+2026-05-05	openai:chat:nvidia/llama-3.1-nemotron-nano-8b-v1	0.4867	73	150	0.4080
+2026-05-06	mistral:mistral-medium-latest	0.9000	135	150	0.8416
+2026-05-06	openai:chat:nvidia/llama-3.1-nemotron-nano-8b-v1	0.4867	73	150	0.4080
+2026-05-06	anthropic:claude-sonnet-4-6	0.8400	126	150	0.7730

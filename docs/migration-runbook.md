@@ -1,20 +1,23 @@
 # Migration runbook — Hermes consolidation + Company AGI fusion
 
-> **Status pointer:** Phase 0 done · Phase 1 foundation committed · Phase 1.5 in flight (Honcho laptop, Telegram pairing) · Phase 4.5 inserted between 4 and 5 (LAIK-as-MCP fusion).
+> **Status pointer:** Phase 0 done · Phase 1 foundation committed · Phase 1.5 in flight (Honcho laptop, Slack pairing per ADR-004) · Phase 4.5 inserted between 4 and 5 (LAIK-as-MCP fusion) · **Phase 4.7 inserted between 4.5 and 5 (PrettyFly Runtime bare-metal cutover, per ADR-006).**
 
 ## Phase index
 
-| Phase   | Goal                                                                  | Money pipelines?                             | Estimated calendar                        | Status             |
-| ------- | --------------------------------------------------------------------- | -------------------------------------------- | ----------------------------------------- | ------------------ |
-| 0       | Probe + scaffold + dry-run                                            | No                                           | 1–2 days                                  | ✅ Done 2026-05-04 |
-| 1       | Personal profile cutover (gravity-claw heir) + foundation             | No                                           | 3–5 days active + 14-day shadow           | 🟡 In flight       |
-| 1.5     | Honcho stand up + Telegram pairing (deferred from Phase 1)            | No                                           | 1 day                                     | 🟡 In flight       |
-| 2       | Mike-lawdbot migration via `hermes claw migrate` + BOT_TOKEN rotation | **Yes (Telegram)**                           | 2–3 days + 14-day shadow                  | ⬜ Not started     |
-| 3       | Paperclip activation (Claude Max session, NOT metered)                | No                                           | 3–4 days                                  | ⬜ Not started     |
-| 4       | Mission Control data migration + retirement                           | **Yes (ConsultOps Marc, sportsbook ingest)** | 5–7 days + 14-day shadow + 90-day archive | ⬜ Not started     |
-| **4.5** | **LAIK-as-MCP fusion** (per Company AGI report §3.2)                  | **Yes (ConsultOps daily, YEH dry_run)**      | 5–7 days                                  | ⬜ Not started     |
-| 5       | Gravity-claw retirement (Fly.io heartbeat off)                        | No                                           | 2–3 days                                  | ⬜ Not started     |
-| 6       | OpenClaw retirement + PrettyFly OS branding + marketplace launch      | No (all migrated)                            | 1–2 weeks                                 | ⬜ Not started     |
+| Phase   | Goal                                                                                                                                                                             | Money pipelines?                             | Estimated calendar                        | Status                              |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | ----------------------------------------- | ----------------------------------- |
+| 0       | Probe + scaffold + dry-run                                                                                                                                                       | No                                           | 1–2 days                                  | ✅ Done 2026-05-04                  |
+| 1       | Personal profile cutover (gravity-claw heir) + foundation                                                                                                                        | No                                           | 3–5 days active + 14-day shadow           | 🟡 In flight                        |
+| 1.5     | Honcho stand up + Slack ecosystem pairing (per ADR-004)                                                                                                                          | No                                           | 1 day                                     | 🟡 In flight                        |
+| 2       | Mike-lawdbot migration via `hermes claw migrate` + BOT_TOKEN rotation                                                                                                            | **Yes (Telegram)**                           | 2–3 days + 14-day shadow                  | ⬜ Not started                      |
+| 3       | Paperclip activation (Claude Max session, NOT metered)                                                                                                                           | No                                           | 3–4 days                                  | ⬜ Not started                      |
+| 4       | Mission Control data migration + retirement                                                                                                                                      | **Yes (ConsultOps Marc, sportsbook ingest)** | 5–7 days + 14-day shadow + 90-day archive | ⬜ Not started                      |
+| **4.5** | **LAIK-as-MCP fusion** (per Company AGI report §3.2)                                                                                                                             | **Yes (ConsultOps daily, YEH dry_run)**      | 5–7 days                                  | ⬜ Not started                      |
+| **4.7** | **PrettyFly Runtime bare-metal cutover (per ADR-006)** — 5 sub-phases (loop / memory / channels / Kanban / cutover). 14-day parallel shadow vs Hermes; data-driven cutover gate. | **Yes (all 13 profiles)**                    | 4–6 weeks build + 14-day shadow           | ⬜ Not started · pre-work fires now |
+| 5       | Gravity-claw retirement (Fly.io heartbeat off)                                                                                                                                   | No                                           | 2–3 days                                  | ⬜ Not started                      |
+| 6       | OpenClaw retirement + PrettyFly OS branding + marketplace launch                                                                                                                 | No (all migrated)                            | 1–2 weeks                                 | ⬜ Not started                      |
+
+> **Hermes pin (per ADR-006):** v0.12.0 (2026.4.30). Do not run `hermes update`. Subscribe to releases for security-fix porting only. Hermes is reframed from "unified runtime" to "frozen reference implementation through Phase 4.7 cutover." All Phase 1–4.5 work runs on this pin.
 
 ## Authoritative specs
 
@@ -136,6 +139,45 @@ Steps:
 
 Acceptance: every Hermes profile that needs grounded company facts reads them through `laik_query()` or `laik_sql()` instead of Postgres-direct.
 
+## Phase 4.7 — PrettyFly Runtime bare-metal cutover (NEW per ADR-006)
+
+**Operator commitment 2026-05-06:** "It's more important for us to build this and replicate it ourselves." Six locked decisions in ADR-006. Karpathy-ladder pacing — each sub-phase ships one thing end-to-end against a measured number; phases never collapse.
+
+### Sub-phase 4.7.1 — Loop primitive
+
+Build `pf-runtime/runtime/{loop,model_adapter,tool_dispatch,stop_condition,audit}.py`. Run the `personal` profile through one Slack DM round-trip via the LiteLLM proxy at `http://127.0.0.1:4000`. **Gate:** same prompt → same tool calls → ≤ 5% token delta vs Hermes baseline on the 30-question golden set.
+
+### Sub-phase 4.7.2 — Memory + skills
+
+Build the 4-tier memory stack (SOUL.md / rolling buffer in SQLite / episodic via LAIK MCP from Phase 4.5 / agentskills.io skill loader) plus skill self-generation (auto-author after 5+ tool calls) and the dream loop (post-session reflection that prunes contradictions into MEMORY.md). **Gate:** Ragas faithfulness ≥ 0.85 on the golden set; ≥ 1 skill auto-authored after a 5+ tool-call session; dream loop produces a non-empty post-session pruning diff.
+
+### Sub-phase 4.7.3 — Channel gateway
+
+Slack adapter first (Socket Mode + 13 OAuth-scoped apps from ADR-004), then Telegram, Email, Discord, optional voice via `file_shared`. **Gate:** identical action across runtimes for a 50-message corpus on `atlas-ceo`; money-pipeline OAuth scopes still read-only on `vanclief` and `sportsbook` (no `chat:write`/`im:write`/`reactions:write`/`files:write`).
+
+### Sub-phase 4.7.4 — Kanban + Fleet Console
+
+**Postgres-backed** task board (sibling schema in mission-control's existing Neon Postgres; revised from the original SQLite spec per architecture-finding-3 + concurrency-finding-A in PLAN.md §5/§10) + REST/WebSocket API + Fleet Console extension at `~/Projects/mission-control/api-cost-dashboard/` (extending ADR-005's dashboard, not building parallel). Tier 2 memory buffer remains SQLite per MEMORY_LIFECYCLE.md; only Kanban moves to Postgres. 14-day parallel shadow of all 13 profiles on PF Runtime alongside Hermes. **Gate:** trace volume ±5%, p95 latency ≤150% of baseline, concurrent throughput ≥80% of baseline, zero P0 incidents, per-profile real-job execution.
+
+### Sub-phase 4.7.5 — Cutover
+
+Operator decision against the five gates (canonical list, synced with ADR-006 sub-phase 4.7.5 row + PLAN.md §11):
+
+1. **Promptfoo Wilson lower-CI ≥ 85% per profile** on the existing `email-triage-eval-nightly` golden set; per-profile failures are not averaged.
+2. **Ragas faithfulness ≥ Hermes baseline – 0.02** on personal profile golden set.
+3. **Per-profile real-job execution gate** — every profile completes ≥1 full real-world job through PF Runtime during shadow (ConsultOps Marc lead intake, sportsbook predictions, lawdbot Telegram message, YEH-ops daily check-in, etc.); Sentry + Langfuse trace each end-to-end with zero P0.
+4. **Latency + throughput gate** — p95 latency ≤150% of Hermes baseline; concurrent throughput ≥80% of baseline. Replaces the original backward-looking cost ±10% gate per skeptic-finding-4.
+5. **Zero P0 incidents** across the full 14-day shadow (Sentry-defined P0 = production data loss, security breach, or ≥1 hour outage of a money-pipeline profile).
+
+If all five pass: stop the Hermes service, flip profile dirs from `~/.hermes/profiles/` mirror to canonical at `pf-runtime/runtime-state/profiles/`, archive `~/.hermes/hermes-agent/` for 90-day forensic window. If any gate fails: stay on Hermes, document gaps in a follow-up ADR.
+
+### Pre-work that fires now (parallel with Phase 1)
+
+- `pf-runtime/SPEC.md` — runtime surface contract (profile loader, channel ABC, tool protocol, memory tier interfaces, kanban schema). ~1 day.
+- LAIK MCP boundary lock — confirm Phase 4.5's MCP surface is runtime-agnostic before it ships. ~2 hours.
+- `tests/profile_dir_contract.py` — nightly assertion that all 13 profile dirs are loadable by Hermes today and the PF Runtime spec. ~3 hours.
+- Hermes commit-watcher — daily diff of HEAD..origin/main mailed to `forge-audit`. ~30 minutes.
+
 ## Phase 5 — gravity-claw retirement
 
 Fly.io heartbeat: `flyctl scale count 0 --app gravity-claw-heartbeat`. Edit `.github/workflows/heartbeat.yml` → `on: workflow_dispatch:` only. Verify Fly.io billing $0 for 7 consecutive days. Stop primary app. Vercel paused. Repo tagged `retired-2026-XX-XX`, moved to `_archive/2026/`. MANIFEST updated.
@@ -146,4 +188,4 @@ Fly.io heartbeat: `flyctl scale count 0 --app gravity-claw-heartbeat`. Edit `.gi
 
 ## Phase pointer (current)
 
-Edit this line as phases complete: **CURRENT PHASE: 1 + 1.5 (parallel)**.
+Edit this line as phases complete: **CURRENT PHASE: 1 + 1.5 (parallel) · Phase 4.7 pre-work also active per ADR-006**.

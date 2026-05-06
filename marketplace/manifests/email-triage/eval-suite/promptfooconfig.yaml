@@ -1,11 +1,17 @@
-description: email-triage golden dataset regression — runs nightly, pass-rate floor 0.85
+description: email-triage golden dataset regression — gate is in-run statistical stability, not calendar nights
 
 prompts:
   - file://prompts/categorize.txt
 
 providers:
-  - id: openrouter:nvidia/nemotron-nano-9b-v2
   - id: mistral:mistral-medium-latest
+  # NIM auth: ${NVIDIA_API_KEY} gets envsubst'd at wrapper runtime into /tmp/promptfoo-rendered.yaml.
+  # promptfoo 0.121.5's openai:chat: provider ignores apiKeyEnvar for non-OpenAI endpoints.
+  - id: openai:chat:nvidia/llama-3.1-nemotron-nano-8b-v1
+    config:
+      apiBaseUrl: https://integrate.api.nvidia.com/v1
+      apiKey: ${NVIDIA_API_KEY}
+  - id: openrouter:nvidia/nemotron-nano-9b-v2
   - id: anthropic:claude-sonnet-4-6
 
 tests:
@@ -25,7 +31,14 @@ defaultTest:
         // Urgency must match within ±1 on the 5-point scale
         return Math.abs(output.urgency - context.vars.expected_urgency) <= 1;
 
+# repeat=5: each case run 5x → 150 trials per provider per run.
+# Stability signal lives in the variance across reps, not across calendar nights.
+commandLineOptions:
+  repeat: 5
+
 outputPath: ./reports/{date}.json
 
-# When this fails 3 nights in a row, VanClief drafts a fix PR.
-# When it fails 7 nights, profile auto-pages on-call.
+# Gate (replaces "7 consecutive nights ≥0.85"):
+#   - 150+ trials per provider per run (5 reps × 30 cases)
+#   - Wilson lower-CI ≥0.80 AND median ≥0.85 on ≥2 funded providers
+#   - 1 run can clear it; reps catch flakiness, multi-provider catches model over-fit

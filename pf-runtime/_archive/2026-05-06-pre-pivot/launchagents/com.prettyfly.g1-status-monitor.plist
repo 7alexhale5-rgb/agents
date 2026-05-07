@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.prettyfly.g1-status-monitor</string>
+
+    <!-- Phase 4.7 G1 capture observability layer.
+         Runs daily at 09:00 ET (after the 02:30 ET capture).
+         Reads ~/Assets/logs/g1-status/${TODAY}.status; if missing or
+         non-zero exit_code, stages a Slack alert payload at
+         ~/Assets/logs/g1-alerts/${TODAY}.txt.
+         A future Slack-poster job drains that staging dir. -->
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>-lc</string>
+        <string>/Users/alexhale/Projects/agents/scripts/g1-status-monitor.sh &gt;&gt; /Users/alexhale/Assets/logs/g1-status-monitor.log 2&gt;&amp;1</string>
+    </array>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>9</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/alexhale/Assets/logs/g1-status-monitor.stdout.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/alexhale/Assets/logs/g1-status-monitor.stderr.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/alexhale/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+        <key>HOME</key>
+        <string>/Users/alexhale</string>
+    </dict>
+</dict>
+</plist>

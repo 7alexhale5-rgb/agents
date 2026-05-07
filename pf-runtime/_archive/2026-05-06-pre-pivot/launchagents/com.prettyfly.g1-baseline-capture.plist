@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.prettyfly.g1-baseline-capture</string>
+
+    <!-- Phase 4.7 Gate G1 Hermes baseline measurement.
+         Runs nightly at 02:30 ET. Writes one row per qualifying night
+         (>=5 sessions on `source='slack'`) to HERMES_BASELINE.md.
+         Schema-version-locked metric contract per ~/.claude/plans/lovely-cooking-flame.md §6.A. -->
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>-lc</string>
+        <string>/Users/alexhale/Projects/agents/scripts/g1-baseline-capture.sh personal &gt;&gt; /Users/alexhale/Assets/logs/g1-baseline-capture.log 2&gt;&amp;1</string>
+    </array>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>2</integer>
+        <key>Minute</key>
+        <integer>30</integer>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/alexhale/Assets/logs/g1-baseline-capture.stdout.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/alexhale/Assets/logs/g1-baseline-capture.stderr.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/alexhale/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+        <key>HOME</key>
+        <string>/Users/alexhale</string>
+    </dict>
+</dict>
+</plist>

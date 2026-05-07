@@ -1,0 +1,24 @@
+{
+  "name": "@prettyfly/agents-monorepo",
+  "private": true,
+  "description": "Hermes + PrettyFly Runtime monorepo. Root package exists for shared Node audit tooling (/audit-setup); primary code is Python and profile dirs.",
+  "license": "MIT",
+  "scripts": {
+    "build": "node scripts/audit-devserver-build.mjs",
+    "start": "npx --yes serve@14 dist -l 3000",
+    "dead-code": "knip",
+    "lh:baseline": "bash ops/lighthouse/run-baseline.sh",
+    "lhci": "lhci autorun",
+    "lh:bless": "bash .github/ci/lh-bless.sh"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.59.1",
+    "knip": "^5.88.1",
+    "lighthouse": "^13.2.0"
+  }
+}

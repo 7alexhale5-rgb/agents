@@ -33,9 +33,15 @@ honcho/workspaces/*/
 **/.ruff_cache/
 **/.mypy_cache/
 **/node_modules/
+# Lighthouse audit placeholder static site (from npm run build)
+/dist/
 **/.DS_Store
 *.log
 **/*.egg-info/
+
+# Playwright (repo-root audit smoke)
+/test-results/
+/playwright-report/
 
 # Promptfoo nightly run outputs — regenerated, not source-of-truth
 marketplace/manifests/*/eval-suite/reports/

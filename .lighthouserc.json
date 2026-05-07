@@ -1,0 +1,45 @@
+{
+  "_comment": "audit-setup:lighthouse-ci v1 — regenerate via /audit-setup --ci-only --force",
+  "_note": "All assertions default to \"warn\" level. Flip to \"error\" to enforce (see ./github/ci/README.md), or run /audit-setup --ci-only --enforce",
+  "ci": {
+    "collect": {
+      "numberOfRuns": 3
+    },
+    "assert": {
+      "assertMatrix": [
+        {
+          "matchingUrlPattern": ".*/$",
+          "assertions": {
+            "categories:performance": [
+              "warn",
+              {
+                "minScore": 0.97
+              }
+            ],
+            "categories:accessibility": [
+              "warn",
+              {
+                "minScore": 1
+              }
+            ],
+            "categories:best-practices": [
+              "warn",
+              {
+                "minScore": 0.95
+              }
+            ],
+            "categories:seo": [
+              "warn",
+              {
+                "minScore": 0.95
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}

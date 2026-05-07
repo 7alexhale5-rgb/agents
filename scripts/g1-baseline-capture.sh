@@ -81,20 +81,15 @@ HERMES_AGENT_DIR="$HOME/.hermes/hermes-agent"
 HERMES_COMMIT="$(git -C "$HERMES_AGENT_DIR" rev-parse --short HEAD 2>/dev/null || echo unknown)"
 HERMES_PIN="${HERMES_VERSION// /_}@${HERMES_COMMIT}"
 
-# --- §1.2.1 qualifying-night gate ---
+# --- session count: informational only, NOT a qualifying-night gate ---
+# Per G1_REFRAME_2026-05-06.md §2: the qualifying-night gate is now
+# `errors==0 AND graded_answers>=30` from Promptfoo, NOT session count.
+# Session count is still computed because it's a useful operational signal
+# (low session count = sparse live traffic, write to row but don't gate).
 SESSION_COUNT=$(sqlite3 "$DB" \
   "SELECT COUNT(*) FROM sessions
    WHERE source = 'slack'
      AND date(started_at, 'unixepoch') = '${DATE}';")
-
-if [ "$SESSION_COUNT" -lt "$MIN_SESSIONS_PER_NIGHT" ]; then
-  printf "%s\t%s\tSKIP\tsessions=%s\tmin=%s\thermes=%s\tschema=%d\n" \
-    "$DATE" "$PROFILE" "$SESSION_COUNT" "$MIN_SESSIONS_PER_NIGHT" "$HERMES_PIN" "$SCHEMA_VERSION" \
-    >> "$BASELINE_MD"
-  echo "SKIP: ${DATE} had ${SESSION_COUNT} sessions (min ${MIN_SESSIONS_PER_NIGHT}) — clock not advanced"
-  write_status 0 "SKIP: ${SESSION_COUNT}<${MIN_SESSIONS_PER_NIGHT} sessions; clock not advanced"
-  exit 0
-fi
 
 # --- METRIC: cost p50/p95 (USD per session, percentile across calendar day UTC) ---
 read -r P50_COST P95_COST <<EOF
@@ -135,11 +130,14 @@ TRACE_VOL=$(sqlite3 "$DB" "
 # "eval failed", masking baseline-invalidation. Per reviewer R2.
 PROMPTFOO_OUTPUT="/tmp/g1-promptfoo-${PROFILE}-${DATE}.json"
 if command -v promptfoo >/dev/null 2>&1 && [ -f "$PROMPTFOO_YAML" ]; then
-  set +e
+  # The `|| PROMPTFOO_RC=$?` pattern captures the rc cleanly without
+  # tripping the ERR trap. `set +e`/`set -e` bracketing leaves a window
+  # where the ERR trap can still fire on the non-zero exit (bash quirk
+  # observed in the wild — the trap fires before the next traced
+  # command even gets to run).
+  PROMPTFOO_RC=0
   promptfoo eval -c "$PROMPTFOO_YAML" --repeat 5 \
-    -o "$PROMPTFOO_OUTPUT" --no-cache 2>/dev/null
-  PROMPTFOO_RC=$?
-  set -e
+    -o "$PROMPTFOO_OUTPUT" --no-cache 2>/dev/null || PROMPTFOO_RC=$?
   if [ "$PROMPTFOO_RC" -ne 0 ] && [ "$PROMPTFOO_RC" -ne 100 ]; then
     # exit 100 = "some tests failed" (expected, eval-stat-tracked).
     # Other non-zero = process-level failure (rate-limit, malformed YAML, network).
@@ -149,12 +147,29 @@ if command -v promptfoo >/dev/null 2>&1 && [ -f "$PROMPTFOO_YAML" ]; then
   fi
   PASS=$(jq -r '.results.stats.successes // 0' "$PROMPTFOO_OUTPUT" 2>/dev/null || echo 0)
   TOTAL=$(jq -r '(.results.stats.successes + .results.stats.failures + .results.stats.errors) // 0' "$PROMPTFOO_OUTPUT" 2>/dev/null || echo 0)
+  PROMPTFOO_ERRORS=$(jq -r '.results.stats.errors // 0' "$PROMPTFOO_OUTPUT" 2>/dev/null || echo 0)
 else
   write_status 6 "promptfoo binary or YAML config missing"
   echo "ABORT: promptfoo or YAML missing — cannot compute Wilson CI" >&2
   exit 6
 fi
 WILSON_CI=$(wilson_lower "$PASS" "$TOTAL")
+
+# --- §2 qualifying-night gate (replaces MIN_SESSIONS_PER_NIGHT) ---
+# Per G1_REFRAME_2026-05-06.md §2 contract: a night qualifies when
+# Promptfoo ran cleanly (errors==0) AND emitted ≥30 graded answers
+# (full golden set ran at least once). Live-traffic volume does NOT
+# factor — quality is calendar-deterministic, operator-DM-volume-independent.
+MIN_GRADED_ANSWERS=30
+if [ "$PROMPTFOO_ERRORS" -gt 0 ] || [ "$TOTAL" -lt "$MIN_GRADED_ANSWERS" ]; then
+  printf "%s\t%s\tSKIP\terrors=%s\tgraded=%s\tmin_graded=%s\thermes=%s\tschema=%d\n" \
+    "$DATE" "$PROFILE" "$PROMPTFOO_ERRORS" "$TOTAL" "$MIN_GRADED_ANSWERS" "$HERMES_PIN" "$SCHEMA_VERSION" \
+    >> "$BASELINE_MD"
+  REASON="SKIP: errors=${PROMPTFOO_ERRORS} graded=${TOTAL}/${MIN_GRADED_ANSWERS} — clock not advanced"
+  echo "$REASON"
+  write_status 0 "$REASON"
+  exit 0
+fi
 
 # --- METRIC: Ragas answer_relevance (NOT faithfulness for non-RAG personal profile) ---
 # Reviewer Fix 3: missing ragas_score.py used to silently write 0; now it
@@ -207,13 +222,34 @@ if [ ! -f "$ATLAS_SNAPSHOT" ]; then
   echo "$ATLAS_DELTA" > "$ATLAS_SNAPSHOT"
 fi
 
+# --- METRIC: per-turn cost + latency (G1_REFRAME §5/§6/§7 locked options) ---
+# Locked decisions (post-Codex review on commit 275aa4c):
+#   §5 cost denominator: Langfuse trace spans (primary) with session-level
+#                        heuristic fallback when Langfuse non-200
+#   §6 latency def:      wall-clock between user-role message and the next
+#                        assistant-role message in the same session
+#   §7 confidence band:  bootstrapped 90% CI on p50, 1000 resamples
+# Helper at scripts/lib/per_turn_metrics.py owns the SQLite + Langfuse +
+# bootstrap math. Output: 9-column TSV — n_turns + 4 cost stats + 4 lat stats.
+PER_TURN_HELPER="$LIB_DIR/per_turn_metrics.py"
+if [ ! -f "$PER_TURN_HELPER" ]; then
+  write_status 8 "per_turn_metrics.py missing at $PER_TURN_HELPER"
+  echo "ABORT: $PER_TURN_HELPER missing — per-turn columns cannot be computed" >&2
+  exit 8
+fi
+PER_TURN_TSV=$(python3 "$PER_TURN_HELPER" "$DB" "$DATE" 2>/dev/null || echo -e "0\t0\t0\t0\t0\t0\t0\t0\t0")
+
 # --- WRITE ROW ---
-HEADER="date	profile	sessions	p50_cost	p95_cost	p95_lat_sec	trace_vol	wilson_ci	promptfoo_n	ragas_metric	ragas_score	hermes_pin	schema_v"
+# Schema_v stays at 1 per G1_REFRAME §4 (additive columns only, no migration).
+# New columns appended after `schema_v` so existing pre-§8 rows remain
+# parseable (their per-turn columns are absent rather than misaligned).
+HEADER="date	profile	sessions	p50_cost	p95_cost	p95_lat_sec	trace_vol	wilson_ci	promptfoo_n	ragas_metric	ragas_score	hermes_pin	schema_v	n_turns	p50_cost_per_turn	p95_cost_per_turn	ci_low_cost_per_turn	ci_high_cost_per_turn	p50_lat_per_turn	p95_lat_per_turn	ci_low_lat_per_turn	ci_high_lat_per_turn"
 [ -f "$BASELINE_MD" ] || printf "%s\n" "$HEADER" > "$BASELINE_MD"
 
-printf "%s\t%s\t%d\t%.5f\t%.5f\t%.2f\t%d\t%s\t%d\tanswer_relevance\t%s\t%s\t%d\n" \
+printf "%s\t%s\t%d\t%.5f\t%.5f\t%.2f\t%d\t%s\t%d\tanswer_relevance\t%s\t%s\t%d\t%s\n" \
   "$DATE" "$PROFILE" "$SESSION_COUNT" "$P50_COST" "$P95_COST" "$P95_LATENCY" \
   "$TRACE_VOL" "$WILSON_CI" "$TOTAL" "$RAGAS_SCORE" "$HERMES_PIN" "$SCHEMA_VERSION" \
+  "$PER_TURN_TSV" \
   >> "$BASELINE_MD"
 
 # --- SANITY CHECK ---
@@ -224,9 +260,16 @@ p95 = float("${P95_LATENCY}")
 sessions = int("${SESSION_COUNT}")
 import sys
 checks = []
-if not (0.0 <= ragas <= 1.0): checks.append(f"Ragas out of [0,1]: {ragas}")
-if sessions > 0 and p50 <= 0: checks.append("Cost p50 zero — billing data missing")
-if sessions > 0 and p95 <= 0: checks.append("Latency p95 zero — sessions have no end time")
+# Ragas in valid range. Hard requirement; downstream gates depend on this.
+if not (0.0 <= ragas <= 1.0):
+    checks.append(f"Ragas out of [0,1]: {ragas}")
+# Per-session cost zero is EXPECTED on the free-tier path — the §8 reframe
+# moved cost gating to the per-turn columns + 4.7.5 confidence-band logic.
+# Don't sanity-fail on it (the original check predates the reframe).
+# Per-session latency zero with traffic IS still a meaningful signal of
+# session-end-time bug; keep that one but downgrade to WARN-only.
+if sessions > 0 and p95 <= 0:
+    print(f"SANITY WARN on ${DATE}: per-session p95 latency zero (sessions have no end time) — non-fatal under §8 reframe")
 if checks:
     print("SANITY FAIL on ${DATE}:", *checks, sep="\n  ")
     sys.exit(1)

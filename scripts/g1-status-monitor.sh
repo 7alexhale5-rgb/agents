@@ -58,6 +58,65 @@ staged_at: $(date -u +%Y-%m-%dT%H:%M:%SZ)
 runbook: scripts/g1-baseline-capture.sh logs at \$G1_STATUS_DIR/${TARGET_DATE}.status
 EOF
   echo "alert staged at $ALERT_FILE"
+  post_alert_to_slack "$reason" "$profile" || echo "warn: Slack post failed (alert still staged)"
+}
+
+# Post the alert directly to Iris's DM with alex via Slack chat.postMessage.
+# Decoupled from the file staging — file always lands; Slack post is best-effort.
+# Requires SLACK_BOT_TOKEN in env (loaded from ~/.hermes/.env at run time).
+# Set G1_ALERT_DISABLE_SLACK=1 to skip (e.g. during fixture tests).
+post_alert_to_slack() {
+  if [ "${G1_ALERT_DISABLE_SLACK:-0}" = "1" ]; then
+    return 0
+  fi
+  local reason="$1"
+  local profile="$2"
+  # Token lives in the per-profile .env (gateway loads it at request time
+  # via dotenv). Fall back to the global ~/.hermes/.env if the profile
+  # one is absent (rare — flagged via warn).
+  local hermes_env=""
+  for candidate in "${HOME}/.hermes/profiles/${profile}/.env" "${HOME}/.hermes/.env"; do
+    if [ -f "$candidate" ]; then
+      hermes_env="$candidate"
+      break
+    fi
+  done
+  if [ -z "$hermes_env" ]; then
+    echo "warn: no .env found in profiles/${profile}/ or .hermes root; skipping Slack post"
+    return 1
+  fi
+  local token
+  token=$(awk -F= '/^SLACK_BOT_TOKEN=/{sub(/^SLACK_BOT_TOKEN=/,""); print; exit}' "$hermes_env" 2>/dev/null)
+  if [ -z "$token" ]; then
+    echo "warn: SLACK_BOT_TOKEN not found in $hermes_env; skipping Slack post"
+    return 1
+  fi
+  local channel="${G1_ALERT_SLACK_CHANNEL:-D0B28352A3T}"
+  local text=":rotating_light: G1 baseline capture alert for ${TARGET_DATE}
+profile: ${profile}
+reason: ${reason}
+runbook: tail ~/Assets/logs/g1-baseline-capture.log; cat ~/Assets/logs/g1-status/${TARGET_DATE}.status"
+  # Use a heredoc + jq to JSON-escape safely.
+  local payload
+  payload=$(jq -n --arg channel "$channel" --arg text "$text" '{channel: $channel, text: $text}' 2>/dev/null)
+  if [ -z "$payload" ]; then
+    echo "warn: jq missing or payload build failed; skipping Slack post"
+    return 1
+  fi
+  local response
+  response=$(curl -sS --max-time 10 -X POST https://slack.com/api/chat.postMessage \
+    -H "Authorization: Bearer ${token}" \
+    -H "Content-Type: application/json; charset=utf-8" \
+    -d "$payload" 2>&1) || {
+      echo "warn: Slack curl failed: $response"
+      return 1
+    }
+  if echo "$response" | grep -q '"ok":true'; then
+    echo "Slack alert posted to ${channel}"
+    return 0
+  fi
+  echo "warn: Slack returned non-ok: $response"
+  return 1
 }
 
 if [ ! -f "$STATUS_FILE" ]; then

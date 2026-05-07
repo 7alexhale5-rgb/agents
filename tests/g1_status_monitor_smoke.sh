@@ -56,7 +56,7 @@ profile=personal
 ran_at=2026-05-06T02:30:00Z
 sessions=2
 EOF
-G1_STATUS_DIR="$STATUS_DIR" G1_ALERT_STAGE_DIR="$STAGE_DIR" \
+G1_STATUS_DIR="$STATUS_DIR" G1_ALERT_STAGE_DIR="$STAGE_DIR" G1_ALERT_DISABLE_SLACK=1 \
   bash "$MONITOR" >/dev/null 2>&1
 EXIT_CLEAN=$?
 ALERTS_CLEAN=$(find "$STAGE_DIR" -type f -name "*.txt" 2>/dev/null | wc -l | tr -d ' ')
@@ -66,7 +66,7 @@ assert "clean status -> 0 alerts staged" "[ $ALERTS_CLEAN -eq 0 ]"
 # --- Test 2: missing status file, alert + exit 1 ---
 rm -f "$STATUS_DIR"/*.status "$STAGE_DIR"/*.txt
 set +e
-G1_STATUS_DIR="$STATUS_DIR" G1_ALERT_STAGE_DIR="$STAGE_DIR" \
+G1_STATUS_DIR="$STATUS_DIR" G1_ALERT_STAGE_DIR="$STAGE_DIR" G1_ALERT_DISABLE_SLACK=1 \
   bash "$MONITOR" >/dev/null 2>&1
 EXIT_MISSING=$?
 set -e
@@ -84,7 +84,7 @@ ran_at=2026-05-06T02:30:00Z
 reason=DB missing at /Users/alexhale/.hermes/profiles/personal/state.db
 EOF
 set +e
-G1_STATUS_DIR="$STATUS_DIR" G1_ALERT_STAGE_DIR="$STAGE_DIR" \
+G1_STATUS_DIR="$STATUS_DIR" G1_ALERT_STAGE_DIR="$STAGE_DIR" G1_ALERT_DISABLE_SLACK=1 \
   bash "$MONITOR" >/dev/null 2>&1
 EXIT_FAILED=$?
 set -e

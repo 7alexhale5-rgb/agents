@@ -1,8 +1,8 @@
 """Memory stack composer — assembles all four tiers into a single interface.
 
 Sub-phase B ships Tier 1 (SoulReader) and Tier 2 (BufferStore) fully wired.
-Tier 3 (EpisodicClient) and Tier 4 (SkillRegistry) are no-op stubs in this
-slice; they satisfy their ABCs so the loop doesn't break.
+Sub-phase D wires ``ProfileSkillRegistry`` via ``default_skill_registry(hermes_home)``.
+Tier 3 (EpisodicClient) remains a no-op stub until later in sub-phase D.
 
 Usage::
 
@@ -10,13 +10,13 @@ Usage::
     from pf_runtime.memory.tier1_soul import SoulReader
     from pf_runtime.memory.tier2_buffer import BufferStore
     from pf_runtime.memory.tier3_episodic import NoOpEpisodicClient
-    from pf_runtime.memory.tier4_skills import NoOpSkillRegistry
+    from pf_runtime.memory.tier4_skills import default_skill_registry
 
     memory = MemoryStack(
         soul=SoulReader(),
         buffer=BufferStore(profile.slug),
         episodic=NoOpEpisodicClient(),
-        skills=NoOpSkillRegistry(),
+        skills=default_skill_registry(Path.home() / ".hermes"),
     )
 """
 from __future__ import annotations
@@ -34,9 +34,9 @@ from pf_runtime.memory.tier4_skills import SkillRegistry
 class MemoryStack:
     """Composer for all four memory tiers.
 
-    Only soul and buffer are required (fully wired in sub-phase B).
-    episodic and skills are optional — set to their NoOp implementations
-    until sub-phase D.
+    Tier 1-2 are required. Tier 3 (episodic) defaults to a NoOp until wired.
+    Tier 4 (``skills``) should use ``default_skill_registry(hermes_home)`` in
+    gateway/CLI; tests may pass ``NoOpSkillRegistry``.
     """
 
     soul: SoulReader

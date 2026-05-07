@@ -38,7 +38,7 @@ from pf_runtime.memory import MemoryStack
 from pf_runtime.memory.tier1_soul import SoulReader
 from pf_runtime.memory.tier2_buffer import BufferStore
 from pf_runtime.memory.tier3_episodic import NoOpEpisodicClient
-from pf_runtime.memory.tier4_skills import NoOpSkillRegistry
+from pf_runtime.memory.tier4_skills import default_skill_registry
 from pf_runtime.runtime.loop import run_session
 from pf_runtime.runtime.model_adapter import ModelAdapter, OpenRouterAdapter
 
@@ -88,7 +88,7 @@ async def run_gateway(
         soul=soul_reader,
         buffer=buffer,
         episodic=NoOpEpisodicClient(),
-        skills=NoOpSkillRegistry(),
+        skills=default_skill_registry(hermes_home),
     )
 
     # Build & connect channels.

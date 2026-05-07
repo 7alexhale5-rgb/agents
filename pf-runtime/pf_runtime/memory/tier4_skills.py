@@ -1,6 +1,6 @@
-"""Tier 4 memory — Skill registry stub.
+"""Tier 4 memory — per-profile SkillRegistry.
 
-Ships as a no-op in sub-phase B. Profile-isolated SkillRegistry lands in sub-phase D.
+Sub-phase D: ``ProfileSkillRegistry`` reads ONLY ``{hermes_home}/profiles/{slug}/skills/**/*.md``.
 
 Tier 4 isolation hard contract (MEMORY_LIFECYCLE.md + THREAT_MODEL.md §A4):
     - SkillRegistry MUST refuse profile_slug=None or empty string with ValueError
@@ -15,6 +15,7 @@ ABC contract:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 
 def _require_slug(profile_slug: str) -> None:
@@ -69,7 +70,7 @@ class SkillRegistry(ABC):
 
 
 class NoOpSkillRegistry(SkillRegistry):
-    """Satisfies the SkillRegistry ABC; used until profile-local skills land (sub-phase D).
+    """Satisfies the SkillRegistry ABC; used in tests that must not touch disk.
 
     Tier 4 isolation enforcement is still active on this stub — the slug
     guard fires on every method even though the registry is empty.
@@ -87,3 +88,76 @@ class NoOpSkillRegistry(SkillRegistry):
             f"Skill '{slug}' not found for profile '{profile_slug}' "
             "(NoOpSkillRegistry has no skills — sub-phase D wires real skills)"
         )
+
+
+class ProfileSkillRegistry(SkillRegistry):
+    """Load markdown skills from ``HERMES_HOME/profiles/<slug>/skills/`` only.
+
+    Skill *slug* is the path relative to ``skills/`` without the ``.md`` suffix
+    (POSIX ``/`` segments), e.g. ``nested/foo`` for ``skills/nested/foo.md``.
+    """
+
+    def __init__(self, hermes_home: Path) -> None:
+        self._hermes_home = hermes_home.expanduser().resolve()
+
+    def _skills_dir(self, profile_slug: str) -> Path:
+        _require_slug(profile_slug)
+        return (self._hermes_home / "profiles" / profile_slug / "skills").resolve()
+
+    def list_skills(self, profile_slug: str) -> list[str]:
+        _require_slug(profile_slug)
+        root = self._skills_dir(profile_slug)
+        if not root.is_dir():
+            return []
+        out: list[str] = []
+        root_resolved = root.resolve()
+        for path in sorted(root_resolved.rglob("*.md")):
+            resolved = path.resolve()
+            try:
+                rel = resolved.relative_to(root_resolved)
+            except ValueError:
+                continue
+            out.append(rel.with_suffix("").as_posix())
+        return out
+
+    def load_skill(self, slug: str, profile_slug: str) -> str:
+        _require_slug(profile_slug)
+        if not slug or slug.strip() != slug:
+            raise KeyError(f"invalid skill slug: {slug!r}")
+        if ".." in Path(slug).parts:
+            raise KeyError(f"invalid skill slug (path traversal): {slug!r}")
+        segments = slug.split("/")
+        if any(s == "" for s in segments):
+            raise KeyError(f"invalid skill slug: {slug!r}")
+
+        root = self._skills_dir(profile_slug)
+        root_resolved = root.resolve()
+        if not root_resolved.is_dir():
+            raise KeyError(
+                f"no skills directory for profile {profile_slug!r}: {root_resolved}"
+            )
+
+        # slug may use POSIX slashes; map to OS path under root
+        relative = Path(*segments)
+        candidate = (root_resolved / relative).with_suffix(".md").resolve()
+        try:
+            candidate.relative_to(root_resolved)
+        except ValueError as e:
+            raise KeyError(
+                f"Skill {slug!r} not found for profile {profile_slug!r}"
+            ) from e
+        if not candidate.is_file():
+            raise KeyError(
+                f"Skill {slug!r} not found for profile {profile_slug!r}"
+            )
+        return candidate.read_text(encoding="utf-8")
+
+
+def default_skill_registry(hermes_home: Path | None = None) -> SkillRegistry:
+    """Return the production Tier 4 registry for ``hermes_home`` (default ``~/.hermes``)."""
+    home = (
+        hermes_home.expanduser().resolve()
+        if hermes_home is not None
+        else (Path.home() / ".hermes").resolve()
+    )
+    return ProfileSkillRegistry(home)

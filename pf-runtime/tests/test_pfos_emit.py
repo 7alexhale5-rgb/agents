@@ -155,7 +155,7 @@ def test_runtime_reply_payload_shape() -> None:
         inbound_preview="user said hi",
     )
     assert p["type"] == "STATE_CHANGED"
-    assert p["surface"] == "cli"
+    assert p["surface"] == "pf_runtime"
     assert p["cwd_project"] == "personal"
     d = p["data"]
     assert d["kind"] == "pf_runtime_reply"

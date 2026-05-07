@@ -1,0 +1,90 @@
+profile: atelier
+
+agent:
+  max_iterations: 32
+  iteration_budget_tokens: 200000
+
+model:
+  default: claude-sonnet-4-6
+  provider: anthropic
+  routing:
+    cheap: claude-haiku-4-5
+    drafting: claude-sonnet-4-6
+    reasoning: claude-opus-4-7
+    strategic: claude-opus-4-7
+
+memory:
+  built_in:
+    enabled: true
+    fts5_enabled: true
+
+mcp_servers:
+  pencil:
+    command: pencil-mcp
+    include: [batch_get, get_screenshot, find_empty_space_on_canvas, export_nodes]
+  playwright:
+    command: npx
+    args: ["-y", "@modelcontextprotocol/server-playwright"]
+  filesystem:
+    command: npx
+    args: ["-y", "@modelcontextprotocol/server-filesystem", "~/Projects"]
+    exclude: [delete]
+  # design-library MCP is a Phase 6 deliverable; uncomment when ready
+  # design-library:
+  #   command: design-library-mcp
+
+skills:
+  install:
+    - design-md-author
+    - design-stack-run
+    - library-curate
+    - design-audit
+  global:
+    - design-stack
+    - ua-ux
+    - ua-ux-critique
+    - frontend-design
+    - cost-watch
+
+channels:
+  cli:
+    enabled: true
+
+mutation_approval:
+  mode: git_pr
+  repos:
+    # Allowlist; Atelier refuses mutations to paths not listed here
+    - path: ~/Projects/koho/consult-ops
+      remote: github.com:koho/consult-ops
+      branch_pattern: atelier/*
+      requires_signed_commit: true
+    - path: ~/Projects/eight12-run-club-website
+      remote: github.com:alexhale/eight12-run-club-website
+      branch_pattern: atelier/*
+      requires_signed_commit: true
+    - path: ~/Projects/advisory-board
+      remote: github.com:alexhale/advisory-board
+      branch_pattern: atelier/*
+      requires_signed_commit: true
+    - path: ~/Projects/prettyfly-os
+      remote: github.com:alexhale/prettyfly-os
+      branch_pattern: atelier/*
+      requires_signed_commit: true
+
+approval:
+  mode: explicit_for_outbound
+  outbound_channels: [git_pr]
+  pii_redaction: true
+
+guardrails:
+  spend_cap_per_day_usd: 3
+  alert_threshold_pct: 80
+
+logging:
+  trajectory_jsonl: true
+  langfuse_project: hermes-atelier
+
+pfos_emit:
+  enabled: true
+  surface: pf_runtime
+  # PFOS_AGENT_EVENT_URL + PFOS_AGENT_EVENT_TOKEN read from env (per pf_runtime/runtime/pfos_emit.py)

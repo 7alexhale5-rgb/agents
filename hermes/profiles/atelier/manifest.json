@@ -1,0 +1,29 @@
+{
+  "sku": "atelier",
+  "name": "Atelier",
+  "version": "0.1.0",
+  "category": "design",
+  "department": "product",
+  "tagline": "Owns DESIGN.md authoring, design-stack runs, and library curation across Alex's projects.",
+  "tier": "pro",
+  "depends_on": ["design-stack", "ua-ux", "ua-ux-critique", "frontend-design"],
+  "channels": ["cli"],
+  "memory_axes": ["working", "episodic", "procedural"],
+  "guardrails": [
+    "design_md_path_allowlist",
+    "library_license_attribution",
+    "outbound_human_approval",
+    "pii_redaction"
+  ],
+  "skill_gen": {
+    "max_new_per_72h": 1,
+    "max_markdown_loc": 150,
+    "max_code_loc": 200,
+    "cost_pct_of_daily_budget": 0.05,
+    "max_episodic_writes": 30,
+    "autonomy": "approve"
+  },
+  "sla": { "uptime": 99.0, "p95_latency_seconds": 60 },
+  "publish": false,
+  "internal_only": true
+}

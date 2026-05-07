@@ -1,0 +1,39 @@
+{
+  "schema": "a2a/v1+ext",
+  "agent_id": "atelier",
+  "version": "0.1.0",
+  "description": "Design agent — owns DESIGN.md authoring, design-stack runs, library curation, and design audits.",
+  "tier": "pro",
+  "side_effects": [
+    "fs.write:DESIGN.md",
+    "fs.write:component",
+    "fs.write:design-library/assets",
+    "fs.read:project"
+  ],
+  "eval_suite_uri": "atelier/eval/suite.json",
+  "cost_envelope": { "budget_usd_per_day": 3.0, "alert_threshold_pct": 80 },
+  "channels": ["cli"],
+  "skills": [
+    {
+      "id": "design-md-author",
+      "description": "Generate DESIGN.md from brief, screenshot, or brand kit",
+      "side_effects": ["fs.write:DESIGN.md"]
+    },
+    {
+      "id": "design-stack-run",
+      "description": "Execute /design-stack on a project task",
+      "side_effects": ["fs.write:component", "fs.write:tokens.json"]
+    },
+    {
+      "id": "library-curate",
+      "description": "Ingest reference URL into design-library",
+      "side_effects": ["fs.write:design-library/assets"]
+    },
+    {
+      "id": "design-audit",
+      "description": "Audit project for DESIGN.md / system.md drift",
+      "side_effects": []
+    }
+  ],
+  "stamped_at": "2026-05-07T00:00:00Z"
+}

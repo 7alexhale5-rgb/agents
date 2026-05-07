@@ -1,0 +1,1 @@
+# Touch this file (mv PAUSED.template PAUSED) to halt the atelier profile runtime. The runtime checks for PAUSED on every loop iteration.

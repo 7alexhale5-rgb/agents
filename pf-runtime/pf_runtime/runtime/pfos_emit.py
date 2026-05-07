@@ -8,9 +8,9 @@ Optional: set ``PFOS_AGENT_EVENT_REQUIRE_HTTPS=1`` (or ``true``) to reject
 non-``https`` URLs in production.
 
 Payload shape matches PFOS ``AgentEventWritePayload`` / ``isAgentEventPayload``.
-Until ``pf_runtime`` is added to the Postgres ``surface`` CHECK constraint,
-events use ``surface="cli"`` with ``data.kind="pf_runtime_reply"`` for fleet
-filtering.
+PFOS accepts ``surface="pf_runtime"`` for runtime-originated events; the
+``data.kind="pf_runtime_reply"`` marker keeps reply events filterable inside
+the fleet surface.
 """
 from __future__ import annotations
 
@@ -79,7 +79,7 @@ def runtime_reply_payload(
     out: dict[str, Any] = {
         "type": "STATE_CHANGED",
         "data": data,
-        "surface": "cli",
+        "surface": "pf_runtime",
         "cwd_project": profile_slug,
     }
     if trace_id:

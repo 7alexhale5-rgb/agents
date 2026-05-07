@@ -66,3 +66,6 @@ The pre-G1 5-agent swarm review surfaced four readiness gaps that landed before 
    2026-05-06 personal SKIP sessions=1 min=5 hermes=Hermes*Agent_v0.12.0*(2026.4.30)@0ce1b9fe2 schema=1
    2026-05-06 personal-baseline SKIP sessions=1 min=5 hermes=Hermes*Agent_v0.12.0*(2026.4.30)@0ce1b9fe2 schema=1
    2026-05-06 personal SKIP sessions=2 min=5 hermes=Hermes*Agent_v0.12.0*(2026.4.30)@0ce1b9fe2 schema=1
+2026-05-07	personal	SKIP	sessions=0	min=5	hermes=Hermes_Agent_v0.12.0_(2026.4.30)@0ce1b9fe2	schema=1
+2026-05-07	personal	SKIP	sessions=0	min=5	hermes=Hermes_Agent_v0.12.0_(2026.4.30)@0ce1b9fe2	schema=1
+2026-05-07	personal	SKIP	sessions=0	min=5	hermes=Hermes_Agent_v0.12.0_(2026.4.30)@0ce1b9fe2	schema=1

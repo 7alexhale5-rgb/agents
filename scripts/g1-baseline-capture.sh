@@ -40,10 +40,35 @@ SCHEMA_VERSION=1
 MIN_SESSIONS_PER_NIGHT=5
 DATE=$(date -u +%Y-%m-%d)
 
+# Sentinel: keep SESSION_COUNT defined before any code path can trap-fire.
+# The ERR trap below references ${SESSION_COUNT:-unknown}; without this
+# initializer, a failure between trap registration and line 79 logs
+# "unknown" instead of a meaningful pre-count value.
+SESSION_COUNT=-1
+
+# --- status file for the morning monitor (Phase 3 of G1 reframe plan) ---
+STATUS_DIR="${G1_STATUS_DIR:-$HOME/Assets/logs/g1-status}"
+mkdir -p "$STATUS_DIR" 2>/dev/null || true
+STATUS_FILE="${STATUS_DIR}/${DATE}.status"
+
+write_status() {
+  local code="$1"; local reason="${2:-}"
+  cat > "$STATUS_FILE" <<EOF_STATUS
+date=${DATE}
+profile=${PROFILE}
+exit_code=${code}
+ran_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+sessions=${SESSION_COUNT:-unknown}
+reason=${reason}
+EOF_STATUS
+}
+
+trap 'rc=$?; write_status "$rc" "trapped exit"; exit $rc' ERR
+
 # --- pre-flight ---
-[ -f "$DB" ] || { echo "ABORT: DB missing at $DB"; exit 4; }
-[ -f "$GOLDEN_JSONL" ] || { echo "ABORT: golden set missing at $GOLDEN_JSONL"; exit 4; }
-[ -f "$LIB_DIR/wilson.sh" ] || { echo "ABORT: wilson.sh missing at $LIB_DIR/wilson.sh"; exit 4; }
+[ -f "$DB" ] || { write_status 4 "DB missing at $DB"; echo "ABORT: DB missing at $DB"; exit 4; }
+[ -f "$GOLDEN_JSONL" ] || { write_status 4 "golden set missing at $GOLDEN_JSONL"; echo "ABORT: golden set missing at $GOLDEN_JSONL"; exit 4; }
+[ -f "$LIB_DIR/wilson.sh" ] || { write_status 4 "wilson.sh missing at $LIB_DIR/wilson.sh"; echo "ABORT: wilson.sh missing at $LIB_DIR/wilson.sh"; exit 4; }
 mkdir -p "$BASELINE_DIR"
 
 source "$LIB_DIR/wilson.sh"
@@ -67,6 +92,7 @@ if [ "$SESSION_COUNT" -lt "$MIN_SESSIONS_PER_NIGHT" ]; then
     "$DATE" "$PROFILE" "$SESSION_COUNT" "$MIN_SESSIONS_PER_NIGHT" "$HERMES_PIN" "$SCHEMA_VERSION" \
     >> "$BASELINE_MD"
   echo "SKIP: ${DATE} had ${SESSION_COUNT} sessions (min ${MIN_SESSIONS_PER_NIGHT}) — clock not advanced"
+  write_status 0 "SKIP: ${SESSION_COUNT}<${MIN_SESSIONS_PER_NIGHT} sessions; clock not advanced"
   exit 0
 fi
 
@@ -103,21 +129,44 @@ TRACE_VOL=$(sqlite3 "$DB" "
   WHERE source = 'slack' AND date(started_at, 'unixepoch') = '${DATE}';")
 
 # --- METRIC: Promptfoo Wilson lower-CI (N=150 via --repeat 5) ---
+# Capture exit code; non-zero = SKIP this night with explicit reason.
+# A silent zero (PASS=0/TOTAL=0) would write Wilson CI = 0.0000 to the
+# row and look like "qualifying with terrible quality" rather than
+# "eval failed", masking baseline-invalidation. Per reviewer R2.
 PROMPTFOO_OUTPUT="/tmp/g1-promptfoo-${PROFILE}-${DATE}.json"
 if command -v promptfoo >/dev/null 2>&1 && [ -f "$PROMPTFOO_YAML" ]; then
+  set +e
   promptfoo eval -c "$PROMPTFOO_YAML" --repeat 5 \
-    -o "$PROMPTFOO_OUTPUT" --no-cache 2>/dev/null || true
+    -o "$PROMPTFOO_OUTPUT" --no-cache 2>/dev/null
+  PROMPTFOO_RC=$?
+  set -e
+  if [ "$PROMPTFOO_RC" -ne 0 ] && [ "$PROMPTFOO_RC" -ne 100 ]; then
+    # exit 100 = "some tests failed" (expected, eval-stat-tracked).
+    # Other non-zero = process-level failure (rate-limit, malformed YAML, network).
+    write_status 5 "promptfoo eval failed with rc=${PROMPTFOO_RC}"
+    echo "ABORT: promptfoo eval rc=${PROMPTFOO_RC} on ${DATE} — night does NOT count" >&2
+    exit 5
+  fi
   PASS=$(jq -r '.results.stats.successes // 0' "$PROMPTFOO_OUTPUT" 2>/dev/null || echo 0)
   TOTAL=$(jq -r '(.results.stats.successes + .results.stats.failures + .results.stats.errors) // 0' "$PROMPTFOO_OUTPUT" 2>/dev/null || echo 0)
 else
-  PASS=0; TOTAL=0
-  echo "WARN: promptfoo or YAML missing — Wilson CI = 0/0" >&2
+  write_status 6 "promptfoo binary or YAML config missing"
+  echo "ABORT: promptfoo or YAML missing — cannot compute Wilson CI" >&2
+  exit 6
 fi
 WILSON_CI=$(wilson_lower "$PASS" "$TOTAL")
 
 # --- METRIC: Ragas answer_relevance (NOT faithfulness for non-RAG personal profile) ---
+# Reviewer Fix 3: missing ragas_score.py used to silently write 0; now it
+# fails the night with an explicit reason. A zero Ragas baseline silently
+# accumulated for 7 nights would invalidate the 4.7.2 gate.
 RAGAS_PYTHON="$LIB_DIR/ragas_score.py"
-if [ -f "$RAGAS_PYTHON" ] && [ "$TOTAL" -gt 0 ]; then
+if [ ! -f "$RAGAS_PYTHON" ]; then
+  write_status 7 "ragas_score.py missing at $RAGAS_PYTHON — Ragas baseline cannot be computed"
+  echo "ABORT: $RAGAS_PYTHON missing — Ragas baseline cannot be computed" >&2
+  exit 7
+fi
+if [ "$TOTAL" -gt 0 ]; then
   RAGAS_SCORE=$(python3 "$RAGAS_PYTHON" \
     --report "$PROMPTFOO_OUTPUT" \
     --metric answer_relevance \
@@ -137,10 +186,12 @@ EMAIL_TRIAGE_LEAK=$(sqlite3 "$DB" "
     AND COALESCE(model, '') LIKE '%email-triage%';" 2>/dev/null || echo 0)
 
 if [ "$LITELLM_429" -gt 0 ]; then
+  write_status 2 "LiteLLM 429 detected on ${DATE} — night does not count"
   echo "ABORT: LiteLLM 429 detected on ${DATE} — night does NOT count" >&2
   exit 2
 fi
 if [ "$EMAIL_TRIAGE_LEAK" -gt 0 ]; then
+  write_status 3 "email-triage exclusion tag failed on ${DATE}"
   echo "ABORT: email-triage leak on ${DATE} — exclusion tag failed" >&2
   exit 3
 fi
@@ -157,7 +208,7 @@ if [ ! -f "$ATLAS_SNAPSHOT" ]; then
 fi
 
 # --- WRITE ROW ---
-HEADER="date	profile	sessions	p50_cost	p95_cost	p95_lat_sec	trace_vol	wilson_ci	prompftoo_n	ragas_metric	ragas_score	hermes_pin	schema_v"
+HEADER="date	profile	sessions	p50_cost	p95_cost	p95_lat_sec	trace_vol	wilson_ci	promptfoo_n	ragas_metric	ragas_score	hermes_pin	schema_v"
 [ -f "$BASELINE_MD" ] || printf "%s\n" "$HEADER" > "$BASELINE_MD"
 
 printf "%s\t%s\t%d\t%.5f\t%.5f\t%.2f\t%d\t%s\t%d\tanswer_relevance\t%s\t%s\t%d\n" \
@@ -183,3 +234,5 @@ print("SANITY OK")
 PY
 
 echo "Captured ${DATE} for ${PROFILE}: sessions=${SESSION_COUNT} cost_p50=${P50_COST} cost_p95=${P95_COST} lat_p95=${P95_LATENCY}s trace_vol=${TRACE_VOL} wilson=${WILSON_CI}/${TOTAL} ragas=${RAGAS_SCORE}"
+
+write_status 0 "qualifying-night row written; sessions=${SESSION_COUNT} wilson=${WILSON_CI}/${TOTAL} ragas=${RAGAS_SCORE}"

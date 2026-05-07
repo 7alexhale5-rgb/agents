@@ -290,6 +290,16 @@ This section makes the "do not do" decisions explicit so they don't drift back i
 
 **When picked up, scope:** four memory-vault feedback entries from this session's compound (`feedback_pre_greenlight_audit_design.md`, `feedback_bash_pipefail_in_command_substitution.md`, `feedback_mcp_tenant_scoped_security_pattern.md`, `feedback_multi_doc_sync_not_paraphrase.md`) become candidates for env-level enforcement (CARL rule additions, Stop-hook additions, CLAUDE.md updates). Each requires its own design — which one warrants a hook (deterministic mechanical check) vs which one stays a memory entry (judgment-required guidance). First-principles lens correctly identified these as "Phase 5 hygiene" not "blocking work for Phase 4.7."
 
+### §6.5 personal-baseline source-of-truth re-version (DEFER until 4.7.4 A/B work needs it)
+
+**Added 2026-05-06 PM** via the post-fix swarm. The runtime workspace at `~/.hermes/profiles/personal-baseline/` was cloned from `personal/` during Phase 4.7.0 and now holds the schema-fixed config we landed in commit `55931ae`. There is currently NO source-of-truth at `~/Projects/agents/hermes/profiles/personal-baseline/` — `sync-profile.sh push personal-baseline` would fail with `SRC missing`.
+
+**Why defer:** The skeptic perspective (5th finding, 2026-05-06 PM swarm) flagged that committing the workspace to git now stages measurement scaffold as a runtime artifact. `personal-baseline` is reserved for sub-phase 4.7.4 mid-pilot A/B (per PLAN.md §10 pilot ladder). Until that ladder fires, the workspace is throwaway-style infrastructure — committing it stages git rot.
+
+**When picked up:** post-G1-reframe Codex re-review clears + sub-phase 4.7.4 begins, this becomes a one-commit re-version (`cp -R ~/.hermes/profiles/personal-baseline ~/Projects/agents/hermes/profiles/personal-baseline`, scrub anything secret, commit, then sync-push works). Estimated work: ~30min when picked up.
+
+**No-op for this window.** Runtime mirror has the schema fix; Phase 4.7's gate-decisions don't require source-of-truth parity.
+
 ## §7 Risk Assessment
 
 | ID  | Risk                                                                                                                                                                               | Severity | Likelihood | Mitigation                                                                                                                                                     |

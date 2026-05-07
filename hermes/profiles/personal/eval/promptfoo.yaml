@@ -20,10 +20,12 @@ prompts:
   - "{{input}}"
 
 providers:
-  # During the G1 window we measure Hermes routing direct (provider per
-  # personal/config.yaml routing.drafting). When 4.7.1 ships, swap providers
-  # to PF Runtime's adapter and re-run the same set.
-  - id: openrouter:nvidia/nemotron-nano-9b-v2
+  # Provider must match `model.default` in `hermes/profiles/personal/config.yaml`
+  # so the Promptfoo eval measures what the gateway actually uses. The earlier
+  # `nvidia/nemotron-nano-9b-v2` slug is paid; OR account is at $0 (HTTP 402).
+  # The `:free` variant is in OR's catalog at $0/call (live-probed 2026-05-06).
+  # When 4.7.1 ships, swap providers to PF Runtime's adapter and re-run the same set.
+  - id: openrouter:nvidia/nemotron-3-nano-30b-a3b:free
     config:
       apiKeyEnvar: OPENROUTER_API_KEY
 

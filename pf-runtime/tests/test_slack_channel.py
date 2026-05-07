@@ -262,6 +262,72 @@ async def test_subtype_messages_dropped(env_file: Path) -> None:
 
 
 @pytest.mark.asyncio
+async def test_outbound_ledger_skips_when_key_pre_recorded(
+    env_file: Path,
+    tmp_path: Path,
+) -> None:
+    """Persistent ledger marks reply already sent — no chat_postMessage."""
+    from pf_runtime.config import OutboundMessage
+    from pf_runtime.runtime.inbound_ledger import SqliteInboundLedger
+
+    ledger_path = tmp_path / "dedup.sqlite"
+    ledger = SqliteInboundLedger(ledger_path)
+    ledger.record_outbound_sent("personal:evt-pre")
+
+    ch = SlackChannel(
+        profile_slug="personal",
+        env_path=env_file,
+        inbound_ledger=ledger,
+    )
+    app = _make_app_mock()
+    ch._app = app
+    ch._connected = True
+
+    msg = OutboundMessage(
+        channel="slack",
+        profile_slug="personal",
+        target_user_id="D123",
+        text="hi",
+        message_id="slack-reply-evt-pre",
+        in_reply_to="evt-pre",
+    )
+    await ch.send(msg)
+    assert app.client.chat_postMessage.await_count == 0
+
+
+@pytest.mark.asyncio
+async def test_outbound_ledger_second_send_skips_after_first_success(
+    env_file: Path,
+    tmp_path: Path,
+) -> None:
+    """First send records out_key; second identical logical reply skips Slack API."""
+    from pf_runtime.config import OutboundMessage
+    from pf_runtime.runtime.inbound_ledger import SqliteInboundLedger
+
+    ledger = SqliteInboundLedger(tmp_path / "dedup2.sqlite")
+    ch = SlackChannel(
+        profile_slug="personal",
+        env_path=env_file,
+        inbound_ledger=ledger,
+    )
+    app = _make_app_mock()
+    ch._app = app
+    ch._connected = True
+
+    msg = OutboundMessage(
+        channel="slack",
+        profile_slug="personal",
+        target_user_id="D123",
+        text="hello",
+        message_id="slack-reply-E1",
+        in_reply_to="E1",
+    )
+    await ch.send(msg)
+    await ch.send(msg)
+    assert app.client.chat_postMessage.await_count == 1
+
+
+@pytest.mark.asyncio
 async def test_outbound_dedup_skips_second_send(env_file: Path) -> None:
     from pf_runtime.config import OutboundMessage
 

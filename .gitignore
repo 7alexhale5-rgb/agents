@@ -29,6 +29,9 @@ honcho/workspaces/*/
 # Python / Node / OS
 **/__pycache__/
 **/.venv/
+**/.coverage
+.coverage.*
+**/htmlcov/
 **/.pytest_cache/
 **/.ruff_cache/
 **/.mypy_cache/

@@ -21,6 +21,7 @@ from pf_runtime.channels.adapter_base import (
     ChannelError,
 )
 from pf_runtime.config import InboundMessage, Message, OutboundMessage
+from pf_runtime.dream.post_session import DreamLoop
 
 # --------------------------------------------------------------------------- #
 # Fakes
@@ -94,6 +95,7 @@ class _FakeSessionResult:
     steps: int = 1
     finish_reason: str = "stop"
     cost_usd: Decimal = Decimal("0")
+    session_id: str = "fake-session"
 
 
 async def _fake_run_session(profile: Any, inbound: Any, **_: Any) -> _FakeSessionResult:
@@ -112,6 +114,7 @@ async def _fake_run_session(profile: Any, inbound: Any, **_: Any) -> _FakeSessio
 
 @pytest.mark.asyncio
 async def test_consumer_survives_three_transient_errors_with_recovery(
+    tmp_path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """3 ChannelError + reconnect cycles → all messages eventually delivered."""
@@ -138,9 +141,17 @@ async def test_consumer_survives_three_transient_errors_with_recovery(
     ]
     ch = _ReconnectChannel(batches=batches)
     profile = _FakeProfile()
+    dream = DreamLoop(tmp_path / "hermes")
+    dream.start()
 
     task = asyncio.create_task(
-        gateway._consume_inbound(ch, profile, adapter=None, memory=None)  # type: ignore[arg-type]
+        gateway._consume_inbound(
+            ch,
+            profile,
+            adapter=None,
+            memory=None,
+            dream_loop=dream,
+        )  # type: ignore[arg-type]
     )
 
     # Give the consumer time to drain all 4 batches across 3 reconnects.
@@ -154,6 +165,7 @@ async def test_consumer_survives_three_transient_errors_with_recovery(
     task.cancel()
     with contextlib.suppress(asyncio.CancelledError):
         await task
+    await dream.stop()
 
     assert len(ch.sent) == 8, f"expected 8 sends, got {len(ch.sent)}"
     # connect_calls = 1 initial (in run_gateway, which we bypass) + 3 reconnects.
@@ -210,6 +222,7 @@ class _AlwaysFailsChannel(Channel):
 
 @pytest.mark.asyncio
 async def test_consumer_exits_after_budget_exhaustion(
+    tmp_path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """6 consecutive ChannelError epochs → consumer exits + channel disconnects.
@@ -226,12 +239,22 @@ async def test_consumer_exits_after_budget_exhaustion(
 
     ch = _AlwaysFailsChannel()
     profile = _FakeProfile()
+    dream = DreamLoop(tmp_path / "hermes")
+    dream.start()
 
     # _consume_inbound returns cleanly when the budget is blown — no exception.
     await asyncio.wait_for(
-        gateway._consume_inbound(ch, profile, adapter=None, memory=None),  # type: ignore[arg-type]
+        gateway._consume_inbound(
+            ch,
+            profile,
+            adapter=None,
+            memory=None,
+            dream_loop=dream,
+        ),  # type: ignore[arg-type]
         timeout=2.0,
     )
+
+    await dream.stop()
 
     assert ch.disconnect_calls >= 1
     # Receive raises 6 times (epoch_attempts increments 1..6); on the 6th

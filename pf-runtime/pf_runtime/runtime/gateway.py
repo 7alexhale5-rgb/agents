@@ -22,9 +22,9 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import logging
+import os
 import random
 import signal
-import uuid
 from pathlib import Path
 from typing import Any
 
@@ -34,15 +34,43 @@ from pf_runtime.channels.adapter_base import (
     ChannelRegistry,
 )
 from pf_runtime.config import OutboundMessage, Profile, load_profile
+from pf_runtime.dream.post_session import DreamLoop, PostSessionJob
 from pf_runtime.memory import MemoryStack
 from pf_runtime.memory.tier1_soul import SoulReader
 from pf_runtime.memory.tier2_buffer import BufferStore
-from pf_runtime.memory.tier3_episodic import NoOpEpisodicClient
+from pf_runtime.memory.tier3_episodic import episodic_client_from_env
 from pf_runtime.memory.tier4_skills import default_skill_registry
+from pf_runtime.runtime.inbound_ledger import SqliteInboundLedger
 from pf_runtime.runtime.loop import run_session
 from pf_runtime.runtime.model_adapter import ModelAdapter, OpenRouterAdapter
+from pf_runtime.runtime.pfos_emit import (
+    emit_agent_event,
+    runtime_reply_payload,
+)
+from pf_runtime.runtime.pfos_emit import (
+    is_configured as pfos_emit_configured,
+)
+from pf_runtime.runtime.sentry_init import init_sentry_from_profile
 
 _log = logging.getLogger(__name__)
+
+
+def _pfos_reply_emit_wanted() -> bool:
+    """True when PFOS URL+token are set and ``PFOS_EMIT_MODE`` allows reply emits.
+
+    ``PFOS_EMIT_MODE`` (default ``reply``): ``off`` / ``false`` / ``0`` / ``no``
+    disables; ``reply`` / ``reply_only`` / ``full`` enable (``full`` reserved for
+    additional milestones).
+    """
+    if not pfos_emit_configured():
+        return False
+    mode = os.environ.get("PFOS_EMIT_MODE", "reply").strip().lower()
+    if mode in ("off", "false", "0", "no", "disabled"):
+        return False
+    if mode in ("reply", "reply_only", "full", ""):
+        return True
+    _log.warning("unknown PFOS_EMIT_MODE=%r; emitting reply events", mode)
+    return True
 
 
 # Per-epoch reconnect budget (see ADAPTER_PLUGIN_INTERFACE.md §Reconnect).
@@ -76,6 +104,7 @@ async def run_gateway(
         channel_names = ["slack"]
 
     profile = load_profile(profile_slug, hermes_home=hermes_home)
+    init_sentry_from_profile(profile, component="gateway")
     adapter: ModelAdapter = OpenRouterAdapter(env_path=profile.env_path)
 
     # Build the memory stack ONCE for the lifetime of the gateway. Mirrors
@@ -87,9 +116,12 @@ async def run_gateway(
     memory = MemoryStack(
         soul=soul_reader,
         buffer=buffer,
-        episodic=NoOpEpisodicClient(),
+        episodic=episodic_client_from_env(),
         skills=default_skill_registry(hermes_home),
     )
+
+    dream_loop = DreamLoop(hermes_home)
+    dream_loop.start()
 
     # Build & connect channels.
     channels: list[Channel] = []
@@ -97,12 +129,25 @@ async def run_gateway(
     try:
         for name in channel_names:
             cls: Any = ChannelRegistry.get(name)
-            ch = cls(profile_slug=profile.slug, env_path=profile.env_path)
+            if name == "slack":
+                ledger_path = (
+                    profile.env_path.parent / "runtime-state" / "inbound_dedup.sqlite"
+                )
+                ledger = SqliteInboundLedger(ledger_path)
+                ch = cls(
+                    profile_slug=profile.slug,
+                    env_path=profile.env_path,
+                    inbound_ledger=ledger,
+                )
+            else:
+                ch = cls(profile_slug=profile.slug, env_path=profile.env_path)
             await ch.connect()
             channels.append(ch)
 
         consumer_tasks = [
-            asyncio.create_task(_consume_inbound(ch, profile, adapter, memory))
+            asyncio.create_task(
+                _consume_inbound(ch, profile, adapter, memory, dream_loop),
+            )
             for ch in channels
         ]
 
@@ -130,9 +175,57 @@ async def run_gateway(
                 await ch.disconnect()
             except Exception as e:
                 _log.warning("disconnect error %s: %s", ch.name, e)
-        # Best-effort close of the SQLite connection during shutdown.
         with contextlib.suppress(Exception):
             buffer.close()
+        with contextlib.suppress(Exception):
+            await dream_loop.stop()
+
+
+# Fire-and-forget PFOS emits — keep strong refs until each task completes.
+_background_pfos_tasks: set[asyncio.Task[None]] = set()
+
+
+def _schedule_pfos_reply_event(
+    *,
+    channel_name: str,
+    profile_slug: str,
+    assistant_reply: str,
+    session_id: str,
+    inbound_preview: str,
+) -> None:
+    task = asyncio.create_task(
+        _safe_pfos_reply_event(
+            channel_name=channel_name,
+            profile_slug=profile_slug,
+            assistant_reply=assistant_reply,
+            session_id=session_id,
+            inbound_preview=inbound_preview,
+        ),
+    )
+    _background_pfos_tasks.add(task)
+    task.add_done_callback(_background_pfos_tasks.discard)
+
+
+async def _safe_pfos_reply_event(
+    *,
+    channel_name: str,
+    profile_slug: str,
+    assistant_reply: str,
+    session_id: str,
+    inbound_preview: str,
+) -> None:
+    """Fire-and-forget PFOS writeback; failures must not affect channel I/O."""
+    try:
+        payload = runtime_reply_payload(
+            channel=channel_name,
+            profile_slug=profile_slug,
+            text_preview=assistant_reply,
+            session_id=session_id,
+            inbound_preview=inbound_preview,
+        )
+        await emit_agent_event(payload)
+    except Exception:
+        _log.exception("pfos agent-event emit failed (non-fatal)")
 
 
 async def _consume_inbound(
@@ -140,6 +233,7 @@ async def _consume_inbound(
     profile: Profile,
     adapter: ModelAdapter,
     memory: MemoryStack,
+    dream_loop: DreamLoop,
 ) -> None:
     """Per-channel consumer loop with reconnect-epoch resilience.
 
@@ -158,7 +252,9 @@ async def _consume_inbound(
         try:
             async for inbound in channel.receive():
                 try:
-                    await _handle_inbound(channel, inbound, profile, adapter, memory)
+                    await _handle_inbound(
+                        channel, inbound, profile, adapter, memory, dream_loop,
+                    )
                 except Exception:
                     _log.exception(
                         "handler error on %s/%s",
@@ -185,7 +281,7 @@ async def _consume_inbound(
                 _MAX_BACKOFF_SECONDS,
                 _BASE_BACKOFF_SECONDS * (2 ** (epoch_attempts - 1)),
             )
-            delay = base_delay * (0.5 + random.random())  # noqa: S311 — jitter, not crypto
+            delay = base_delay * (0.5 + random.random())  # noqa: S311 nosec B311 — jitter, not crypto
             _log.warning(
                 "channel %s error (%s); reconnect attempt %d/%d in %.2fs",
                 channel.name,
@@ -210,13 +306,17 @@ async def _handle_inbound(
     profile: Profile,
     adapter: ModelAdapter,
     memory: MemoryStack,
+    dream_loop: DreamLoop,
 ) -> None:
     """Drive a single inbound through ``run_session`` and reply via channel."""
     # ``inbound`` is an InboundMessage; typed loosely here so test stubs can
     # pass minimal mock objects.
     from pf_runtime.config import InboundMessage  # local — avoid cycle
 
-    assert isinstance(inbound, InboundMessage)
+    if not isinstance(inbound, InboundMessage):
+        raise TypeError(
+            f"_handle_inbound expected InboundMessage, got {type(inbound).__name__}",
+        )
 
     result = await run_session(
         profile,
@@ -243,7 +343,25 @@ async def _handle_inbound(
         text=assistant_reply,
         metadata={"thread_ts": inbound.metadata.get("thread_ts", "")},
         in_reply_to=inbound.message_id,
-        message_id=f"{channel.name}-out-{uuid.uuid4()}",
+        message_id=f"{channel.name}-reply-{inbound.message_id}",
     )
     await channel.send(outbound)
+    if _pfos_reply_emit_wanted():
+        _schedule_pfos_reply_event(
+            channel_name=channel.name,
+            profile_slug=profile.slug,
+            assistant_reply=assistant_reply,
+            session_id=result.session_id,
+            inbound_preview=inbound.text,
+        )
     await channel.ack(inbound.message_id)
+
+    await dream_loop.schedule(
+        PostSessionJob(
+            profile_slug=profile.slug,
+            session_id=result.session_id,
+            channel=channel.name,
+            user_preview=inbound.text,
+            assistant_preview=assistant_reply,
+        ),
+    )

@@ -24,6 +24,7 @@ runtime = [
     "websockets>=13",
     "structlog>=24",
     "langfuse>=2.50",         # observability per ADR-005
+    "sentry-sdk>=2.0",        # optional error reporting (SENTRY_DSN in profile .env)
 ]
 channels = [
     "slack-bolt>=1.21",       # Slack Socket Mode (ADR-004)
@@ -65,9 +66,11 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["S101", "S105", "S106"]
+"tests/**/*.py" = ["S101", "S105", "S106", "S603"]
 # urllib to fixed OpenRouter HTTPS URL only (no user-controlled scheme)
 "pf_runtime/runtime/model_adapter.py" = ["S310"]
+# Operator-supplied PFOS HTTPS URL (http allowed for local dev); see _url_is_httpish.
+"pf_runtime/runtime/pfos_emit.py" = ["S310"]
 
 # ----- mypy (type-check) -----
 [tool.mypy]
@@ -88,12 +91,24 @@ ignore_missing_imports = true
 module = "pf_runtime.channels.slack"
 disallow_untyped_decorators = false
 
+[[tool.mypy.overrides]]
+module = "asyncpg"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "langfuse"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "sentry_sdk"
+ignore_missing_imports = true
+
 # ----- pytest -----
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py", "*_contract.py", "*_consistency.py", "*_smoke.py", "*_e2e.py"]
-addopts = "-ra --strict-markers --tb=short"
+addopts = "-ra --strict-markers --tb=short --cov=pf_runtime --cov-config=.coveragerc --cov-fail-under=70"
 
 # ----- setuptools (single package: pf_runtime; ignore scaffold dirs at repo root) -----
 [build-system]
@@ -107,4 +122,4 @@ include = ["pf_runtime*"]
 # ----- bandit (security lint) -----
 [tool.bandit]
 exclude_dirs = ["tests", "runtime-state", ".planning"]
-skips = ["B101"]  # assert in tests
+skips = ["B311"]

@@ -19,10 +19,11 @@ from pf_runtime.config import InboundMessage, load_profile
 from pf_runtime.memory import MemoryStack
 from pf_runtime.memory.tier1_soul import SoulReader
 from pf_runtime.memory.tier2_buffer import BufferStore
-from pf_runtime.memory.tier3_episodic import NoOpEpisodicClient
+from pf_runtime.memory.tier3_episodic import episodic_client_from_env
 from pf_runtime.memory.tier4_skills import default_skill_registry
 from pf_runtime.runtime.loop import run_session
 from pf_runtime.runtime.model_adapter import OpenRouterAdapter
+from pf_runtime.runtime.sentry_init import init_sentry_from_profile
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -72,6 +73,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
 async def _run(profile_slug: str, message: str, hermes_home: Path) -> None:
     profile = load_profile(profile_slug, hermes_home=hermes_home)
+    init_sentry_from_profile(profile, component="cli")
     adapter = OpenRouterAdapter(env_path=profile.env_path)
 
     # Build the memory stack. BufferStore is used as a context manager so
@@ -81,7 +83,7 @@ async def _run(profile_slug: str, message: str, hermes_home: Path) -> None:
         memory = MemoryStack(
             soul=soul_reader,
             buffer=buffer,
-            episodic=NoOpEpisodicClient(),
+            episodic=episodic_client_from_env(),
             skills=default_skill_registry(hermes_home),
         )
 

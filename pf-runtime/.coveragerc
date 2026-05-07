@@ -1,0 +1,10 @@
+[run]
+source = pf_runtime
+omit =
+    pf_runtime/stubs/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if TYPE_CHECKING:
+    raise NotImplementedError

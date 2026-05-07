@@ -104,7 +104,8 @@ class OpenRouterAdapter(ModelAdapter):
             },
             method="POST",
         )
-        with urllib.request.urlopen(req, timeout=60) as resp:
+        # HTTPS fixed host _OPENROUTER_URL only; POST body built from adapter (no user URL).
+        with urllib.request.urlopen(req, timeout=60) as resp:  # nosec B310
             return json.loads(resp.read().decode("utf-8"))  # type: ignore[no-any-return]
 
     async def complete(

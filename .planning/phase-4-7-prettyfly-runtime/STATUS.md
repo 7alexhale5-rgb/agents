@@ -1,6 +1,6 @@
 # Phase 4.7 status tracker
 
-> **Last updated:** 2026-05-06 (aligned with [`PIVOT_2026-05-06.md`](PIVOT_2026-05-06.md)). Operator G0=YES locked. Phase 4.7.0 pre-work CLEARED. **G1 (7-night Hermes baseline) is superseded — do not schedule G1 work;** pivot ladder A→E is authoritative. Older notes below are retained for context.
+> **Last updated:** 2026-05-07 — PF Runtime QA gate: [`scripts/pf-qa.sh`](../../scripts/pf-qa.sh), CI [.github/workflows/pf-runtime-ci.yml](../../.github/workflows/pf-runtime-ci.yml).
 
 ## Pivot summary (authoritative)
 
@@ -8,13 +8,15 @@
 - **Full charter:** [`PLAN.md`](PLAN.md) — where it conflicts with PIVOT §3–§4, **PIVOT wins**.
 - **Personal Slack cutover:** [`CUTOVER_C_PLAYBOOK.md`](CUTOVER_C_PLAYBOOK.md).
 
-| Pivot sub-phase              | Ships                        | Status                                                       |
-| ---------------------------- | ---------------------------- | ------------------------------------------------------------ |
-| **A** Loop + profile loader  | CLI `run_session` round-trip | Implemented in `pf-runtime/pf_runtime/`                      |
-| **B** Memory tiers 1–2       | SoulReader + BufferStore     | Wired in gateway + loop                                      |
-| **C** Slack + cutover        | Iris on PF Runtime           | Repo: channels + gateway + tests; operator steps in playbook |
-| **D** Dream loop + tiers 3–4 | SkillRegistry + compaction   | Not started                                                  |
-| **E** Kanban + shadow        | Postgres + fleet             | Not started                                                  |
+| Pivot sub-phase              | Ships                          | Status                                                                                                                                                                                        |
+| ---------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **A** Loop + profile loader  | CLI `run_session` round-trip   | Implemented in `pf-runtime/pf_runtime/`                                                                                                                                                       |
+| **B** Memory tiers 1–2       | SoulReader + BufferStore       | Wired in gateway + loop                                                                                                                                                                       |
+| **C** Slack + cutover        | Iris on PF Runtime             | Repo: channels + gateway + tests; operator steps in playbook                                                                                                                                  |
+| **D** Dream loop + tiers 3–4 | SkillRegistry + dream + Tier 3 | 🟡 **PARTIAL** — Tier 4 in prompt (`run_session` + budget); `DreamLoop` + `post_session` audit; `bounds_audit`; `PF_EPISODIC` (`noop` / `laik` stub); LAIK MCP-backed episodic still optional |
+| **E** Kanban + shadow        | Postgres + fleet               | 🟡 scaffold / idempotency path in repo (see `pf-runtime` kanban + ledger)                                                                                                                     |
+
+| **QA / CI** | pf-qa + GitHub Actions | `scripts/pf-qa.sh` (ruff, mypy, pytest+cov, bandit, pip-audit); `.github/workflows/pf-runtime-ci.yml` (Python 3.11 + 3.12) |
 
 ## Post-4.7.0 swarm review findings (2026-05-06 15:30 — historical)
 
@@ -81,15 +83,17 @@ The global `~/.hermes/.env` has the keys. They never reached the per-profile env
 
 ## Sub-phase status (PIVOT ladder)
 
-| Pivot | PLAN cross-ref           | Status                                     | Measured target (PIVOT §4)        |
-| ----- | ------------------------ | ------------------------------------------ | --------------------------------- |
-| **A** | loop + loader            | 🟢 in tree                                 | Non-empty assistant reply + trace |
-| **B** | memory 1–2               | 🟢 in tree                                 | Buffer persistence tests          |
-| **C** | Slack gateway (personal) | 🟡 repo + tests; operator cutover optional | 50 DMs / 24h, p95 ≤2s             |
-| **D** | dream + tiers 3–4        | ⬜                                         | Dream firing + tier4 isolation    |
-| **E** | Kanban + cutover         | ⬜                                         | Postgres p95 + 48h shadow         |
+| Pivot | PLAN cross-ref           | Status                                                                                | Measured target (PIVOT §4)                                     |
+| ----- | ------------------------ | ------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| **A** | loop + loader            | 🟢 in tree                                                                            | Non-empty assistant reply + trace                              |
+| **B** | memory 1–2               | 🟢 in tree                                                                            | Buffer persistence tests                                       |
+| **C** | Slack gateway (personal) | 🟡 repo + tests; operator cutover optional                                            | 50 DMs / 24h, p95 ≤2s                                          |
+| **D** | dream + tiers 3–4        | 🟡 Tier 4 path isolation + registry shipped; prompt + dream + episodic flag in flight | Dream firing + tier4 isolation tests (extend as features land) |
+| **E** | Kanban + cutover         | 🟡 Postgres schema + store stub + inbound ledger for dedup                            | Postgres p95 + 48h shadow                                      |
 
 **Final cutover evaluation:** PIVOT §3 (Wilson, Ragas, real-job, latency/throughput, P0) — not the pre-pivot Hermes delta table in PLAN.md §11.
+
+**Repo truth (PF Runtime, `pf-runtime/`):** Tier 4 — [`pf_runtime/memory/tier4_skills.py`](../../pf-runtime/pf_runtime/memory/tier4_skills.py) (`ProfileSkillRegistry`, `default_skill_registry`); tests — [`pf-runtime/tests/test_tier4_isolation.py`](../../pf-runtime/tests/test_tier4_isolation.py). Gateway/CLI wire registry from `HERMES_HOME`.
 
 ## Operator cutover (Sub-phase C)
 

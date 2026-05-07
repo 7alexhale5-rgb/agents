@@ -17,11 +17,12 @@ Deferred to sub-phase A full:
   - Tool dispatch (tools=[] stub parameter accepted but ignored)
   - Multi-step loop (max_steps is accepted but loop exits after step 1)
   - Cost ceiling enforcement (ceiling is recorded in result, not enforced)
-  - Langfuse trace export (stdout only for now)
+  - Langfuse trace export (stdout + optional Langfuse SDK).
 """
 from __future__ import annotations
 
 import asyncio
+import time
 import uuid
 from dataclasses import dataclass, field
 from decimal import Decimal
@@ -29,6 +30,7 @@ from typing import TYPE_CHECKING, Any
 
 from pf_runtime.config import InboundMessage, Message, Profile
 from pf_runtime.runtime.model_adapter import ModelAdapter
+from pf_runtime.runtime.trace import emit_session_trace
 
 if TYPE_CHECKING:
     from pf_runtime.memory import MemoryStack
@@ -81,14 +83,32 @@ async def run_session(
     Returns:
         SessionResult with the assistant reply
     """
+    t0 = time.perf_counter()
+    session_id = str(uuid.uuid4())
     # Step 1: Build system prompt
     if memory is not None:
         # Tier 1: soul context (mtime-cached, 30s TTL)
         tier1_context = memory.system_prompt(profile)
-        system_prompt = (
-            f"{tier1_context}\n\n"
-            "Respond in complete sentences. Never give one-word answers."
-        )
+        skill_block = memory.skills_context_for_prompt(profile)
+        if skill_block:
+            system_prompt = (
+                f"{tier1_context}\n\n{skill_block}\n\n"
+                "Respond in complete sentences. Never give one-word answers."
+            )
+        else:
+            system_prompt = (
+                f"{tier1_context}\n\n"
+                "Respond in complete sentences. Never give one-word answers."
+            )
+
+        if memory.episodic is not None:
+            q = inbound.text[:2000]
+            hits = await memory.episodic.query(q, profile.slug)
+            if hits:
+                block = "\n# EPISODIC SNIPPETS\n" + "\n".join(
+                    f"- {h[:500]}" for h in hits[:8]
+                )
+                system_prompt = f"{system_prompt}{block}"
     else:
         # Fallback: direct file reads (sub-phase A path, no memory wired)
         soul_content = profile.soul_md_path.read_text(encoding="utf-8")
@@ -156,9 +176,20 @@ async def run_session(
 
     result_messages = [user_message, assistant_message]
 
+    latency_ms = (time.perf_counter() - t0) * 1000
+    emit_session_trace(
+        profile_slug=profile.slug,
+        session_id=session_id,
+        model=profile.model,
+        latency_ms=latency_ms,
+        finish_reason="stop",
+        cost_usd=cost_usd,
+    )
+
     return SessionResult(
         messages=result_messages,
         steps=1,
         finish_reason="stop",
         cost_usd=cost_usd,
+        session_id=session_id,
     )

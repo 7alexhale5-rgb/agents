@@ -25,7 +25,7 @@ import uuid
 from collections import OrderedDict
 from collections.abc import AsyncIterator
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pf_runtime.channels.adapter_base import (
     Channel,
@@ -41,17 +41,34 @@ from pf_runtime.runtime.model_adapter import _load_dotenv
 # slack-bolt is an optional dependency declared under the [channels] extra.
 # Importing the module must not fail when slack-bolt is absent so that the
 # rest of the package (and the test suite for non-Slack code) remains usable.
-try:
-    from slack_bolt.adapter.socket_mode.async_handler import AsyncSocketModeHandler
-    from slack_bolt.async_app import AsyncApp
-    from slack_sdk.errors import SlackApiError
+if TYPE_CHECKING:  # pragma: no branch
+    from slack_bolt.adapter.socket_mode.async_handler import (
+        AsyncSocketModeHandler as _AsyncSocketModeHandler,
+    )
+    from slack_bolt.async_app import AsyncApp as _AsyncApp
+    from slack_sdk.errors import SlackApiError as _SlackApiError
 
+    AsyncApp = _AsyncApp
+    AsyncSocketModeHandler = _AsyncSocketModeHandler
+    SlackApiError = _SlackApiError
     _SLACK_AVAILABLE = True
-except ImportError:  # pragma: no cover — exercised only when extra not installed
-    AsyncApp = None
-    AsyncSocketModeHandler = None
-    SlackApiError = Exception
-    _SLACK_AVAILABLE = False
+else:
+    try:
+        from slack_bolt.adapter.socket_mode.async_handler import (
+            AsyncSocketModeHandler as _AsyncSocketModeHandler,
+        )
+        from slack_bolt.async_app import AsyncApp as _AsyncApp
+        from slack_sdk.errors import SlackApiError as _SlackApiError
+
+        AsyncApp = _AsyncApp
+        AsyncSocketModeHandler = _AsyncSocketModeHandler
+        SlackApiError = _SlackApiError
+        _SLACK_AVAILABLE = True
+    except ImportError:  # pragma: no cover — exercised only when extra not installed
+        _SLACK_AVAILABLE = False
+        AsyncApp = Any  # type: ignore[assignment,misc]
+        AsyncSocketModeHandler = Any  # type: ignore[assignment,misc]
+        SlackApiError = Exception
 
 
 _log = logging.getLogger(__name__)
@@ -74,6 +91,7 @@ class SlackChannel(Channel):
         env_path: Path,
         *,
         dedup_window: int = 10000,
+        inbound_ledger: Any | None = None,
     ) -> None:
         # Instance attributes shadow the class-level attribute declarations
         # on the ABC; this is intentional so subclasses can carry state.
@@ -98,6 +116,7 @@ class SlackChannel(Channel):
         self._inbound_dedup: OrderedDict[str, None] = OrderedDict()
         self._outbound_dedup: OrderedDict[str, None] = OrderedDict()
         self._dedup_window: int = dedup_window
+        self._inbound_ledger: Any | None = inbound_ledger
 
         self._bot_user_id: str | None = None
         self._connected: bool = False
@@ -267,11 +286,16 @@ class SlackChannel(Channel):
 
         # Inbound LRU dedup — Slack occasionally redelivers events on
         # reconnect; we never want to enqueue the same one twice.
-        if event_id in self._inbound_dedup:
+        if self._inbound_ledger is not None:
+            claimed = await asyncio.to_thread(self._inbound_ledger.try_claim, event_id)
+            if not claimed:
+                return
+        elif event_id in self._inbound_dedup:
             return
-        self._inbound_dedup[event_id] = None
-        while len(self._inbound_dedup) > self._dedup_window:
-            self._inbound_dedup.popitem(last=False)
+        if self._inbound_ledger is None:
+            self._inbound_dedup[event_id] = None
+            while len(self._inbound_dedup) > self._dedup_window:
+                self._inbound_dedup.popitem(last=False)
 
         thread_ts = self._conversation_thread_ts(event)
         msg = InboundMessage(
@@ -346,6 +370,18 @@ class SlackChannel(Channel):
     async def send(self, msg: OutboundMessage) -> None:
         """Send a chat.postMessage; idempotent on ``msg.message_id``."""
         mid = msg.message_id or f"slack-out-{uuid.uuid4()}"
+        out_key = (
+            f"{self.profile_slug}:{msg.in_reply_to}" if msg.in_reply_to else None
+        )
+        if (
+            self._inbound_ledger is not None
+            and out_key
+            and await asyncio.to_thread(
+                self._inbound_ledger.outbound_already_sent,
+                out_key,
+            )
+        ):
+            return
         # Outbound dedup — check BEFORE sending so retries after a transient
         # failure can re-send (we only record on success below).
         if mid in self._outbound_dedup:
@@ -410,6 +446,8 @@ class SlackChannel(Channel):
 
         # Record dedup AFTER successful upstream call — transient failures
         # remain retryable.
+        if self._inbound_ledger is not None and out_key:
+            await asyncio.to_thread(self._inbound_ledger.record_outbound_sent, out_key)
         self._outbound_dedup[mid] = None
         while len(self._outbound_dedup) > self._dedup_window:
             self._outbound_dedup.popitem(last=False)

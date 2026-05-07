@@ -8,6 +8,7 @@ ABC contract:
 """
 from __future__ import annotations
 
+import os
 from abc import ABC, abstractmethod
 
 
@@ -45,12 +46,32 @@ class EpisodicClient(ABC):
 
 
 class NoOpEpisodicClient(EpisodicClient):
-    """Satisfies the EpisodicClient ABC; used until LAIK MCP is wired (sub-phase D)."""
+    """Satisfies the EpisodicClient ABC; used until LAIK MCP is fully wired."""
 
     async def query(self, query: str, profile_slug: str) -> list[str]:
-        """Always returns an empty list (LAIK not yet wired)."""
+        del query, profile_slug
         return []
 
     async def write(self, content: str, profile_slug: str) -> None:
-        """Silently discards the write (LAIK not yet wired)."""
+        del content, profile_slug
         return
+
+
+class LaikEpisodicStub(EpisodicClient):
+    """Feature-flag hook for LAIK MCP (`PF_EPISODIC=laik`). Returns empty until wired."""
+
+    async def query(self, query: str, profile_slug: str) -> list[str]:
+        del query, profile_slug
+        return []
+
+    async def write(self, content: str, profile_slug: str) -> None:
+        del content, profile_slug
+        return
+
+
+def episodic_client_from_env() -> EpisodicClient:
+    """Select episodic backend via ``PF_EPISODIC`` (``noop`` | ``laik``)."""
+    mode = os.environ.get("PF_EPISODIC", "noop").strip().lower()
+    if mode == "laik":
+        return LaikEpisodicStub()
+    return NoOpEpisodicClient()

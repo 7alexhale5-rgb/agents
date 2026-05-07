@@ -76,3 +76,52 @@ class MemoryStack:
             message: The message to persist.
         """
         self.buffer.append(message)
+
+    def skills_context_for_prompt(
+        self,
+        profile: Profile,
+        *,
+        max_chars: int = 8000,
+        max_skills: int = 32,
+        preview_lines: int = 12,
+        preview_body_chars: int = 600,
+    ) -> str:
+        """Bounded Tier 4 block: skill slugs and truncated previews for the LLM.
+
+        Returns empty string when ``skills`` is None or the profile has no skills.
+        Stops appending when ``max_chars`` would be exceeded.
+        """
+        if self.skills is None:
+            return ""
+        slugs = self.skills.list_skills(profile.slug)[:max_skills]
+        if not slugs:
+            return ""
+
+        header = "# PROFILE SKILLS (Tier 4)\n\n"
+        intro = (
+            "Markdown skills under this profile's `skills/` directory. "
+            "Apply when relevant.\n\n"
+        )
+        parts: list[str] = [header, intro]
+        used = sum(len(s) for s in parts)
+
+        for i, slug in enumerate(slugs):
+            try:
+                full = self.skills.load_skill(slug, profile.slug)
+            except KeyError:
+                continue
+            lines = full.splitlines()[:preview_lines]
+            preview = "\n".join(lines)
+            if len(preview) > preview_body_chars:
+                preview = preview[:preview_body_chars] + "\n…"
+            block = f"## skill:{slug}\n```\n{preview}\n```\n\n"
+            if used + len(block) > max_chars:
+                remaining = len(slugs) - i
+                parts.append(
+                    f"\n(…{remaining} more skills omitted for character budget …)\n"
+                )
+                break
+            parts.append(block)
+            used += len(block)
+
+        return "".join(parts)

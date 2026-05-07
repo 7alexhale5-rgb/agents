@@ -30,9 +30,9 @@ _after_ this cutover holds for 14 days.
 
 ## Pre-cutover gates (do not start without all green)
 
-- [ ] `cd ~/Projects/agents/pf-runtime && .venv/bin/python -m pytest tests/ -v` — 100% pass (19 tests as of 2026-05-06)
-- [ ] `cd ~/Projects/agents/pf-runtime && .venv/bin/ruff check pf_runtime tests` — clean
-- [ ] `cd ~/Projects/agents/pf-runtime && .venv/bin/mypy pf_runtime` — clean
+- [ ] Run **canonical QA:** `bash scripts/pf-qa.sh` from `~/Projects/agents` (ruff, mypy, pytest with coverage floor, bandit, pip-audit). Or `bash scripts/pf-cutover-preflight.sh` for QA **plus** launchd collision check and staged plist lint.
+- [ ] (Optional) Add `SENTRY_DSN` to `~/.hermes/profiles/personal/.env` for crash reporting (`pip install` PF with `[runtime]` so `sentry-sdk` is present). Langfuse keys (`LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`) are separate — see `pf_runtime/runtime/trace.py`.
+- [ ] CI: GitHub Actions workflow `.github/workflows/pf-runtime-ci.yml` green on your branch (Python 3.11 + 3.12).
 - [ ] Manual dry-run completed: stop Hermes daemon, run PF Runtime manually, send 5+ DMs to Iris, verify replies arrive within 5 seconds and feel coherent
 - [ ] You have a clear 24-hour observation window (no travel, no other deploys)
 - [ ] Hermes profile state files at `~/.hermes/profiles/personal/{state.db,sessions/,gateway_state.json}` are backed up (these are not used by PF Runtime; the backup is for rollback evidence only)

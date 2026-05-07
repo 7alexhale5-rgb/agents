@@ -7,7 +7,7 @@
   "tagline": "Voice-first agent that takes the load off your daily life",
   "tier": "chief-of-staff",
   "depends_on": ["4d-senses", "obsidian"],
-  "channels": ["telegram", "voice", "obsidian", "cli"],
+  "channels": ["slack", "telegram", "voice", "obsidian", "cli"],
   "model_routing": {
     "default": "openrouter:nemotron-free",
     "drafting": "mistral:medium",

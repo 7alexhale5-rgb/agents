@@ -33,7 +33,6 @@ import sqlite3
 import time
 from pathlib import Path
 from types import TracebackType
-from typing import Optional
 
 from pf_runtime.config import Message
 
@@ -77,7 +76,7 @@ class BufferStore:
     def __init__(
         self,
         profile_slug: str,
-        buffer_dir: Optional[Path] = None,
+        buffer_dir: Path | None = None,
     ) -> None:
         # Tier 4 isolation hard contract — refuse empty / None slug.
         if not profile_slug:
@@ -100,13 +99,13 @@ class BufferStore:
             base = _DEFAULT_HERMES_HOME / "profiles" / profile_slug
 
         self._db_path: Path = base / "pf_buffer.sqlite"
-        self._conn: Optional[sqlite3.Connection] = None
+        self._conn: sqlite3.Connection | None = None
 
     # ------------------------------------------------------------------ #
     # Connection lifecycle
     # ------------------------------------------------------------------ #
 
-    def open(self) -> "BufferStore":
+    def open(self) -> BufferStore:
         """Open the SQLite connection and ensure the schema exists."""
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
         self._conn = sqlite3.connect(str(self._db_path), check_same_thread=False)
@@ -123,14 +122,14 @@ class BufferStore:
             self._conn.close()
             self._conn = None
 
-    def __enter__(self) -> "BufferStore":
+    def __enter__(self) -> BufferStore:
         return self.open()
 
     def __exit__(
         self,
-        exc_type: Optional[type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
     ) -> None:
         self.close()
 
@@ -151,7 +150,7 @@ class BufferStore:
     # Public API
     # ------------------------------------------------------------------ #
 
-    def append(self, message: Message, session_id: Optional[str] = None) -> int:
+    def append(self, message: Message, session_id: str | None = None) -> int:
         """INSERT a message into the buffer.
 
         Args:
@@ -175,7 +174,7 @@ class BufferStore:
     def recent(
         self,
         limit: int = 10,
-        before_ts: Optional[float] = None,
+        before_ts: float | None = None,
     ) -> list[Message]:
         """Return the most-recent *limit* messages (timestamp DESC).
 

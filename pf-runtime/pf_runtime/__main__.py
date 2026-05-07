@@ -52,6 +52,21 @@ def _build_parser() -> argparse.ArgumentParser:
         ),
     )
 
+    gateway_parser = subparsers.add_parser(
+        "gateway",
+        help="Run the long-running channel gateway",
+    )
+    gateway_parser.add_argument(
+        "--profile",
+        required=True,
+        help="Profile slug (e.g. 'personal')",
+    )
+    gateway_parser.add_argument(
+        "--hermes-home",
+        default=None,
+        help="Path to Hermes home directory (default: ~/.hermes)",
+    )
+
     return parser
 
 
@@ -112,6 +127,17 @@ def main() -> None:
         )
         try:
             asyncio.run(_run(args.profile, args.message, hermes_home))
+        except Exception:
+            traceback.print_exc(file=sys.stderr)
+            sys.exit(1)
+    elif args.command == "gateway":
+        from pf_runtime.runtime.gateway import run_gateway
+
+        hermes_home = (
+            Path(args.hermes_home) if args.hermes_home else Path.home() / ".hermes"
+        )
+        try:
+            asyncio.run(run_gateway(args.profile, hermes_home))
         except Exception:
             traceback.print_exc(file=sys.stderr)
             sys.exit(1)

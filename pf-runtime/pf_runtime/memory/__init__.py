@@ -22,7 +22,6 @@ Usage::
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 from pf_runtime.config import Message, Profile
 from pf_runtime.memory.tier1_soul import SoulReader
@@ -42,8 +41,8 @@ class MemoryStack:
 
     soul: SoulReader
     buffer: BufferStore
-    episodic: Optional[EpisodicClient] = None
-    skills: Optional[SkillRegistry] = None
+    episodic: EpisodicClient | None = None
+    skills: SkillRegistry | None = None
 
     def system_prompt(self, profile: Profile) -> str:
         """Return the Tier 1 context block for *profile*.

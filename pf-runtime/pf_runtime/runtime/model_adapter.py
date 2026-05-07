@@ -20,7 +20,6 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
-
 # ----- dotenv loader (stdlib only) -----
 
 def _load_dotenv(env_path: Path) -> dict[str, str]:
@@ -105,7 +104,7 @@ class OpenRouterAdapter(ModelAdapter):
             },
             method="POST",
         )
-        with urllib.request.urlopen(req, timeout=60) as resp:  # noqa: S310
+        with urllib.request.urlopen(req, timeout=60) as resp:
             return json.loads(resp.read().decode("utf-8"))  # type: ignore[no-any-return]
 
     async def complete(

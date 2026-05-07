@@ -10,7 +10,6 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
-
 # ----- supporting dataclasses -----
 
 @dataclass(frozen=True)
@@ -105,6 +104,7 @@ class OutboundMessage:
     target_user_id: str
     text: str
     attachments: list[Attachment] = field(default_factory=list)
+    metadata: dict[str, Any] = field(default_factory=dict)
     in_reply_to: str | None = None
     message_id: str = ""
 
@@ -128,7 +128,7 @@ def _parse_yaml_key(text: str, key: str) -> str:
 def load_profile(
     slug: str,
     *,
-    hermes_home: Path = Path.home() / ".hermes",
+    hermes_home: Path | None = None,
 ) -> Profile:
     """Load a Profile from a Hermes profile directory.
 
@@ -143,6 +143,8 @@ def load_profile(
         ValueError: if required keys (model.default, model.provider)
             are missing from config.yaml.
     """
+    if hermes_home is None:
+        hermes_home = Path.home() / ".hermes"
     profile_dir = hermes_home / "profiles" / slug
     config_path = profile_dir / "config.yaml"
 

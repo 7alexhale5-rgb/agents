@@ -54,7 +54,7 @@ async def run_session(
     cost_ceiling_usd: Decimal = Decimal("0.50"),
     tools: list[Any] | None = None,
     interrupt: asyncio.Event | None = None,
-    memory: "MemoryStack | None" = None,
+    memory: MemoryStack | None = None,
 ) -> SessionResult:
     """Run a single agent session end-to-end.
 

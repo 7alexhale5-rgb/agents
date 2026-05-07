@@ -2,7 +2,7 @@
 name = "pf-runtime"
 version = "0.1.0-pre"
 description = "PrettyFly Runtime — bare-metal Python agent runtime (Phase 4.7 of agents/ migration). MIT-licensed, replaces third-party Hermes Agent at cutover."
-license = { text = "MIT" }
+license = "MIT"
 authors = [{ name = "PrettyFly", email = "alex@prettyflyforai.com" }]
 readme = "SPEC.md"
 requires-python = ">=3.11"
@@ -66,6 +66,8 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["S101", "S105", "S106"]
+# urllib to fixed OpenRouter HTTPS URL only (no user-controlled scheme)
+"pf_runtime/runtime/model_adapter.py" = ["S310"]
 
 # ----- mypy (type-check) -----
 [tool.mypy]
@@ -85,9 +87,18 @@ ignore_missing_imports = true
 # ----- pytest -----
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-testpaths = ["../tests"]
+testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py", "*_contract.py", "*_consistency.py", "*_smoke.py", "*_e2e.py"]
 addopts = "-ra --strict-markers --tb=short"
+
+# ----- setuptools (single package: pf_runtime; ignore scaffold dirs at repo root) -----
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pf_runtime*"]
 
 # ----- bandit (security lint) -----
 [tool.bandit]

@@ -1,9 +1,13 @@
 #!/bin/bash
 # Regenerate the Lighthouse baseline. Standalone — only needs node + npm (for
 # `npx lighthouse`). Override via env vars: LH_TARGET_URL, LH_ROUTES, LH_RUNS.
+#
+# Default URL matches package.json `npm run start` (AUDIT_STATIC_PORT, default 3099).
+# In another terminal: npm run build && npm run start
 set -euo pipefail
 
-TARGET_URL="${LH_TARGET_URL:-http://localhost:3000}"
+_PORT="${AUDIT_STATIC_PORT:-3099}"
+TARGET_URL="${LH_TARGET_URL:-http://127.0.0.1:${_PORT}}"
 ROUTES="${LH_ROUTES:-/}"
 RUNS="${LH_RUNS:-3}"
 
@@ -13,6 +17,11 @@ if [[ -z "${CHROME_PATH:-}" ]]; then
   elif command -v google-chrome >/dev/null 2>&1; then
     export CHROME_PATH="$(command -v google-chrome)"
   fi
+fi
+
+if ! curl -sf "${TARGET_URL}/" >/dev/null 2>&1; then
+  echo "error: nothing serving at ${TARGET_URL}/ — run: npm run build && npm run start" >&2
+  exit 1
 fi
 
 OUT_DIR="ops/lighthouse/baseline"

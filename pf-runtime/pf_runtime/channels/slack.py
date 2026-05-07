@@ -48,9 +48,9 @@ try:
 
     _SLACK_AVAILABLE = True
 except ImportError:  # pragma: no cover — exercised only when extra not installed
-    AsyncApp = None  # type: ignore[assignment,misc]
-    AsyncSocketModeHandler = None  # type: ignore[assignment,misc]
-    SlackApiError = Exception  # type: ignore[assignment,misc]
+    AsyncApp = None
+    AsyncSocketModeHandler = None
+    SlackApiError = Exception
     _SLACK_AVAILABLE = False
 
 

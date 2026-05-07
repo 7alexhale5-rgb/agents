@@ -81,8 +81,12 @@ no_implicit_optional = true
 exclude = ["runtime-state", "stubs", ".planning"]
 
 [[tool.mypy.overrides]]
-module = ["slack_bolt.*", "discord.*", "aioimaplib.*", "aiosmtplib.*"]
+module = ["slack_bolt.*", "slack_sdk.*"]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "pf_runtime.channels.slack"
+disallow_untyped_decorators = false
 
 # ----- pytest -----
 [tool.pytest.ini_options]

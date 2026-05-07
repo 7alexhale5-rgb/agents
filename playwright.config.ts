@@ -2,20 +2,30 @@
 // Edit freely; the skill never overwrites an existing config.
 import { defineConfig } from "@playwright/test";
 
+/** Fixed port avoids collisions with common dev servers on :3000 (Lighthouse / Playwright / run-baseline must match). */
+const AUDIT_STATIC_PORT = process.env.AUDIT_STATIC_PORT ?? "3099";
+const staticOrigin = `http://127.0.0.1:${AUDIT_STATIC_PORT}`;
+
 export default defineConfig({
   testDir: "tests",
   webServer: {
-    // Static placeholder from scripts/audit-devserver-build.mjs (repo has no Next.js app)
-    command: "npm run build && npx --yes serve@14 dist -l 3000",
-    url: "http://localhost:3000",
+    command: `npm run build && npx --yes serve@14 dist --listen ${AUDIT_STATIC_PORT}`,
+    url: staticOrigin,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },
   use: {
-    baseURL: process.env.E2E_BASE_URL ?? "http://localhost:3000",
+    baseURL: process.env.E2E_BASE_URL ?? staticOrigin,
   },
   projects: [
-    { name: "a11y", testMatch: /.*\.spec\.ts/, grep: /@a11y/ },
-    { name: "smoke", testMatch: /.*\.spec\.ts/, grepInvert: /@a11y/ },
+    {
+      name: "smoke",
+      testMatch: /tests\/smoke\/.*\.spec\.ts/,
+    },
+    {
+      name: "a11y",
+      testMatch: /tests\/a11y\/.*\.spec\.ts/,
+      grep: /@a11y/,
+    },
   ],
 });

@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "node scripts/audit-devserver-build.mjs",
-    "start": "npx --yes serve@14 dist -l 3000",
+    "start": "npx --yes serve@14 dist --listen ${AUDIT_STATIC_PORT:-3099}",
     "dead-code": "knip",
     "lh:baseline": "bash ops/lighthouse/run-baseline.sh",
     "lhci": "lhci autorun",
@@ -13,6 +13,9 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "overrides": {
+    "tmp": ">=0.2.4"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",

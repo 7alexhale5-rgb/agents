@@ -17,21 +17,19 @@
 // Customize ROUTES for your site. Keep the list tight (4-7 key routes) — axe
 // takes ~1-2s per route with a warm page.
 
-import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { test, expect } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 
-const BASE = process.env.E2E_BASE_URL ?? 'http://localhost:3000';
-
-const ROUTES: { name: string; path: string }[] = [
-  { name: 'home', path: '/' },
-];
+const ROUTES: { name: string; path: string }[] = [{ name: "home", path: "/" }];
 
 // WCAG 2.1 AA is the default bar. Extend tags only if you target AAA.
-const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
+const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
 
 for (const route of ROUTES) {
-  test(`@a11y ${route.name} has no critical/serious violations`, async ({ page }) => {
-    await page.goto(`${BASE}${route.path}`, { waitUntil: 'networkidle' });
+  test(`@a11y ${route.name} has no critical/serious violations`, async ({
+    page,
+  }) => {
+    await page.goto(route.path, { waitUntil: "networkidle" });
 
     const results = await new AxeBuilder({ page })
       .withTags(WCAG_TAGS)
@@ -43,7 +41,7 @@ for (const route of ROUTES) {
     // /review-stack gate but don't fail the Playwright test itself — the
     // gate re-evaluates from the JSON.
     const blocking = results.violations.filter(
-      (v) => v.impact === 'critical' || v.impact === 'serious',
+      (v) => v.impact === "critical" || v.impact === "serious",
     );
 
     if (blocking.length > 0) {
@@ -51,11 +49,18 @@ for (const route of ROUTES) {
       console.log(`\n[a11y] ${route.name} violations:`);
       for (const v of blocking) {
         console.log(`  - [${v.impact}] ${v.id}: ${v.help}`);
-        console.log(`    nodes: ${v.nodes.length}, first: ${v.nodes[0]?.target?.join(' ')}`);
-        console.log(`    wcag:  ${v.tags.filter((t) => t.startsWith('wcag')).join(', ')}`);
+        console.log(
+          `    nodes: ${v.nodes.length}, first: ${v.nodes[0]?.target?.join(" ")}`,
+        );
+        console.log(
+          `    wcag:  ${v.tags.filter((t) => t.startsWith("wcag")).join(", ")}`,
+        );
       }
     }
 
-    expect(blocking, `${blocking.length} critical/serious a11y violations on ${route.path}`).toEqual([]);
+    expect(
+      blocking,
+      `${blocking.length} critical/serious a11y violations on ${route.path}`,
+    ).toEqual([]);
   });
 }

@@ -6,12 +6,18 @@ Sub-phase A (throwaway): single-step loop only.
   - Sends the inbound user message
   - Returns the assistant reply in a SessionResult
 
+Sub-phase B additions (wired here):
+  - memory: MemoryStack | None parameter accepted by run_session()
+  - When memory is not None:
+      - system_prompt is prefixed with Tier 1 soul context
+      - last-N buffer messages are prepended to the conversation
+      - user + assistant messages are appended to the buffer after each turn
+
 Deferred to sub-phase A full:
   - Tool dispatch (tools=[] stub parameter accepted but ignored)
   - Multi-step loop (max_steps is accepted but loop exits after step 1)
   - Cost ceiling enforcement (ceiling is recorded in result, not enforced)
   - Langfuse trace export (stdout only for now)
-  - Memory tier integration beyond reading SOUL/USER
 """
 from __future__ import annotations
 
@@ -19,10 +25,13 @@ import asyncio
 import uuid
 from dataclasses import dataclass, field
 from decimal import Decimal
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pf_runtime.config import InboundMessage, Message, Profile
 from pf_runtime.runtime.model_adapter import ModelAdapter
+
+if TYPE_CHECKING:
+    from pf_runtime.memory import MemoryStack
 
 
 @dataclass
@@ -45,14 +54,18 @@ async def run_session(
     cost_ceiling_usd: Decimal = Decimal("0.50"),
     tools: list[Any] | None = None,
     interrupt: asyncio.Event | None = None,
+    memory: "MemoryStack | None" = None,
 ) -> SessionResult:
     """Run a single agent session end-to-end.
 
-    Sub-phase A (throwaway) implementation:
-      1. Read SOUL.md + USER.md from profile paths
-      2. Build system prompt from concatenated content
-      3. Send user message to LLM
-      4. Return SessionResult with the assistant reply
+    Sub-phase A (throwaway) + sub-phase B (memory stack) implementation:
+      1. Build system prompt — from MemoryStack (Tier 1) when available,
+         otherwise reads SOUL.md + USER.md directly from profile paths.
+      2. Hydrate conversation with last-N buffer messages (Tier 2) when
+         memory is wired.
+      3. Send user message to LLM.
+      4. Persist user + assistant messages to Tier 2 buffer.
+      5. Return SessionResult with the assistant reply.
 
     Args:
         profile: The loaded Profile (contains paths to SOUL.md, USER.md, etc.)
@@ -62,25 +75,45 @@ async def run_session(
         cost_ceiling_usd: Cost ceiling (throwaway: recorded but not enforced)
         tools: Tool list stub — accepted but ignored in throwaway
         interrupt: Asyncio Event for cancellation (throwaway: not checked)
+        memory: Optional MemoryStack; when provided, Tier 1 context + Tier 2
+            buffer hydration are active and each turn is persisted.
 
     Returns:
         SessionResult with the assistant reply
     """
-    # Step 1: Build system prompt from SOUL.md + USER.md
-    soul_content = profile.soul_md_path.read_text(encoding="utf-8")
-    user_content = profile.user_md_path.read_text(encoding="utf-8")
+    # Step 1: Build system prompt
+    if memory is not None:
+        # Tier 1: soul context (mtime-cached, 30s TTL)
+        tier1_context = memory.system_prompt(profile)
+        system_prompt = (
+            f"{tier1_context}\n\n"
+            "Respond in complete sentences. Never give one-word answers."
+        )
+    else:
+        # Fallback: direct file reads (sub-phase A path, no memory wired)
+        soul_content = profile.soul_md_path.read_text(encoding="utf-8")
+        user_content = profile.user_md_path.read_text(encoding="utf-8")
+        system_prompt = (
+            f"# SOUL\n\n{soul_content.strip()}\n\n"
+            f"# USER PROFILE\n\n{user_content.strip()}\n\n"
+            "Respond in complete sentences. Never give one-word answers."
+        )
 
-    system_prompt = (
-        f"# SOUL\n\n{soul_content.strip()}\n\n"
-        f"# USER PROFILE\n\n{user_content.strip()}\n\n"
-        "Respond in complete sentences. Never give one-word answers."
-    )
-
-    # Step 2: Assemble messages
+    # Step 2: Assemble messages — seed with system prompt
     messages: list[dict[str, str]] = [
         {"role": "system", "content": system_prompt},
-        {"role": "user", "content": inbound.text},
     ]
+
+    # Tier 2: hydrate with recent buffer messages (most-recent-first → reverse
+    # to chronological order for LLM context)
+    if memory is not None:
+        prior = memory.recent_messages(profile, limit=10)
+        # prior is DESC; reverse to chronological before injecting
+        for msg in reversed(prior):
+            messages.append({"role": msg.role, "content": msg.content})
+
+    # Append the current user turn
+    messages.append({"role": "user", "content": inbound.text})
 
     # Step 3: Call the LLM (with one retry if response is too short)
     assistant_content, cost_usd = await model_adapter.complete(
@@ -112,11 +145,16 @@ async def run_session(
         assistant_content = retry_content
         cost_usd = cost_usd + retry_cost
 
-    # Step 4: Build result
-    result_messages = [
-        Message(role="user", content=inbound.text),
-        Message(role="assistant", content=assistant_content),
-    ]
+    # Step 4: Build typed message objects for the result
+    user_message = Message(role="user", content=inbound.text)
+    assistant_message = Message(role="assistant", content=assistant_content)
+
+    # Step 5: Persist to Tier 2 buffer so the next session sees this turn
+    if memory is not None:
+        memory.append(profile, user_message)
+        memory.append(profile, assistant_message)
+
+    result_messages = [user_message, assistant_message]
 
     return SessionResult(
         messages=result_messages,

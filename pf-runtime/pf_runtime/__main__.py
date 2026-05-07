@@ -16,6 +16,11 @@ import traceback
 from pathlib import Path
 
 from pf_runtime.config import InboundMessage, load_profile
+from pf_runtime.memory import MemoryStack
+from pf_runtime.memory.tier1_soul import SoulReader
+from pf_runtime.memory.tier2_buffer import BufferStore
+from pf_runtime.memory.tier3_episodic import NoOpEpisodicClient
+from pf_runtime.memory.tier4_skills import NoOpSkillRegistry
 from pf_runtime.runtime.loop import run_session
 from pf_runtime.runtime.model_adapter import OpenRouterAdapter
 
@@ -54,18 +59,33 @@ async def _run(profile_slug: str, message: str, hermes_home: Path) -> None:
     profile = load_profile(profile_slug, hermes_home=hermes_home)
     adapter = OpenRouterAdapter(env_path=profile.env_path)
 
-    inbound = InboundMessage(
-        channel="cli",
-        profile_slug=profile_slug,
-        user_id="alex",
-        text=message,
-    )
+    # Build the memory stack. BufferStore is used as a context manager so
+    # the SQLite connection is properly closed after the session completes.
+    soul_reader = SoulReader()
+    with BufferStore(profile.slug) as buffer:
+        memory = MemoryStack(
+            soul=soul_reader,
+            buffer=buffer,
+            episodic=NoOpEpisodicClient(),
+            skills=NoOpSkillRegistry(),
+        )
 
-    result = await run_session(
-        profile,
-        inbound,
-        model_adapter=adapter,
-    )
+        inbound = InboundMessage(
+            channel="cli",
+            profile_slug=profile_slug,
+            user_id="alex",
+            text=message,
+        )
+
+        result = await run_session(
+            profile,
+            inbound,
+            model_adapter=adapter,
+            memory=memory,
+        )
+
+    # Extract reply outside the context manager (connection already closed).
+    # The result object holds the messages in memory so this is safe.
 
     # Find the last assistant message
     assistant_reply = ""

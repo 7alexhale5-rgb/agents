@@ -86,7 +86,7 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["../tests"]
-python_files = ["test_*.py", "*_test.py", "*_contract.py", "*_consistency.py"]
+python_files = ["test_*.py", "*_test.py", "*_contract.py", "*_consistency.py", "*_smoke.py", "*_e2e.py"]
 addopts = "-ra --strict-markers --tb=short"
 
 # ----- bandit (security lint) -----

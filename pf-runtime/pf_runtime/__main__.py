@@ -68,6 +68,11 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Path to Hermes home directory (default: ~/.hermes)",
     )
 
+    # Communications-triage subcommand group (Slice 5).
+    from pf_runtime.communications.cli import register_subparser as _register_comms
+
+    _register_comms(subparsers)
+
     return parser
 
 
@@ -140,6 +145,14 @@ def main() -> None:
         )
         try:
             asyncio.run(run_gateway(args.profile, hermes_home))
+        except Exception:
+            traceback.print_exc(file=sys.stderr)
+            sys.exit(1)
+    elif args.command == "comms":
+        from pf_runtime.communications.cli import handle as _handle_comms
+
+        try:
+            sys.exit(_handle_comms(args))
         except Exception:
             traceback.print_exc(file=sys.stderr)
             sys.exit(1)

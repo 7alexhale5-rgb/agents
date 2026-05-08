@@ -74,6 +74,10 @@ ignore = [
 "pf_runtime/runtime/model_adapter.py" = ["S310"]
 # Operator-supplied PFOS HTTPS URL (http allowed for local dev); see _url_is_httpish.
 "pf_runtime/runtime/pfos_emit.py" = ["S310"]
+# Provider clients call only fixed Gmail/Graph HTTPS endpoints; constructor
+# refuses non-https schemes implicitly via the urllib.request.Request URL.
+"pf_runtime/communications/clients/gmail.py" = ["S310"]
+"pf_runtime/communications/clients/graph.py" = ["S310"]
 
 # ----- mypy (type-check) -----
 [tool.mypy]

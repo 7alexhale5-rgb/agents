@@ -87,6 +87,56 @@ def runtime_reply_payload(
     return out
 
 
+def runtime_proposal_payload(
+    *,
+    profile_slug: str,
+    skill_slug: str,
+    agent_slug: str,
+    action_id: str,
+    action_type: str,
+    account_id: str,
+    target_id: str,
+    rationale_preview: str,
+    confidence_bucket: str | None = None,
+    session_id: str | None = None,
+    trace_id: str | None = None,
+    parent_run_id: str | None = None,
+) -> dict[str, Any]:
+    """Build an ``ARTIFACT_CREATED`` payload for a communications-triage proposal.
+
+    PFOS Stage 4 v2 fields (``skill_slug``, ``surface``, ``cwd_project``,
+    ``parent_run_id``) carry skill-attribution and chain linkage. The
+    ``data.kind="pf_runtime_proposal"`` marker keeps proposals filterable
+    inside the fleet surface alongside ``pf_runtime_reply`` events.
+    """
+    data: dict[str, Any] = {
+        "kind": "pf_runtime_proposal",
+        "action_id": action_id,
+        "action_type": action_type,
+        "account_id": account_id,
+        "target_id": target_id,
+        "rationale_preview": rationale_preview[:500],
+    }
+    if confidence_bucket:
+        data["confidence_bucket"] = confidence_bucket
+    if session_id:
+        data["session_id"] = session_id
+    out: dict[str, Any] = {
+        "type": "ARTIFACT_CREATED",
+        "data": data,
+        "surface": "pf_runtime",
+        "agent_slug": agent_slug,
+        "skill_slug": skill_slug,
+        "cwd_project": profile_slug,
+        "status": "pending",
+    }
+    if trace_id:
+        out["trace_id"] = trace_id
+    if parent_run_id:
+        out["parent_run_id"] = parent_run_id
+    return out
+
+
 def _post_json(url: str, token: str, body: dict[str, Any]) -> tuple[int, str]:
     """POST JSON; return (status_code, response_text). status 0 on transport error."""
     payload = json.dumps(body, separators=(",", ":")).encode("utf-8")

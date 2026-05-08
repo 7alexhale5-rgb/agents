@@ -57,3 +57,31 @@ def emit_session_trace(
         lf.flush()
     except Exception as e:
         _log.debug("langfuse trace skipped: %s", e)
+
+
+def emit_tool_trace(
+    *,
+    profile_slug: str,
+    session_id: str,
+    tool_name: str,
+    tool_server: str,
+    arguments_hash: str,
+    success: bool,
+    error_class: str,
+    latency_ms: float,
+) -> None:
+    """Emit a TRACE_SCHEMA-compatible tool_call line without raw arguments."""
+    payload = {
+        "kind": "pf_runtime.tool_call",
+        "pf_runtime.profile_slug": profile_slug,
+        "pf_runtime.session_id": session_id,
+        "pf_runtime.span_kind": "tool_call",
+        "tool.name": tool_name,
+        "tool.server": tool_server,
+        "tool.arguments_hash": arguments_hash,
+        "tool.success": success,
+        "tool.error_class": error_class,
+        "latency.ms": round(latency_ms, 2),
+        "ts": time.time(),
+    }
+    _log.info("trace %s", json.dumps(payload, ensure_ascii=False))

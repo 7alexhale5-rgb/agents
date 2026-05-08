@@ -24,7 +24,7 @@ pf-runtime/                  # project root (kebab-case per filesystem protocol)
     ├── runtime/
     │   ├── loop.py             # async def run_session(...)
     │   ├── model_adapter.py    # LiteLLMAdapter
-    │   ├── tool_dispatch.py    # ToolDispatcher
+    │   ├── tool_dispatch.py    # ToolDispatcher (schema validation + cycle detection)
     │   ├── stop_condition.py   # StopCondition
     │   └── audit.py            # AuditSink (Langfuse + SQLite mutation_audit)
     ├── memory/
@@ -189,7 +189,7 @@ class ToolResult(BaseModel):
     cost_usd: Decimal = Decimal("0")
 ```
 
-**Argument validation contract.** `ToolDispatcher.dispatch(name, args, context)` MUST validate `args` against the tool's `parameters` JSONSchema _before_ calling `invoke()`. Validation failure raises `ToolValidationError(name, schema_path, message)` and is recorded in `audit.tool_validation_failures`; `invoke()` is never reached. This keeps tool implementations free of defensive arg-shape checks and centralizes the failure mode. JSONSchema is Draft 2020-12 via `jsonschema>=4.21`; format checkers (`uuid`, `date-time`, `email`, `uri`) are enabled by default. Schemas are loaded once per Tool registration and cached.
+**Argument validation contract.** `ToolDispatcher.dispatch(name, args, context)` MUST validate `args` against the tool's `parameters` JSONSchema-like object _before_ calling `invoke()`. Validation failure raises `ToolValidationError(name, schema_path, message)` and is recorded as a validation-class tool trace; `invoke()` is never reached. This keeps tool implementations free of defensive arg-shape checks and centralizes the failure mode. The v1 implementation supports the subset used by PF Runtime tools (`object`, `array`, `string`, `integer`, `number`, `boolean`, `required`, `enum`, `minLength`, `additionalProperties: false`) without adding a runtime dependency; move to full Draft 2020-12 only when an MCP tool requires it.
 
 ## Memory stack
 

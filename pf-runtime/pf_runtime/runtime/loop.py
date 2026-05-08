@@ -13,15 +13,16 @@ Sub-phase B additions (wired here):
       - last-N buffer messages are prepended to the conversation
       - user + assistant messages are appended to the buffer after each turn
 
-Deferred to sub-phase A full:
-  - Tool dispatch (tools=[] stub parameter accepted but ignored)
-  - Multi-step loop (max_steps is accepted but loop exits after step 1)
-  - Cost ceiling enforcement (ceiling is recorded in result, not enforced)
-  - Langfuse trace export (stdout + optional Langfuse SDK).
+Sub-phase communications additions:
+  - Schema-validated JSON tool calls
+  - Multi-step loop bounded by max_steps
+  - Cost ceiling + timeout enforcement
+  - Tool-call trace lines
 """
 from __future__ import annotations
 
 import asyncio
+import json
 import time
 import uuid
 from dataclasses import dataclass, field
@@ -30,6 +31,7 @@ from typing import TYPE_CHECKING, Any
 
 from pf_runtime.config import InboundMessage, Message, Profile
 from pf_runtime.runtime.model_adapter import ModelAdapter
+from pf_runtime.runtime.tool_dispatch import Tool, ToolContext, ToolDispatcher
 from pf_runtime.runtime.trace import emit_session_trace
 
 if TYPE_CHECKING:
@@ -54,29 +56,30 @@ async def run_session(
     model_adapter: ModelAdapter,
     max_steps: int = 4,
     cost_ceiling_usd: Decimal = Decimal("0.50"),
-    tools: list[Any] | None = None,
+    tools: list[Tool] | None = None,
     interrupt: asyncio.Event | None = None,
     memory: MemoryStack | None = None,
 ) -> SessionResult:
     """Run a single agent session end-to-end.
 
-    Sub-phase A (throwaway) + sub-phase B (memory stack) implementation:
+    Sub-phase A/B plus communications tool-loop implementation:
       1. Build system prompt — from MemoryStack (Tier 1) when available,
          otherwise reads SOUL.md + USER.md directly from profile paths.
       2. Hydrate conversation with last-N buffer messages (Tier 2) when
          memory is wired.
       3. Send user message to LLM.
-      4. Persist user + assistant messages to Tier 2 buffer.
-      5. Return SessionResult with the assistant reply.
+      4. Dispatch schema-valid tool calls when the model returns a JSON
+         ``{"tool_call": ...}`` envelope.
+      5. Persist user + final assistant message to Tier 2 buffer.
 
     Args:
         profile: The loaded Profile (contains paths to SOUL.md, USER.md, etc.)
         inbound: The inbound message from the user
         model_adapter: The LLM adapter to use for completion
-        max_steps: Maximum number of tool-call steps (throwaway: exits after 1)
-        cost_ceiling_usd: Cost ceiling (throwaway: recorded but not enforced)
-        tools: Tool list stub — accepted but ignored in throwaway
-        interrupt: Asyncio Event for cancellation (throwaway: not checked)
+        max_steps: Maximum number of model/tool turns.
+        cost_ceiling_usd: Cost ceiling enforced after model/tool calls.
+        tools: Optional schema-validated tool list.
+        interrupt: Asyncio Event for cancellation checked before each step.
         memory: Optional MemoryStack; when provided, Tier 1 context + Tier 2
             buffer hydration are active and each turn is persisted.
 
@@ -119,6 +122,11 @@ async def run_session(
             "Respond in complete sentences. Never give one-word answers."
         )
 
+    dispatcher = ToolDispatcher(tools or [])
+    tool_catalog = dispatcher.prompt_catalog()
+    if tool_catalog:
+        system_prompt = f"{system_prompt}\n\n{tool_catalog}"
+
     # Step 2: Assemble messages — seed with system prompt
     messages: list[dict[str, str]] = [
         {"role": "system", "content": system_prompt},
@@ -135,35 +143,75 @@ async def run_session(
     # Append the current user turn
     messages.append({"role": "user", "content": inbound.text})
 
-    # Step 3: Call the LLM (with one retry if response is too short)
-    assistant_content, cost_usd = await model_adapter.complete(
-        messages,
-        model=profile.model,
-        max_tokens=1024,
-    )
+    cost_usd = Decimal("0")
+    assistant_content = ""
+    finish_reason = "stop"
+    steps_taken = 0
+    context = ToolContext(profile_slug=profile.slug, session_id=session_id)
 
-    # If model gives a very short response (< 10 chars), retry once with an
-    # explicit verbosity nudge appended to the conversation. Small free-tier
-    # models (e.g. nemotron-nano:free) are stochastically terse on simple
-    # queries; a second turn requesting elaboration reliably produces a full
-    # sentence. This is a throwaway-only behavior; sub-phase A full will
-    # use a warm-start system prompt instead.
-    if len(assistant_content.strip()) < 10:
-        retry_messages: list[dict[str, str]] = [
-            *messages,
-            {"role": "assistant", "content": assistant_content},
-            {
-                "role": "user",
-                "content": "Please give a complete sentence answer.",
-            },
-        ]
-        retry_content, retry_cost = await model_adapter.complete(
-            retry_messages,
-            model=profile.model,
-            max_tokens=1024,
+    for step in range(max_steps):
+        steps_taken = step + 1
+        if interrupt is not None and interrupt.is_set():
+            finish_reason = "interrupt"
+            break
+
+        assistant_content, call_cost = await asyncio.wait_for(
+            model_adapter.complete(messages, model=profile.model, max_tokens=1024),
+            timeout=90,
         )
-        assistant_content = retry_content
-        cost_usd = cost_usd + retry_cost
+        cost_usd += call_cost
+        if cost_usd > cost_ceiling_usd:
+            finish_reason = "cost_ceiling"
+            break
+
+        tool_call = _extract_tool_call(assistant_content)
+        if tool_call is None:
+            if len(assistant_content.strip()) < 10:
+                retry_messages: list[dict[str, str]] = [
+                    *messages,
+                    {"role": "assistant", "content": assistant_content},
+                    {"role": "user", "content": "Please give a complete sentence answer."},
+                ]
+                retry_content, retry_cost = await asyncio.wait_for(
+                    model_adapter.complete(
+                        retry_messages,
+                        model=profile.model,
+                        max_tokens=1024,
+                    ),
+                    timeout=90,
+                )
+                assistant_content = retry_content
+                cost_usd += retry_cost
+                if cost_usd > cost_ceiling_usd:
+                    finish_reason = "cost_ceiling"
+            break
+
+        tool_result = await asyncio.wait_for(
+            dispatcher.dispatch(tool_call["name"], tool_call["arguments"], context),
+            timeout=60,
+        )
+        cost_usd += tool_result.cost_usd
+        if cost_usd > cost_ceiling_usd:
+            finish_reason = "cost_ceiling"
+            break
+        messages.append({"role": "assistant", "content": assistant_content})
+        messages.append(
+            {
+                "role": "tool",
+                "content": json.dumps(
+                    {
+                        "name": tool_call["name"],
+                        "ok": tool_result.ok,
+                        "output": tool_result.output,
+                        "error": tool_result.error,
+                    },
+                    default=str,
+                    sort_keys=True,
+                ),
+            }
+        )
+    else:
+        finish_reason = "max_steps"
 
     # Step 4: Build typed message objects for the result
     user_message = Message(role="user", content=inbound.text)
@@ -182,14 +230,33 @@ async def run_session(
         session_id=session_id,
         model=profile.model,
         latency_ms=latency_ms,
-        finish_reason="stop",
+        finish_reason=finish_reason,
         cost_usd=cost_usd,
     )
 
     return SessionResult(
         messages=result_messages,
-        steps=1,
-        finish_reason="stop",
+        steps=steps_taken,
+        finish_reason=finish_reason,
         cost_usd=cost_usd,
         session_id=session_id,
     )
+
+
+def _extract_tool_call(content: str) -> dict[str, Any] | None:
+    """Parse the narrow PF Runtime JSON tool-call envelope."""
+    text = content.strip()
+    if not text.startswith("{"):
+        return None
+    try:
+        payload = json.loads(text)
+    except json.JSONDecodeError:
+        return None
+    call = payload.get("tool_call") if isinstance(payload, dict) else None
+    if not isinstance(call, dict):
+        return None
+    name = call.get("name")
+    arguments = call.get("arguments")
+    if not isinstance(name, str) or not isinstance(arguments, dict):
+        return None
+    return {"name": name, "arguments": arguments}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://a2a-protocol.org/schemas/agent-card.v1.json",
+  "name": "PrettyFly Communications Triage",
+  "version": "0.1.0",
+  "description": "Reads connected mailboxes and calendars, ranks what matters, and creates proposed actions for human approval. V1 never applies mailbox/calendar mutations.",
+  "capabilities": [
+    {
+      "id": "triage_communications",
+      "name": "Triage communications",
+      "description": "Read connected mail and calendars; return digest buckets and proposed actions.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "tenant_slug": { "type": "string" },
+          "lookback_hours": { "type": "integer", "default": 24 }
+        },
+        "required": ["tenant_slug"]
+      },
+      "approval_required": false
+    },
+    {
+      "id": "approve_proposed_action",
+      "name": "Approve proposed action",
+      "description": "Approve one stored proposal for a later provider-specific apply worker.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "tenant_slug": { "type": "string" },
+          "proposal_id": { "type": "string" }
+        },
+        "required": ["tenant_slug", "proposal_id"]
+      },
+      "approval_required": true,
+      "approval_protocol": "human-in-the-loop"
+    }
+  ],
+  "channels": ["a2a/json-rpc-2.0"],
+  "endpoint": "https://agents.prettyflyforai.com/a2a/communications-triage",
+  "tier_eligibility": ["starter", "pro", "scale"],
+  "guardrails": [
+    "outbound_email_approval",
+    "no_auto_send",
+    "no_auto_delete",
+    "no_auto_calendar_write",
+    "pii_redaction"
+  ]
+}

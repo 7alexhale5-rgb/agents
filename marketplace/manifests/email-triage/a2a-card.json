@@ -1,8 +1,8 @@
 {
   "$schema": "https://a2a-protocol.org/schemas/agent-card.v1.json",
   "name": "PrettyFly Email Triage",
-  "version": "0.1.0",
-  "description": "Categorizes inbound email into respond / deferred / unsubscribe / delete. Drafts unsubscribes for one-tap approval. Produces a daily digest of the 5 emails that matter.",
+  "version": "0.2.0",
+  "description": "Categorizes inbound email into respond / deferred / unsubscribe / delete proposals. V0.2 is read/propose only and is superseded by communications-triage for multi-provider mail/calendar.",
   "vendor": {
     "name": "PrettyFly.ai",
     "url": "https://prettyflyforai.com",
@@ -12,7 +12,7 @@
     {
       "id": "triage_inbox",
       "name": "Triage Inbox",
-      "description": "Read the user's last-24h inbox; categorize each message; archive deferred; queue unsubscribes.",
+      "description": "Read the user's last-24h inbox; categorize each message; create proposals for any archive, delete, or unsubscribe action.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -27,7 +27,7 @@
           "respond": { "type": "array" },
           "deferred_count": { "type": "integer" },
           "unsubscribe_drafts": { "type": "array" },
-          "deleted_count": { "type": "integer" }
+          "delete_proposals": { "type": "array" }
         }
       },
       "approval_required": false

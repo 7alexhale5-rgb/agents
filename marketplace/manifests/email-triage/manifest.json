@@ -1,12 +1,12 @@
 {
   "sku": "email-triage",
   "name": "Email Triage — Starter Inbox Agent",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "category": "personal",
   "department": "personal",
-  "tagline": "Wakes up before you do. Deletes the junk. Unsubscribes from the useless. Hands you the 5 emails that matter.",
+  "tagline": "Wakes up before you do, ranks what matters, and proposes cleanup for approval.",
   "tier": "starter",
-  "depends_on": ["composio-bridge", "4d-senses"],
+  "depends_on": ["communications-triage", "4d-senses"],
   "channels": ["gmail", "slack_digest", "telegram_digest"],
   "model_routing": {
     "default": "openrouter:nemotron-free",
@@ -37,7 +37,9 @@
   "trial_pool_usd": 5,
   "trial_nag_at_usd": 3,
   "onboarding_questions": 6,
-  "first_sample_task": "triage-last-50-emails-with-explanation",
+  "first_sample_task": "triage-last-50-emails-with-explanation-and-proposals",
+  "superseded_by": "communications-triage",
+  "autonomy": "read_and_propose",
   "sla": {
     "uptime": 99.0,
     "p95_latency_seconds": 30,

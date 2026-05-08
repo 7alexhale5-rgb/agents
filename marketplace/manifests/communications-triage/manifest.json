@@ -1,0 +1,83 @@
+{
+  "sku": "communications-triage",
+  "name": "Communications Triage — Unified Mail + Calendar Agent",
+  "version": "0.1.0",
+  "category": "personal",
+  "department": "personal",
+  "tagline": "One read-only morning command center for mail, calendars, releases, promotions, and schedule risks.",
+  "tier": "starter",
+  "depends_on": ["pf-runtime", "google-workspace-oauth", "microsoft-graph-oauth", "imap-hostgator"],
+  "channels": ["gmail", "google_calendar", "microsoft_graph", "imap_hostgator", "slack_digest"],
+  "autonomy": "read_and_propose",
+  "provider_matrix": {
+    "gmail": {
+      "v1_scopes": ["https://www.googleapis.com/auth/gmail.readonly"],
+      "forbidden_v1_scopes": [
+        "https://www.googleapis.com/auth/gmail.modify",
+        "https://www.googleapis.com/auth/gmail.compose",
+        "https://www.googleapis.com/auth/gmail.send",
+        "https://mail.google.com/"
+      ]
+    },
+    "google_calendar": {
+      "v1_scopes": [
+        "https://www.googleapis.com/auth/calendar.events.readonly",
+        "https://www.googleapis.com/auth/calendar.freebusy"
+      ],
+      "forbidden_v1_scopes": ["https://www.googleapis.com/auth/calendar.events"]
+    },
+    "microsoft_graph": {
+      "v1_scopes": ["Mail.Read", "Calendars.ReadBasic", "MailboxSettings.Read"],
+      "forbidden_v1_scopes": ["Mail.ReadWrite", "Mail.Send", "Calendars.ReadWrite"]
+    },
+    "hostgator_imap": {
+      "v1_transport": "imap_ssl_993",
+      "forbidden_v1_transport": "smtp_send"
+    }
+  },
+  "actions_v1": {
+    "mode": "proposal_only",
+    "proposable": [
+      "label",
+      "archive",
+      "move_folder",
+      "mark_read",
+      "trash",
+      "unsubscribe_draft",
+      "reply_draft",
+      "calendar_hold",
+      "calendar_update",
+      "follow_up_task"
+    ],
+    "auto_apply": []
+  },
+  "model_routing": {
+    "default": "openrouter:nemotron-free",
+    "drafting": "mistral:medium",
+    "reasoning": "anthropic:claude-sonnet-4-6"
+  },
+  "memory_axes": ["working", "episodic", "procedural"],
+  "guardrails": [
+    "outbound_email_approval",
+    "no_auto_send",
+    "no_auto_delete",
+    "no_auto_calendar_write",
+    "pii_redaction",
+    "spend_cap_per_day"
+  ],
+  "account_registry": {
+    "gmail_accounts": 5,
+    "microsoft_domains": ["kohoconsulting.com"],
+    "imap_domains": ["yehovahbuilders.com"]
+  },
+  "sla": {
+    "uptime": 99.0,
+    "p95_latency_seconds": 45,
+    "eval_pass_rate_floor": 0.85
+  },
+  "a2a_card": "./a2a-card.json",
+  "pricing_ref": "./pricing.yaml",
+  "publish": false,
+  "pilot_tenant": "alex-unified-comms",
+  "pilot_target_days": 14
+}

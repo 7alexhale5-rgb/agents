@@ -1,0 +1,56 @@
+# Copy to the tenant runtime profile and fill OAuth credential references.
+# Do not store client secrets or refresh tokens in this file.
+
+accounts:
+  - account_id: gmail-1
+    provider: google_mail
+    address: alex@example-gmail-1.com
+    scopes:
+      - https://www.googleapis.com/auth/gmail.readonly
+    read_only: true
+
+  - account_id: gmail-2
+    provider: google_mail
+    address: alex@example-gmail-2.com
+    scopes:
+      - https://www.googleapis.com/auth/gmail.readonly
+    read_only: true
+
+  - account_id: gmail-3
+    provider: google_mail
+    address: alex@example-gmail-3.com
+    scopes:
+      - https://www.googleapis.com/auth/gmail.readonly
+    read_only: true
+
+  - account_id: gmail-4
+    provider: google_mail
+    address: alex@example-gmail-4.com
+    scopes:
+      - https://www.googleapis.com/auth/gmail.readonly
+    read_only: true
+
+  - account_id: gmail-5
+    provider: google_mail
+    address: alex@example-gmail-5.com
+    scopes:
+      - https://www.googleapis.com/auth/gmail.readonly
+    read_only: true
+
+  - account_id: koho-m365
+    provider: microsoft_graph
+    address: alex@kohoconsulting.com
+    scopes:
+      - Mail.Read
+      - Calendars.ReadBasic
+      - MailboxSettings.Read
+    read_only: true
+
+  - account_id: yehovah-hostgator
+    provider: imap_hostgator
+    address: alex@yehovahbuilders.com
+    imap:
+      port: 993
+      ssl: true
+    smtp_enabled_v1: false
+    read_only: true

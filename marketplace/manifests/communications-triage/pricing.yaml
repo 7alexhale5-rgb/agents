@@ -1,0 +1,16 @@
+tiers:
+  starter:
+    monthly_price: 99
+    accounts_included: 8
+    autonomy: read_and_propose
+    eval_pass_rate_floor: 0.85
+  pro:
+    monthly_price: 299
+    accounts_included: 20
+    autonomy: read_and_propose
+    eval_pass_rate_floor: 0.88
+  scale:
+    monthly_price: 999
+    accounts_included: unlimited
+    autonomy: read_and_propose
+    eval_pass_rate_floor: 0.92

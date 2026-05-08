@@ -1,0 +1,37 @@
+required:
+  - id: google-workspace-oauth
+    purpose: Gmail and Google Calendar read-only sync for v1
+    transport: http
+    scopes:
+      - https://www.googleapis.com/auth/gmail.readonly
+      - https://www.googleapis.com/auth/calendar.events.readonly
+      - https://www.googleapis.com/auth/calendar.freebusy
+    forbidden_v1_scopes:
+      - https://www.googleapis.com/auth/gmail.modify
+      - https://www.googleapis.com/auth/gmail.send
+      - https://www.googleapis.com/auth/calendar.events
+
+  - id: microsoft-graph-oauth
+    purpose: Koho Microsoft 365 delegated mail/calendar read-only sync for v1
+    transport: http
+    scopes:
+      - Mail.Read
+      - Calendars.ReadBasic
+      - MailboxSettings.Read
+    forbidden_v1_scopes:
+      - Mail.ReadWrite
+      - Mail.Send
+      - Calendars.ReadWrite
+
+  - id: imap-hostgator
+    purpose: Yehovah Builders HostGator private-mail IMAP read-only sync
+    transport: imap_ssl
+    port: 993
+    smtp_enabled_v1: false
+
+optional:
+  - id: 4d-senses
+    purpose: Risk-pattern checks before surfacing proposed actions
+    transport: stdio
+    command: node
+    args: ["~/Projects/agents/mcp-servers/4d-senses/index.js"]

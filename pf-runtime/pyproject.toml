@@ -8,8 +8,10 @@ readme = "SPEC.md"
 requires-python = ">=3.11"
 
 # Production deps will populate as sub-phases ship.
-# v0.1-pre = spec + stubs only; no runtime deps yet.
-dependencies = []
+# pyyaml is required by communications/account_registry.py (Slice 1).
+dependencies = [
+    "pyyaml>=6.0",
+]
 
 [project.optional-dependencies]
 runtime = [
@@ -41,6 +43,7 @@ dev = [
     "pytest>=8.3",
     "pytest-asyncio>=0.24",
     "pytest-cov>=5.0",
+    "types-PyYAML>=6.0",
 ]
 
 # ----- ruff (lint + format) -----

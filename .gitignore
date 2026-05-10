@@ -48,3 +48,7 @@ honcho/workspaces/*/
 
 # Promptfoo nightly run outputs — regenerated, not source-of-truth
 marketplace/manifests/*/eval-suite/reports/
+
+# Shadow workspaces created by scripts/clone-profile-baseline.sh — generated,
+# regenerated on demand, not source-of-truth.
+hermes/profiles/*-baseline/

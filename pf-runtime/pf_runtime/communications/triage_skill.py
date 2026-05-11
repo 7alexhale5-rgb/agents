@@ -60,7 +60,13 @@ from pf_runtime.communications.tools import (
     SKILL_SLUG,
     CreateProposalTool,
 )
-from pf_runtime.runtime.pfos_emit import emit_agent_event
+from pf_runtime.runtime.pfos_emit import (
+    emit_action,
+    emit_agent_event,
+    emit_todo,
+    runtime_action_payload,
+    runtime_todo_payload,
+)
 from pf_runtime.runtime.tool_dispatch import ToolContext
 
 log = logging.getLogger(__name__)
@@ -128,6 +134,7 @@ class ClassifierError(RuntimeError):
 # Alex via the daily digest only, never the proposal queue.
 _PROPOSABLE_BUCKETS: frozenset[TriageBucket] = frozenset(
     {
+        TriageBucket.NEEDS_ALEX_TODAY,
         TriageBucket.NEEDS_REPLY,
         TriageBucket.SCHEDULE,
         TriageBucket.PROMOTION,
@@ -139,12 +146,93 @@ _PROPOSABLE_BUCKETS: frozenset[TriageBucket] = frozenset(
 # Default action proposed for each proposable bucket. The proposal stays in the
 # queue for Alex to approve before any provider mutation runs.
 _BUCKET_TO_DEFAULT_ACTION: dict[TriageBucket, ActionType] = {
+    TriageBucket.NEEDS_ALEX_TODAY: ActionType.FOLLOW_UP_TASK,
     TriageBucket.NEEDS_REPLY: ActionType.REPLY_DRAFT,
     TriageBucket.SCHEDULE: ActionType.CALENDAR_HOLD,
     TriageBucket.PROMOTION: ActionType.UNSUBSCRIBE_DRAFT,
     TriageBucket.NOISE: ActionType.ARCHIVE,
     TriageBucket.RELEASE_UPDATE: ActionType.LABEL,
 }
+
+
+# Classifier emits "high" / "medium" / "low"; map to floats so PFOS can
+# rank by numeric confidence (the agent_actions.confidence column is
+# NUMERIC(3,2)). "high" maps mid-band so a manually-corrected proposal
+# upstream still has room to be set higher.
+_CONFIDENCE_BUCKET_FLOAT: dict[str, float] = {
+    "high": 0.85,
+    "medium": 0.55,
+    "low": 0.25,
+}
+
+
+async def _emit_proposal_to_pfos(
+    *,
+    entry: RegistryEntry,
+    msg: NormalizedMessage,
+    action_type: ActionType,
+    bucket: TriageBucket,
+    action_id: str,
+    rationale: str,
+    confidence: float,
+    run_id: str,
+) -> None:
+    """Emit one proposed action (and todo, when NEEDS_ALEX_TODAY) to PFOS.
+
+    Every successful action emit lands an `agent_actions` row plus a
+    paired `agent_events` row in PFOS, scoped to the account's silo per
+    :attr:`RegistryEntry.silo`.
+
+    NEEDS_ALEX_TODAY classifications additionally emit a `todos` row so
+    the urgent item surfaces on the PFOS `/home` AgentActivityLane with
+    `requires_human=true`.
+
+    Failures here are non-fatal: the local SQLite proposal row is the
+    durable source of truth. Phase 3 wires a `dirty` flag and drain
+    path so missed emits retry on subsequent cycles.
+    """
+    silo = entry.silo
+    action_body = runtime_action_payload(
+        action_type=action_type.value,
+        bucket=bucket.value,
+        account_id=entry.account.account_id,
+        target_id=msg.message_id,
+        confidence=confidence,
+        rationale=rationale,
+        sender=msg.sender,
+        subject=msg.subject,
+        trace_id=run_id,
+    )
+    try:
+        await emit_action(action_body, silo=silo)
+    except Exception:
+        log.warning(
+            "PFRT_EMIT_ACTION_FAIL account=%s action=%s",
+            entry.account.account_id,
+            action_type.value,
+            exc_info=True,
+        )
+
+    if bucket is not TriageBucket.NEEDS_ALEX_TODAY:
+        return
+
+    title = msg.subject.strip() or f"Follow up on {msg.sender or 'incoming mail'}"
+    todo_body = runtime_todo_payload(
+        title=title,
+        confidence=confidence,
+        message_id=msg.message_id,
+        action_id=action_id,
+        trace_id=run_id,
+    )
+    try:
+        await emit_todo(todo_body, silo=silo)
+    except Exception:
+        log.warning(
+            "PFRT_EMIT_TODO_FAIL account=%s message=%s",
+            entry.account.account_id,
+            msg.message_id,
+            exc_info=True,
+        )
 
 _VALID_CONFIDENCES: frozenset[str] = frozenset({"high", "medium", "low"})
 
@@ -473,6 +561,20 @@ async def _triage_account(
                 tool_context,
             )
             proposed_count += 1
+
+            # Phase 2: emit to PFOS. Failures are non-fatal — the local
+            # SQLite row is the durable source of truth; next cycle's emit
+            # will retry (Phase 3 wires the `dirty` flag and drain path).
+            await _emit_proposal_to_pfos(
+                entry=entry,
+                msg=msg,
+                action_type=action_type,
+                bucket=classification.bucket,
+                action_id=action_id,
+                rationale=classification.rationale,
+                confidence=_CONFIDENCE_BUCKET_FLOAT.get(classification.confidence, 0.5),
+                run_id=run_id,
+            )
 
     log.info(
         "PFRT_ACCOUNT_FETCH_END account=%s fetched=%s classified=%s proposed=%s",

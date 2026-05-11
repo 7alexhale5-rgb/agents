@@ -368,7 +368,8 @@ async def test_proposal_filtering(tmp_path: Path) -> None:
     2. medium + needs_reply     → NOT proposed (low confidence)
     3. low + promotion          → NOT proposed
     4. high + fyi               → NOT proposed (non-proposable bucket)
-    5. high + needs_alex_today  → NOT proposed (digest-only bucket)
+    5. high + needs_alex_today  → proposed (FOLLOW_UP_TASK; Phase 2 addition —
+       NEEDS_ALEX_TODAY now lands a real PFOS task plus an agent_actions row)
     """
     entry = _gmail_entry()
     raw = [
@@ -416,16 +417,20 @@ async def test_proposal_filtering(tmp_path: Path) -> None:
     )
     assert result.fetched == 5
     assert result.classified == 5
-    assert result.proposed == 1
+    assert result.proposed == 2
 
-    # Only the first message should have triggered a proposal.
-    assert proposal_spy.await_count == 1
-    args, _ = proposal_spy.await_args
-    payload = args[0]
-    assert payload["target_id"] == "m1"
-    assert payload["action_type"] == "reply_draft"
-    assert payload["confidence_bucket"] == "high"
-    assert payload["action_id"] == "gmail-1-m1-reply_draft"
+    assert proposal_spy.await_count == 2
+    by_target = {
+        call.args[0]["target_id"]: call.args[0]
+        for call in proposal_spy.await_args_list
+    }
+    assert set(by_target) == {"m1", "m5"}
+    assert by_target["m1"]["action_type"] == "reply_draft"
+    assert by_target["m1"]["confidence_bucket"] == "high"
+    assert by_target["m1"]["action_id"] == "gmail-1-m1-reply_draft"
+    assert by_target["m5"]["action_type"] == "follow_up_task"
+    assert by_target["m5"]["confidence_bucket"] == "high"
+    assert by_target["m5"]["action_id"] == "gmail-1-m5-follow_up_task"
 
 
 # ---------------------------------------------------------------------------
@@ -547,15 +552,15 @@ async def test_golden_mailbox_classification_and_proposals(tmp_path: Path) -> No
     assert result.classified == 10
 
     # Proposable subset = NEEDS_REPLY (g1, g9) + PROMOTION (g2, g10) +
-    # SCHEDULE (g3) + RELEASE_UPDATE (g4) + NOISE (g5) = 7. The 3 digest-only
-    # buckets (NEEDS_ALEX_TODAY g6, WAITING g7, FYI g8) are deliberately
-    # excluded from the proposal queue per spec.
-    assert result.proposed == 7
+    # SCHEDULE (g3) + RELEASE_UPDATE (g4) + NOISE (g5) + NEEDS_ALEX_TODAY
+    # (g6, Phase 2) = 8. The 2 remaining digest-only buckets (WAITING g7,
+    # FYI g8) stay excluded from the proposal queue per spec.
+    assert result.proposed == 8
 
     proposed_target_ids = {
         c.args[0]["target_id"] for c in proposal_spy.await_args_list
     }
-    assert proposed_target_ids == {"g1", "g2", "g3", "g4", "g5", "g9", "g10"}
+    assert proposed_target_ids == {"g1", "g2", "g3", "g4", "g5", "g6", "g9", "g10"}
 
     # Spot-check action mapping for one message of each proposable bucket.
     action_by_target = {
@@ -567,6 +572,7 @@ async def test_golden_mailbox_classification_and_proposals(tmp_path: Path) -> No
     assert action_by_target["g3"] == "calendar_hold"
     assert action_by_target["g4"] == "label"
     assert action_by_target["g5"] == "archive"
+    assert action_by_target["g6"] == "follow_up_task"
 
 
 # ---------------------------------------------------------------------------
@@ -1003,11 +1009,16 @@ def test_normalize_unsupported_provider_raises() -> None:
 
 
 def test_module_constants_match_spec() -> None:
-    """Lock the bucket→action mapping and proposable set to spec."""
+    """Lock the bucket→action mapping and proposable set to spec.
+
+    Phase 2 added NEEDS_ALEX_TODAY → FOLLOW_UP_TASK so the urgent bucket
+    lands a real PFOS todo on each cycle (not just a digest line).
+    """
     from pf_runtime.communications.schema import ActionType
 
     expected_proposable = frozenset(
         {
+            TriageBucket.NEEDS_ALEX_TODAY,
             TriageBucket.NEEDS_REPLY,
             TriageBucket.SCHEDULE,
             TriageBucket.PROMOTION,
@@ -1017,6 +1028,7 @@ def test_module_constants_match_spec() -> None:
     )
     assert expected_proposable == triage_skill._PROPOSABLE_BUCKETS
     expected_action_map = {
+        TriageBucket.NEEDS_ALEX_TODAY: ActionType.FOLLOW_UP_TASK,
         TriageBucket.NEEDS_REPLY: ActionType.REPLY_DRAFT,
         TriageBucket.SCHEDULE: ActionType.CALENDAR_HOLD,
         TriageBucket.PROMOTION: ActionType.UNSUBSCRIBE_DRAFT,

@@ -63,7 +63,7 @@ GOOGLE_DEFAULT_SCOPES = " ".join([
 
 MICROSOFT_DEFAULT_SCOPES = "Mail.Read Calendars.ReadBasic MailboxSettings.Read offline_access User.Read"
 
-DEFAULT_PORT = 8765
+DEFAULT_PORT = 8910  # 8765 is commonly grabbed by Docker on macOS
 DEFAULT_PATH = "/callback"
 
 SUCCESS_HTML = b"""<!doctype html><html><head><meta charset="utf-8"><title>Connected</title>
@@ -93,21 +93,29 @@ class _CallbackHandler(http.server.BaseHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         if parsed.path != self.callback_path:
             self.send_response(404)
+            self.send_header("Connection", "close")
             self.end_headers()
             return
         params = urllib.parse.parse_qs(parsed.query)
         code = (params.get("code") or [None])[0]
         error = (params.get("error") or [None])[0]
         state = (params.get("state") or [None])[0]
+        # Stash captured state FIRST so the main thread sees it even if the
+        # response write blocks or the connection drops mid-flight.
+        _CallbackHandler.captured = _CapturedCode(code=code, error=error, state=state)
         ok = bool(code) and (not self.expected_state or state == self.expected_state)
         body = SUCCESS_HTML if ok else FAILURE_HTML
         self.send_response(200 if ok else 400)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
+        self.send_header("Connection", "close")
         self.end_headers()
-        self.wfile.write(body)
-        # Stash on the class so the main thread can see it.
-        _CallbackHandler.captured = _CapturedCode(code=code, error=error, state=state)
+        try:
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionResetError):
+            # Browser closed the connection before we finished writing — we
+            # already captured the code, so this is fine.
+            pass
 
     def log_message(self, fmt: str, *args: Any) -> None:  # noqa: A003 (override)
         # Quiet the default access-log line so the CLI output stays clean.
@@ -115,8 +123,14 @@ class _CallbackHandler(http.server.BaseHTTPRequestHandler):
 
 
 def _free_port(preferred: int) -> int:
-    """Return ``preferred`` if it binds; otherwise raise so the operator can pick another."""
+    """Return ``preferred`` if it binds; otherwise raise so the operator can pick another.
+
+    Uses SO_REUSEADDR so a TIME_WAIT socket from a prior run on the same port
+    doesn't false-positive as busy. Real conflicts (another process holding
+    LISTEN) still fail.
+    """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     try:
         s.bind(("127.0.0.1", preferred))
     except OSError as exc:
@@ -155,6 +169,8 @@ def _run_listener(port: int, path: str, state: str, timeout_s: int) -> _Captured
     _CallbackHandler.captured = _CapturedCode()
     _CallbackHandler.expected_state = state
     _CallbackHandler.callback_path = path
+    # Allow TIME_WAIT sockets from a prior provision run to be re-bound immediately.
+    http.server.HTTPServer.allow_reuse_address = True
     server = http.server.HTTPServer(("127.0.0.1", port), _CallbackHandler)
     t = threading.Thread(target=server.serve_forever, daemon=True)
     t.start()
@@ -199,8 +215,10 @@ def _provision_google(args: argparse.Namespace) -> int:
 
     print(f"[{args.account}] opening browser for {args.email or 'Google account picker'}...")
     print(f"  redirect_uri = {redirect_uri}")
+    print(f"  authorize_url = {authorize_url}")
     print(f"  (if Google says redirect_uri_mismatch, add {redirect_uri} to the OAuth client at https://console.cloud.google.com/apis/credentials)")
-    _open_url(authorize_url)
+    if not args.no_open:
+        _open_url(authorize_url)
     captured = _run_listener(port, args.path, state, args.timeout)
 
     if captured.error or not captured.code:
@@ -279,8 +297,10 @@ def _provision_microsoft(args: argparse.Namespace) -> int:
 
     print(f"[{args.account}] opening browser for {args.email or 'Microsoft account picker'}...")
     print(f"  redirect_uri = {redirect_uri}")
+    print(f"  authorize_url = {authorize_url}")
     print(f"  (if Microsoft says redirect_uri_mismatch, add {redirect_uri} to the Azure app's Web redirect URIs)")
-    _open_url(authorize_url)
+    if not args.no_open:
+        _open_url(authorize_url)
     captured = _run_listener(port, args.path, state, args.timeout)
 
     if captured.error or not captured.code:
@@ -375,6 +395,7 @@ def main(argv: list[str] | None = None) -> int:
         help="also write PF_GMAIL_TOKEN_<UPPER(alias)> (repeatable; e.g. --write-also gmail-2-calendar)",
     )
     g.add_argument("--timeout", type=int, default=180, help="seconds to wait for callback")
+    g.add_argument("--no-open", action="store_true", help="print the authorize_url but don't auto-open the browser")
     g.set_defaults(handler=_provision_google)
 
     m = sub.add_parser("microsoft", help="Provision a Microsoft Graph OAuth grant via loopback redirect")
@@ -385,6 +406,7 @@ def main(argv: list[str] | None = None) -> int:
     m.add_argument("--path", default=DEFAULT_PATH)
     m.add_argument("--scope", help="override default scopes (space-separated)")
     m.add_argument("--timeout", type=int, default=180, help="seconds to wait for callback")
+    m.add_argument("--no-open", action="store_true", help="print the authorize_url but don't auto-open the browser")
     m.set_defaults(handler=_provision_microsoft)
 
     args = parser.parse_args(argv)

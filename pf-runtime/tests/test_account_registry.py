@@ -272,6 +272,63 @@ def test_read_only_must_be_true(tmp_path: Path) -> None:
     assert "read_only" in str(exc.value)
 
 
+def test_silo_property_derives_from_address() -> None:
+    """RegistryEntry.silo is a derived property from account.address."""
+    registry = AccountRegistry.load(EXAMPLE_REGISTRY, env={})
+    silos_by_id = {e.account.account_id: e.silo for e in registry.entries}
+    # Example registry uses fake @example-gmail-N.com addresses that don't
+    # match any explicit silo domain, so they fall back to the default.
+    assert silos_by_id["gmail-1"] == "prettyfly"
+    assert silos_by_id["koho-m365"] == "koho"
+    assert silos_by_id["yehovah-hostgator"] == "yeh"
+
+
+def test_is_mail_provider_excludes_calendar_twins() -> None:
+    registry = AccountRegistry.load(EXAMPLE_REGISTRY, env={})
+    for entry in registry.entries:
+        if entry.account.provider.value == "google_calendar":
+            assert entry.is_mail_provider is False
+        else:
+            assert entry.is_mail_provider is True
+
+
+def test_with_mail_credentials_filters_calendar_twins(tmp_path: Path) -> None:
+    """A registry with both mail + calendar entries credentialled should
+    yield only mail entries from with_mail_credentials()."""
+    yaml_path = _write(
+        tmp_path / "registry.yaml",
+        (
+            "accounts:\n"
+            "  - account_id: gmail-1\n"
+            "    provider: google_mail\n"
+            "    address: alex@example.com\n"
+            "    scopes:\n"
+            "      - https://www.googleapis.com/auth/gmail.readonly\n"
+            "    read_only: true\n"
+            "  - account_id: gmail-1-calendar\n"
+            "    provider: google_calendar\n"
+            "    address: alex@example.com\n"
+            "    scopes:\n"
+            "      - https://www.googleapis.com/auth/calendar.events.readonly\n"
+            "    read_only: true\n"
+        ),
+    )
+    registry = AccountRegistry.load(
+        yaml_path,
+        env={
+            "PF_GMAIL_TOKEN_GMAIL_1": "abc",
+            "PF_GMAIL_TOKEN_GMAIL_1_CALENDAR": "xyz",
+        },
+    )
+    # Both have credentials.
+    assert sum(1 for e in registry.with_credentials()) == 2
+    # Only the mail entry comes out of with_mail_credentials.
+    mail_only = list(registry.with_mail_credentials())
+    assert len(mail_only) == 1
+    assert mail_only[0].account.account_id == "gmail-1"
+    assert mail_only[0].account.provider.value == "google_mail"
+
+
 def test_imap_entry_carries_settings(tmp_path: Path) -> None:
     yaml_path = _write(
         tmp_path / "registry.yaml",

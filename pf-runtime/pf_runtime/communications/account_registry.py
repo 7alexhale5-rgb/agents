@@ -25,8 +25,18 @@ from typing import Any
 import yaml
 
 from pf_runtime.communications.schema import AccountConfig, Provider
+from pf_runtime.communications.silo_map import silo_for_address
 
 log = logging.getLogger(__name__)
+
+
+# Providers whose accounts produce mail triage cycles. Calendar providers
+# share the OAuth grant of their mail twin but aren't fetched as standalone
+# triage targets — they're queried inside the SCHEDULE-bucket flow via the
+# matching mail account's calendar twin.
+_MAIL_PROVIDERS: frozenset[Provider] = frozenset(
+    {Provider.GOOGLE_MAIL, Provider.MICROSOFT_GRAPH, Provider.IMAP_HOSTGATOR}
+)
 
 
 class RegistryError(Exception):
@@ -61,6 +71,29 @@ class RegistryEntry:
     account: AccountConfig
     imap: IMAPSettings | None = None
     credentials_present: bool = False
+
+    @property
+    def silo(self) -> str:
+        """PFOS silo slug derived from the account's address.
+
+        Drives the URL `pf-runtime` POSTs to: each successful triage emit
+        targets ``/api/silos/<silo>/agent-action`` so the PFOS lane shows
+        each account under its native workstream (koho, ctox, yeh,
+        prettyfly).
+        """
+        return silo_for_address(self.account.address)
+
+    @property
+    def is_mail_provider(self) -> bool:
+        """True for providers whose accounts are valid triage targets.
+
+        Calendar providers share an OAuth grant with their mail twin and
+        are queried inside the SCHEDULE-bucket flow, never as standalone
+        triage targets. Excluding them from the iteration boundary
+        prevents the silent ``RegistryValidationError`` rows that the
+        default client factory produced for `Provider.GOOGLE_CALENDAR`.
+        """
+        return self.account.provider in _MAIL_PROVIDERS
 
 
 @dataclass(frozen=True)
@@ -117,6 +150,19 @@ class AccountRegistry:
     def with_credentials(self) -> Iterator[RegistryEntry]:
         """Iterate only entries whose credential env var was present at load."""
         return (e for e in self.entries if e.credentials_present)
+
+    def with_mail_credentials(self) -> Iterator[RegistryEntry]:
+        """Iterate credentialled mail-provider entries only.
+
+        Filters out calendar twins (``GOOGLE_CALENDAR``) so the triage loop
+        doesn't try to build a mail client for an entry the default factory
+        can't handle. Calendar entries are reached via their mail twin's
+        SCHEDULE-bucket correlation, not as standalone iteration targets.
+        """
+        return (
+            e for e in self.entries
+            if e.credentials_present and e.is_mail_provider
+        )
 
 
 # ---------------------------------------------------------------------------

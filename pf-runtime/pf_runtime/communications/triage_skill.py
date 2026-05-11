@@ -245,7 +245,11 @@ async def triage_all_accounts(
     factory = client_factory if client_factory is not None else _default_client_factory
 
     accounts_total = len(registry.entries)
-    creds_entries = list(registry.with_credentials())
+    # Filter to mail providers only — calendar twins share OAuth with their
+    # mail siblings and are queried inside the SCHEDULE-bucket flow, not as
+    # standalone triage targets. Including them here would have the default
+    # client factory raise RegistryValidationError per entry.
+    creds_entries = list(registry.with_mail_credentials())
     accounts_with_creds = len(creds_entries)
 
     log.info(

@@ -91,6 +91,16 @@ def register_subparser(subparsers: argparse._SubParsersAction[Any]) -> None:
             "(default: <hermes-home>/profiles/<profile>/account-registry.yaml)"
         ),
     )
+    triage.add_argument(
+        "--scheduled",
+        action="store_true",
+        help=(
+            "Cron mode: emit a single JSON line on stdout instead of "
+            "human-readable summary. Never prompts. Intended for launchd "
+            "invocation; logs from this run are captured by launchd's "
+            "StandardOutPath."
+        ),
+    )
     _add_profile_args(triage)
 
 
@@ -241,8 +251,44 @@ def _handle_triage(args: argparse.Namespace) -> int:
         )
     )
 
-    print(_format_run_result(result))
+    if getattr(args, "scheduled", False):
+        print(_format_run_result_json(result))
+    else:
+        print(_format_run_result(result))
     return 0 if result.errors == 0 else 1
+
+
+def _format_run_result_json(result: TriageRunResult) -> str:
+    """One-line JSON summary for launchd capture.
+
+    Stable shape so log greppers downstream don't have to parse human
+    text. Contains the run_id, duration, proposal/error counts, and one
+    object per account with status + counts.
+    """
+    duration_ms = int((result.finished_at - result.started_at).total_seconds() * 1000)
+    accounts_payload = [
+        {
+            "account_id": a.account_id,
+            "provider": a.provider.value,
+            "fetched": a.fetched,
+            "classified": a.classified,
+            "proposed": a.proposed,
+            "error": a.error,
+        }
+        for a in result.accounts
+    ]
+    return json.dumps(
+        {
+            "run_id": result.run_id,
+            "started_at": result.started_at.isoformat(),
+            "finished_at": result.finished_at.isoformat(),
+            "duration_ms": duration_ms,
+            "proposals_created": result.proposals_created,
+            "errors": result.errors,
+            "accounts": accounts_payload,
+        },
+        separators=(",", ":"),
+    )
 
 
 def _build_adapter(profile: Any) -> ModelAdapter:

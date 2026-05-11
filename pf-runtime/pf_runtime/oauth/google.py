@@ -175,7 +175,15 @@ def _cmd_refresh(args: argparse.Namespace) -> int:
     if args.write_env:
         wrote = write_access_token_to_env(args.profile, args.account, record["access_token"])
         msg = "updated" if wrote else "appended"
-        print(f"refreshed {args.account}: token {msg} in profile .env, expires in {int(record['expires_at'] - time.time())}s")
+        also_msg = ""
+        if args.write_also:
+            for alias in args.write_also:
+                write_access_token_to_env(args.profile, alias, record["access_token"])
+            also_msg = f" (also wrote: {', '.join(args.write_also)})"
+        print(
+            f"refreshed {args.account}: token {msg} in profile .env, "
+            f"expires in {int(record['expires_at'] - time.time())}s{also_msg}"
+        )
     else:
         print(f"refreshed {args.account}: expires in {int(record['expires_at'] - time.time())}s (cache only)")
     return 0
@@ -187,6 +195,17 @@ def main(argv: list[str] | None = None) -> int:
     p_refresh = sub.add_parser("refresh", help="refresh access token for an account")
     p_refresh.add_argument("--account", required=True, help="account_id, e.g. gmail-1")
     p_refresh.add_argument("--profile", default="personal")
+    p_refresh.add_argument(
+        "--write-also",
+        action="append",
+        default=[],
+        metavar="ALIAS_ID",
+        help=(
+            "Also write the access token to PF_GMAIL_TOKEN_<UPPER(alias)>. "
+            "Repeatable. Use when one OAuth grant covers multiple registry "
+            "accounts (e.g. --write-also gmail-1-calendar)."
+        ),
+    )
     p_refresh.add_argument("--no-write-env", dest="write_env", action="store_false",
                            help="don't update PF_GMAIL_TOKEN_<account> in .env")
     p_refresh.set_defaults(write_env=True)

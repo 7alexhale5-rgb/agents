@@ -127,3 +127,19 @@ def test_write_access_token_to_env_appends_if_missing(hermes_home: Path) -> None
     assert wrote is True
     content = (hermes_home / "profiles" / "personal" / ".env").read_text()
     assert "PF_GMAIL_TOKEN_GMAIL_3=ya29.added" in content
+
+
+def test_cli_refresh_write_also_populates_alias_keys(hermes_home: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    _write_env(hermes_home, (
+        "PF_GOOGLE_OAUTH_CLIENT_ID=cid\n"
+        "PF_GOOGLE_OAUTH_CLIENT_SECRET=cs\n"
+        "PF_GMAIL_REFRESH_TOKEN_GMAIL_1=rt\n"
+    ))
+    with patch.object(og.urllib.request, "urlopen", return_value=_fake_token_response("ya29.shared", 3600)):
+        rc = og.main(["refresh", "--account", "gmail-1", "--profile", "personal", "--write-also", "gmail-1-calendar"])
+    assert rc == 0
+    env_content = (hermes_home / "profiles" / "personal" / ".env").read_text()
+    assert "PF_GMAIL_TOKEN_GMAIL_1=ya29.shared" in env_content
+    assert "PF_GMAIL_TOKEN_GMAIL_1_CALENDAR=ya29.shared" in env_content
+    out = capsys.readouterr().out
+    assert "gmail-1-calendar" in out

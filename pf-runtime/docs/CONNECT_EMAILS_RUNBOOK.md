@@ -27,16 +27,17 @@
 
 1. Open <https://console.cloud.google.com/apis/credentials>.
 2. Click the existing OAuth 2.0 Client ID that matches `PF_GOOGLE_OAUTH_CLIENT_ID` in `~/.hermes/profiles/personal/.env`.
-3. Under **Authorized redirect URIs** → **+ Add URI** → paste `http://127.0.0.1:8765/callback` → **Save**.
+3. Under **Authorized redirect URIs** → **+ Add URI** → paste `http://127.0.0.1:8910/callback` → **Save**.
+4. If the OAuth consent screen is set to **Testing** with User type **External**, every Google account you want to provision must be added as a test user. Open <https://console.cloud.google.com/auth/audience> → under **Test users** → **+ Add users** → paste each address (`alex@prettyflyforai.com`, `info@prettyflyforai.com`, `7alexhale5@gmail.com`, `alex@ctox.com`) → **Save**. Skipping this step makes Step 1 fail with `access_denied` ("Google hasn't verified this app").
 
 ### 0b — Microsoft: register the Azure app
 
 1. Open <https://entra.microsoft.com> → **App registrations** → **+ New registration**.
 2. Name: `PrettyFly PF Runtime (personal)`. Supported account types: **Accounts in any organizational directory and personal Microsoft accounts** (multitenant).
-3. Redirect URI: **Web** → `http://127.0.0.1:8765/callback`. Click **Register**.
+3. Redirect URI: **Web** → `http://localhost:8910/callback` (Azure's Web platform validator rejects `127.0.0.1`; it must be the literal string `localhost`). Click **Register**.
 4. Copy the **Application (client) ID**.
 5. Sidebar → **Certificates & secrets** → **+ New client secret** → 24-month expiry → copy the **Value** field immediately (Azure hides it after page reload).
-6. Sidebar → **API permissions** → **+ Add a permission** → **Microsoft Graph** → **Delegated permissions** → check `Mail.Read`, `Calendars.ReadBasic`, `MailboxSettings.Read`, `offline_access`, `User.Read` → Add.
+6. Sidebar → **API permissions** → **+ Add a permission** → **Microsoft Graph** → **Delegated permissions** → check `Mail.Read`, `Calendars.ReadBasic`, `MailboxSettings.Read`, `offline_access`, `User.Read` → Add. The search box matches permission groups but does NOT auto-expand them — type `Mail`, then click the chevron next to the **Mail** group to reveal `Mail.Read`. One chevron click per group.
 7. Append three lines to `~/.hermes/profiles/personal/.env`:
 
    ```

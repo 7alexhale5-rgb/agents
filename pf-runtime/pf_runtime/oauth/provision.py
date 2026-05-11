@@ -9,10 +9,10 @@ calendar-twin alias write).
 One-time prerequisite (per OAuth app):
 
     Google Cloud Console > Credentials > <OAuth client> > Authorized redirect URIs:
-        http://127.0.0.1:8765/callback
+        http://127.0.0.1:8910/callback
 
     Azure Entra > App registrations > <app> > Authentication > Redirect URIs:
-        http://127.0.0.1:8765/callback   (type: "Web")
+        http://localhost:8910/callback   (type: "Web"; Azure rejects 127.0.0.1)
 
 CLI::
 
@@ -25,7 +25,8 @@ CLI::
 
 Each invocation:
   1. Builds the authorize URL with scopes + login_hint + access_type=offline.
-  2. Starts http.server on 127.0.0.1:--port (default 8765).
+  2. Starts http.server on 127.0.0.1:--port (default 8910; 8765 is commonly
+     grabbed by Docker on macOS).
   3. Opens the authorize URL in the default browser via `open`.
   4. Listener captures /callback?code=... and answers with a short success page.
   5. POSTs the code to the provider token endpoint.

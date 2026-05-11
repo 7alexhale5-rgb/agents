@@ -36,16 +36,17 @@ def _write(path: Path, body: str) -> Path:
 
 def test_load_example_registry_without_manifest() -> None:
     registry = AccountRegistry.load(EXAMPLE_REGISTRY, env={})
-    assert len(registry.entries) == 7
+    assert len(registry.entries) == 10
     providers = [e.account.provider for e in registry.entries]
-    assert providers.count(Provider.GOOGLE_MAIL) == 5
+    assert providers.count(Provider.GOOGLE_MAIL) == 4
+    assert providers.count(Provider.GOOGLE_CALENDAR) == 4
     assert providers.count(Provider.MICROSOFT_GRAPH) == 1
     assert providers.count(Provider.IMAP_HOSTGATOR) == 1
 
 
 def test_load_example_registry_with_manifest_passes_scope_check() -> None:
     registry = AccountRegistry.load(EXAMPLE_REGISTRY, manifest_path=MANIFEST, env={})
-    assert len(registry.entries) == 7
+    assert len(registry.entries) == 10
 
 
 def test_rejects_forbidden_scope(tmp_path: Path) -> None:

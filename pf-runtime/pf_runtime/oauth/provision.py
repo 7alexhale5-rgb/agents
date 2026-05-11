@@ -278,7 +278,10 @@ def _provision_microsoft(args: argparse.Namespace) -> int:
         return 1
 
     port = _free_port(args.port)
-    redirect_uri = f"http://127.0.0.1:{port}{args.path}"
+    # Microsoft rejects bare 127.0.0.1 for Web platform redirect URIs — only
+    # localhost or HTTPS are accepted. The loopback resolves the same way,
+    # so the listener (which binds 127.0.0.1) still catches the callback.
+    redirect_uri = f"http://localhost:{port}{args.path}"
     state = f"pf-{args.account}-{int(time.time())}"
     authorize_base = f"https://login.microsoftonline.com/{urllib.parse.quote(tenant, safe='')}/oauth2/v2.0/authorize"
 

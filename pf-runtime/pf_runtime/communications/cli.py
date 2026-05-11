@@ -35,7 +35,12 @@ from pf_runtime.config import load_profile
 from pf_runtime.runtime.model_adapter import ModelAdapter, OpenRouterAdapter
 
 DEFAULT_PROFILE_SLUG = "personal"
-DEFAULT_CLASSIFIER_MODEL = "openrouter/cerebras/llama-3.1-8b-instruct"
+# Phase 3 default: claude-haiku-4-5 (~$5/day at hourly cadence). Higher
+# accuracy on ambiguous NEEDS_ALEX_TODAY classifications matters more
+# than the ~$5/day delta vs cerebras-llama-3.1-8b. Drop to
+# `openrouter/google/gemini-2.0-flash` via PF_TRIAGE_CLASSIFIER_MODEL env
+# var or --model flag if monthly cost becomes the binding constraint.
+DEFAULT_CLASSIFIER_MODEL = "openrouter/anthropic/claude-haiku-4-5"
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _DEFAULT_MANIFEST = (

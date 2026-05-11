@@ -21,6 +21,8 @@ only writes proposals through :class:`CreateProposalTool`.
 
 from __future__ import annotations
 
+import contextlib
+import hashlib
 import json
 import logging
 import os
@@ -166,6 +168,33 @@ _CONFIDENCE_BUCKET_FLOAT: dict[str, float] = {
 }
 
 
+def _dedupe_key(msg: NormalizedMessage) -> str:
+    """Compute a cross-account dedupe key for ``msg``.
+
+    Order of preference, falling back when each is empty:
+
+    1. ``provider_ids["rfc822_message_id"]`` — the RFC 822 Message-ID
+       header. Globally unique across mailboxes; the same thread sent
+       to two of Alex's addresses carries the same value here.
+    2. ``sha256(subject || sender || nearest-minute-timestamp)`` —
+       fallback when the RFC 822 ID is absent (rare; Gmail strips it
+       on some forwarded messages, IMAP from quirky senders, etc.).
+       Minute-bucketing keeps the same email sent within a 60s window
+       to two mailboxes collapsing on the same key.
+
+    The fallback is deliberately less precise than the header; cases
+    where subject+sender+minute collide on distinct real threads are
+    rare in practice but logged at WARN inside ``find_by_dedupe`` for
+    audit.
+    """
+    rfc822 = (msg.provider_ids or {}).get("rfc822_message_id", "").strip()
+    if rfc822:
+        return f"rfc822:{rfc822}"
+    minute_bucket = msg.received_at.replace(second=0, microsecond=0).isoformat()
+    digest_input = f"{msg.subject}|{msg.sender}|{minute_bucket}".encode()
+    return f"hash:{hashlib.sha256(digest_input).hexdigest()}"
+
+
 async def _emit_proposal_to_pfos(
     *,
     entry: RegistryEntry,
@@ -176,7 +205,7 @@ async def _emit_proposal_to_pfos(
     rationale: str,
     confidence: float,
     run_id: str,
-) -> None:
+) -> bool:
     """Emit one proposed action (and todo, when NEEDS_ALEX_TODAY) to PFOS.
 
     Every successful action emit lands an `agent_actions` row plus a
@@ -187,9 +216,11 @@ async def _emit_proposal_to_pfos(
     the urgent item surfaces on the PFOS `/home` AgentActivityLane with
     `requires_human=true`.
 
-    Failures here are non-fatal: the local SQLite proposal row is the
-    durable source of truth. Phase 3 wires a `dirty` flag and drain
-    path so missed emits retry on subsequent cycles.
+    Returns ``True`` when the action emit succeeded (todo emit failure
+    is logged but doesn't flip the success flag — the action row is the
+    primary user-visible artifact; the todo is a convenience surface).
+    Caller marks the proposal_store row dirty when this returns False
+    so the next cycle's drain re-emits.
     """
     silo = entry.silo
     action_body = runtime_action_payload(
@@ -204,7 +235,7 @@ async def _emit_proposal_to_pfos(
         trace_id=run_id,
     )
     try:
-        await emit_action(action_body, silo=silo)
+        action_ok = await emit_action(action_body, silo=silo)
     except Exception:
         log.warning(
             "PFRT_EMIT_ACTION_FAIL account=%s action=%s",
@@ -212,27 +243,28 @@ async def _emit_proposal_to_pfos(
             action_type.value,
             exc_info=True,
         )
+        action_ok = False
 
-    if bucket is not TriageBucket.NEEDS_ALEX_TODAY:
-        return
-
-    title = msg.subject.strip() or f"Follow up on {msg.sender or 'incoming mail'}"
-    todo_body = runtime_todo_payload(
-        title=title,
-        confidence=confidence,
-        message_id=msg.message_id,
-        action_id=action_id,
-        trace_id=run_id,
-    )
-    try:
-        await emit_todo(todo_body, silo=silo)
-    except Exception:
-        log.warning(
-            "PFRT_EMIT_TODO_FAIL account=%s message=%s",
-            entry.account.account_id,
-            msg.message_id,
-            exc_info=True,
+    if bucket is TriageBucket.NEEDS_ALEX_TODAY:
+        title = msg.subject.strip() or f"Follow up on {msg.sender or 'incoming mail'}"
+        todo_body = runtime_todo_payload(
+            title=title,
+            confidence=confidence,
+            message_id=msg.message_id,
+            action_id=action_id,
+            trace_id=run_id,
         )
+        try:
+            await emit_todo(todo_body, silo=silo)
+        except Exception:
+            log.warning(
+                "PFRT_EMIT_TODO_FAIL account=%s message=%s",
+                entry.account.account_id,
+                msg.message_id,
+                exc_info=True,
+            )
+
+    return bool(action_ok)
 
 _VALID_CONFIDENCES: frozenset[str] = frozenset({"high", "medium", "low"})
 
@@ -548,6 +580,26 @@ async def _triage_account(
             if classification.bucket not in _PROPOSABLE_BUCKETS:
                 continue
             action_type = _BUCKET_TO_DEFAULT_ACTION[classification.bucket]
+
+            # Phase 3 dedupe: if the same RFC 822 Message-ID (or
+            # subject+sender+minute fallback) is already in the local
+            # store from another account, attach this account to the
+            # existing row's `also_seen_in` array and skip the duplicate
+            # insert + duplicate PFOS emit. The first mailbox to fire
+            # wins the proposal; subsequent hits become provenance only.
+            dedupe_key = _dedupe_key(msg)
+            existing = proposal_tool.store.find_by_dedupe(dedupe_key)
+            if existing is not None and existing["account_id"] != account_id:
+                proposal_tool.store.append_also_seen(
+                    str(existing["action_id"]), account_id
+                )
+                log.info(
+                    "PFRT_DEDUPE_HIT account=%s existing_action=%s",
+                    account_id,
+                    existing["action_id"],
+                )
+                continue
+
             action_id = f"{account_id}-{msg.message_id}-{action_type.value}"
             await proposal_tool.invoke(
                 {
@@ -557,15 +609,17 @@ async def _triage_account(
                     "target_id": msg.message_id,
                     "rationale": classification.rationale,
                     "confidence_bucket": classification.confidence,
+                    "dedupe_key": dedupe_key,
                 },
                 tool_context,
             )
             proposed_count += 1
 
             # Phase 2: emit to PFOS. Failures are non-fatal — the local
-            # SQLite row is the durable source of truth; next cycle's emit
-            # will retry (Phase 3 wires the `dirty` flag and drain path).
-            await _emit_proposal_to_pfos(
+            # SQLite row is the durable source of truth; mark_dirty wires
+            # the cycle-to-cycle retry path (Phase 6 stability work
+            # surfaces drained-dirty counts on the TriageStatusBar).
+            emit_ok = await _emit_proposal_to_pfos(
                 entry=entry,
                 msg=msg,
                 action_type=action_type,
@@ -575,6 +629,9 @@ async def _triage_account(
                 confidence=_CONFIDENCE_BUCKET_FLOAT.get(classification.confidence, 0.5),
                 run_id=run_id,
             )
+            if not emit_ok:
+                with contextlib.suppress(KeyError):
+                    proposal_tool.store.mark_dirty(action_id, True)
 
     log.info(
         "PFRT_ACCOUNT_FETCH_END account=%s fetched=%s classified=%s proposed=%s",

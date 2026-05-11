@@ -2,7 +2,7 @@
 
 **Goal:** populate all 10 entries in `~/.hermes/profiles/personal/account-registry.yaml` with live credentials so `pf_runtime` can read every Gmail + Calendar + M365 + IMAP mailbox.
 
-**Current state** (run `python -c "..." | …` from this doc's footer to re-check):
+**Current state** (run the probe at the bottom of this doc to re-check):
 
 ```
 [OK  ] gmail-1            google_mail       alex@prettyflyforai.com
@@ -17,104 +17,77 @@
 [OK  ] yehovah-hostgator  imap_hostgator    alex@yehovahbuilders.com
 ```
 
-3 / 10. Steps below take it to 10 / 10.
+3 / 10. The `pf_runtime.oauth.provision` module ships a loopback-redirect provisioner that reduces every account to a single browser click on Google's / Microsoft's consent screen — no OAuth Playground, no curl, no copying access codes by hand.
 
 ---
 
-## Step 1 — Re-consent the 4 Gmail accounts with combined scopes
+## Step 0 — One-time OAuth-app prep
 
-The two existing Gmail refresh tokens were minted with `gmail.readonly` only. Calendar needs `calendar.events.readonly` granted at consent time — same OAuth flow, additional scope, single refresh token covers both.
+### 0a — Google: add the loopback redirect URI
 
-**Same procedure for each of gmail-1 .. gmail-4.** Combined scope string (paste into OAuth Playground Step 1):
+1. Open <https://console.cloud.google.com/apis/credentials>.
+2. Click the existing OAuth 2.0 Client ID that matches `PF_GOOGLE_OAUTH_CLIENT_ID` in `~/.hermes/profiles/personal/.env`.
+3. Under **Authorized redirect URIs** → **+ Add URI** → paste `http://127.0.0.1:8765/callback` → **Save**.
 
-```
-https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.events.readonly https://www.googleapis.com/auth/calendar.freebusy
-```
+### 0b — Microsoft: register the Azure app
 
-1. Open <https://developers.google.com/oauthplayground> in a browser logged into the target account (sign in/out at <https://accounts.google.com> if you have multiple).
-2. Top-right gear → **Use your own OAuth credentials = ON** → paste the existing client_id + client_secret already in `~/.hermes/profiles/personal/.env` (`PF_GOOGLE_OAUTH_CLIENT_ID` / `PF_GOOGLE_OAUTH_CLIENT_SECRET`). The Authorized redirect URI for this client must include `https://developers.google.com/oauthplayground` — verify once at <https://console.cloud.google.com/apis/credentials>.
-3. Top-right gear → **Force prompt: consent = ON**, **Use HTTPS = ON**, **Offline access = ON**.
-4. Step 1 (left panel): paste the combined scope string above → click **Authorize APIs** → sign in + grant consent.
-5. Step 2: click **Exchange authorization code for tokens**. The right panel now shows `access_token` + **`refresh_token`** — capture the refresh_token.
-6. Open `~/.hermes/profiles/personal/.env` and set/replace the matching `PF_GMAIL_REFRESH_TOKEN_GMAIL_N` line with the new refresh token. For gmail-2 and gmail-3 these lines don't exist yet — append them.
-7. Mint a fresh access token (and populate the calendar twin env var atomically):
+1. Open <https://entra.microsoft.com> → **App registrations** → **+ New registration**.
+2. Name: `PrettyFly PF Runtime (personal)`. Supported account types: **Accounts in any organizational directory and personal Microsoft accounts** (multitenant).
+3. Redirect URI: **Web** → `http://127.0.0.1:8765/callback`. Click **Register**.
+4. Copy the **Application (client) ID**.
+5. Sidebar → **Certificates & secrets** → **+ New client secret** → 24-month expiry → copy the **Value** field immediately (Azure hides it after page reload).
+6. Sidebar → **API permissions** → **+ Add a permission** → **Microsoft Graph** → **Delegated permissions** → check `Mail.Read`, `Calendars.ReadBasic`, `MailboxSettings.Read`, `offline_access`, `User.Read` → Add.
+7. Append three lines to `~/.hermes/profiles/personal/.env`:
 
-   ```bash
-   cd ~/Projects/agents/.claude/worktrees/heuristic-satoshi-372cc7/pf-runtime
-   /Users/alexhale/Projects/agents/pf-runtime/.venv/bin/python -m pf_runtime.oauth.google \
-       refresh --account gmail-N --profile personal \
-       --write-also gmail-N-calendar
+   ```
+   PF_MS_OAUTH_CLIENT_ID=<application-client-id-from-step-4>
+   PF_MS_OAUTH_CLIENT_SECRET=<value-from-step-5>
+   PF_GRAPH_REFRESH_TOKEN_KOHO_M365=
    ```
 
-   Repeat for N = 1, 2, 3, 4. Each run rewrites both `PF_GMAIL_TOKEN_GMAIL_N` (gmail client) and `PF_GMAIL_TOKEN_GMAIL_N_CALENDAR` (calendar client) from one refresh token. Cached at `~/.hermes/profiles/personal/oauth-cache/gmail-N.json` (mode 0600).
-
-**Expected outcome after step 1:** 8 entries OK in the registry (4 gmail + 4 calendar + the 1 already-good gmail-4 + yehovah-hostgator carried over). Only `koho-m365` still missing.
+   The refresh-token value is filled in automatically by Step 2. Leave the line blank for now.
 
 ---
 
-## Step 2 — Connect koho-m365 (Microsoft Graph)
+## Step 1 — Provision the 4 Gmail accounts (4 × ~10 sec each)
 
-The `pf_runtime/oauth/microsoft.py` module mirrors the Google flow: same env-var contract, same `.env` rewrite pattern, with two MS-specific behaviors — Microsoft rotates the refresh token on every exchange (handled automatically), and the tenant is configurable via `PF_MS_OAUTH_TENANT_ID` (defaults to `common`).
-
-### 2a — Register an Azure AD app (~5 min, one-time)
-
-1. Open <https://entra.microsoft.com> → App registrations → **+ New registration**.
-2. Name: `PrettyFly PF Runtime (personal)`. Supported account types: **Accounts in any organizational directory and personal Microsoft accounts** (multitenant). Redirect URI: **Public client/native (mobile & desktop)** → `https://login.microsoftonline.com/common/oauth2/nativeclient`.
-3. Hit **Register**. Copy the **Application (client) ID**.
-4. Sidebar → **Certificates & secrets** → **+ New client secret** → 24-month expiry → copy the **Value** column immediately (Azure hides it after page reload).
-5. Sidebar → **API permissions** → **+ Add a permission** → **Microsoft Graph** → **Delegated permissions** → check `Mail.Read`, `Calendars.ReadBasic`, `MailboxSettings.Read`, `offline_access`, `User.Read` → Add.
-6. (Optional but recommended) **Grant admin consent for <your tenant>** — only if alex@kohoconsulting.com is the tenant admin.
-
-### 2b — Capture a refresh token via the browser auth-code flow
-
-1. Open this URL in a browser logged in as `alex@kohoconsulting.com` (replace `{CLIENT_ID}` with the Application ID from 2a step 3):
-
-   ```
-   https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id={CLIENT_ID}&response_type=code&redirect_uri=https%3A%2F%2Flogin.microsoftonline.com%2Fcommon%2Foauth2%2Fnativeclient&response_mode=query&scope=Mail.Read%20Calendars.ReadBasic%20MailboxSettings.Read%20offline_access%20User.Read&prompt=consent
-   ```
-
-2. Complete sign-in + consent. The browser redirects to `https://login.microsoftonline.com/common/oauth2/nativeclient?code=…`. Copy the entire `code=` query param value (everything after `code=` up to `&session_state` or the end).
-
-3. Exchange the code for tokens (replace `{CLIENT_ID}`, `{CLIENT_SECRET}`, `{AUTH_CODE}`):
-
-   ```bash
-   curl -s -X POST https://login.microsoftonline.com/common/oauth2/v2.0/token \
-     -d "client_id={CLIENT_ID}" \
-     -d "client_secret={CLIENT_SECRET}" \
-     -d "grant_type=authorization_code" \
-     -d "code={AUTH_CODE}" \
-     -d "redirect_uri=https://login.microsoftonline.com/common/oauth2/nativeclient" \
-     -d "scope=Mail.Read Calendars.ReadBasic MailboxSettings.Read offline_access User.Read" \
-     | python3 -m json.tool
-   ```
-
-   Response contains `access_token` (~1 hr), `refresh_token` (90 days, rotates), `expires_in`.
-
-### 2c — Populate `.env` and verify
-
-Append/edit the following in `~/.hermes/profiles/personal/.env`:
-
-```
-PF_MS_OAUTH_CLIENT_ID={CLIENT_ID}
-PF_MS_OAUTH_CLIENT_SECRET={CLIENT_SECRET}
-PF_GRAPH_REFRESH_TOKEN_KOHO_M365={REFRESH_TOKEN from step 2b}
-# Optional — restrict to Koho's tenant. Default "common" works fine.
-# PF_MS_OAUTH_TENANT_ID={kohoconsulting-tenant-guid}
-```
-
-Then verify the refresh flow works:
+Run the provisioner once per account. It opens a browser at Google's consent screen pre-targeted at the right email; click **Allow**; the provisioner writes both the gmail and calendar twin env vars atomically.
 
 ```bash
 cd ~/Projects/agents/.claude/worktrees/heuristic-satoshi-372cc7/pf-runtime
-/Users/alexhale/Projects/agents/pf-runtime/.venv/bin/python -m pf_runtime.oauth.microsoft \
-    refresh --account koho-m365 --profile personal
+VENVPY=/Users/alexhale/Projects/agents/pf-runtime/.venv/bin/python
+
+$VENVPY -m pf_runtime.oauth.provision google --account gmail-1 --email alex@prettyflyforai.com --write-also gmail-1-calendar
+$VENVPY -m pf_runtime.oauth.provision google --account gmail-2 --email info@prettyflyforai.com --write-also gmail-2-calendar
+$VENVPY -m pf_runtime.oauth.provision google --account gmail-3 --email 7alexhale5@gmail.com --write-also gmail-3-calendar
+$VENVPY -m pf_runtime.oauth.provision google --account gmail-4 --email alex@ctox.com   --write-also gmail-4-calendar
 ```
 
-(The `cd` is required while the OAuth modules live on the worktree branch — once
-this merges to main, the canonical `pf-runtime/.venv/` install picks them up
-and the explicit cd goes away.)
+Each command:
 
-Expected output: `refreshed koho-m365: token updated in profile .env, expires in 3599s (refresh_token rotated)`. The CLI rewrites both `PF_GRAPH_TOKEN_KOHO_M365` (access) and `PF_GRAPH_REFRESH_TOKEN_KOHO_M365` (the rotated value).
+- Opens `https://accounts.google.com/o/oauth2/v2/auth?...&login_hint=<email>` in your default browser.
+- You click **Allow** (and tap 2FA if Google asks).
+- The provisioner's listener captures the redirect, exchanges the code, and writes:
+  - `PF_GMAIL_REFRESH_TOKEN_GMAIL_N` (refresh, durable)
+  - `PF_GMAIL_TOKEN_GMAIL_N` (access, ~1 hr)
+  - `PF_GMAIL_TOKEN_GMAIL_N_CALENDAR` (same access token, for the calendar twin entry)
+
+After step 1: 9 / 10 connected.
+
+---
+
+## Step 2 — Provision koho-m365 (~10 sec)
+
+```bash
+$VENVPY -m pf_runtime.oauth.provision microsoft --account koho-m365 --email alex@kohoconsulting.com
+```
+
+Single click "Allow" on the Microsoft consent screen. The provisioner writes:
+
+- `PF_GRAPH_REFRESH_TOKEN_KOHO_M365` (refresh, 90 days, rotates)
+- `PF_GRAPH_TOKEN_KOHO_M365` (access, ~1 hr)
+
+After step 2: 10 / 10 connected.
 
 ---
 

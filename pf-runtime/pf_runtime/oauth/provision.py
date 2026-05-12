@@ -48,7 +48,6 @@ import time
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
 from pf_runtime.oauth import google as og
@@ -90,7 +89,7 @@ class _CallbackHandler(http.server.BaseHTTPRequestHandler):
     expected_state: str = ""
     callback_path: str = DEFAULT_PATH
 
-    def do_GET(self) -> None:  # noqa: N802 (BaseHTTPRequestHandler API)
+    def do_GET(self) -> None:
         parsed = urllib.parse.urlparse(self.path)
         if parsed.path != self.callback_path:
             self.send_response(404)
@@ -118,7 +117,7 @@ class _CallbackHandler(http.server.BaseHTTPRequestHandler):
             # already captured the code, so this is fine.
             pass
 
-    def log_message(self, fmt: str, *args: Any) -> None:  # noqa: A003 (override)
+    def log_message(self, fmt: str, *args: Any) -> None:
         # Quiet the default access-log line so the CLI output stays clean.
         return
 

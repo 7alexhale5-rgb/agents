@@ -77,7 +77,7 @@ class RefreshableMicrosoftCredentials:
     scopes: str = DEFAULT_SCOPES
 
     @classmethod
-    def from_env(cls, account_id: str, *, profile: str = "personal") -> "RefreshableMicrosoftCredentials":
+    def from_env(cls, account_id: str, *, profile: str = "personal") -> RefreshableMicrosoftCredentials:
         _load_profile_env(profile)
         cid = os.environ.get("PF_MS_OAUTH_CLIENT_ID")
         cs = os.environ.get("PF_MS_OAUTH_CLIENT_SECRET")

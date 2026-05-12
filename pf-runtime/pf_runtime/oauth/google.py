@@ -71,7 +71,7 @@ class RefreshableGoogleCredentials:
     refresh_token: str
 
     @classmethod
-    def from_env(cls, account_id: str, *, profile: str = "personal") -> "RefreshableGoogleCredentials":
+    def from_env(cls, account_id: str, *, profile: str = "personal") -> RefreshableGoogleCredentials:
         # Load profile .env into os.environ if not already set
         _load_profile_env(profile)
         cid = os.environ.get("PF_GOOGLE_OAUTH_CLIENT_ID")

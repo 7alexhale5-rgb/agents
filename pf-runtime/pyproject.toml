@@ -50,7 +50,7 @@ dev = [
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-extend-exclude = ["runtime-state", "stubs/*.pyi", ".planning"]
+extend-exclude = ["runtime-state", "stubs/*.pyi", ".planning", "_archive"]
 
 [tool.ruff.lint]
 select = [
@@ -69,7 +69,8 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["S101", "S105", "S106", "S603"]
+# S107 hardcoded password defaults: test fixtures use fake "tokens" as defaults.
+"tests/**/*.py" = ["S101", "S105", "S106", "S107", "S603"]
 # urllib to fixed OpenRouter HTTPS URL only (no user-controlled scheme)
 "pf_runtime/runtime/model_adapter.py" = ["S310"]
 # Operator-supplied PFOS HTTPS URL (http allowed for local dev); see _url_is_httpish.
@@ -78,6 +79,15 @@ ignore = [
 # refuses non-https schemes implicitly via the urllib.request.Request URL.
 "pf_runtime/communications/clients/gmail.py" = ["S310"]
 "pf_runtime/communications/clients/graph.py" = ["S310"]
+# OAuth: hits fixed Google/Microsoft token endpoints. S105 fires on URL constants
+# that contain the word "token" (GOOGLE_TOKEN_URL). S310 fires on urllib calls to
+# those known HTTPS hosts.
+"pf_runtime/oauth/google.py" = ["S310", "S105"]
+"pf_runtime/oauth/microsoft.py" = ["S310", "S105"]
+# OAuth provisioner: same fixed-endpoint pattern, plus subprocess to /usr/bin/open
+# (macOS) or xdg-open (Linux) for browser launch (S603/S607 — fixed binary, no
+# user-controlled args), plus intentional broken-pipe suppression (SIM105).
+"pf_runtime/oauth/provision.py" = ["S310", "S105", "S603", "S607", "SIM105"]
 
 # ----- mypy (type-check) -----
 [tool.mypy]

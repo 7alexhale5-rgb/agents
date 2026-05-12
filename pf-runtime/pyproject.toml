@@ -81,6 +81,8 @@ ignore = [
 # refuses non-https schemes implicitly via the urllib.request.Request URL.
 "pf_runtime/communications/clients/gmail.py" = ["S310"]
 "pf_runtime/communications/clients/graph.py" = ["S310"]
+# Calendar freebusy client posts only to the fixed Google Calendar v3 host.
+"pf_runtime/communications/clients/google_calendar.py" = ["S310"]
 # OAuth: hits fixed Google/Microsoft token endpoints. S105 fires on URL constants
 # that contain the word "token" (GOOGLE_TOKEN_URL). S310 fires on urllib calls to
 # those known HTTPS hosts.

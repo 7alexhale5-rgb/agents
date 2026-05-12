@@ -260,6 +260,7 @@ def runtime_action_payload(
     trace_id: str | None = None,
     priority: str | None = None,
     label_suggestion: str | None = None,
+    calendar_metadata: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build the body for ``POST /api/silos/<silo>/agent-action``.
 
@@ -269,6 +270,13 @@ def runtime_action_payload(
 
     ``also_seen_in`` is the cross-account dedupe trail wired in Phase 3;
     in Phase 2 it's populated with a single-element list ``[account_id]``.
+
+    ``calendar_metadata`` is Phase 5: a dict from
+    :func:`pf_runtime.communications.triage_skill._correlate_schedule` with
+    one or more of ``proposed_start_iso``, ``meeting_url``, and
+    ``freebusy_conflict``. Each key is forwarded verbatim into ``params_json``
+    so PFOS renders the SCHEDULE card without a schema change. Pass ``None``
+    (the default) for non-SCHEDULE actions.
     """
     action_name = _ACTION_TYPE_TO_NAME.get(action_type, f"inbox.{action_type}")
     side_effect = _ACTION_TYPE_TO_SIDE_EFFECT.get(action_type, "write")
@@ -288,6 +296,12 @@ def runtime_action_payload(
         params["priority"] = priority
     if label_suggestion:
         params["label_suggestion"] = label_suggestion
+    if calendar_metadata:
+        # Forward the keys we recognize so a future field added to the
+        # caller's dict doesn't silently leak into params_json.
+        for key in ("proposed_start_iso", "meeting_url", "freebusy_conflict"):
+            if key in calendar_metadata:
+                params[key] = calendar_metadata[key]
     body: dict[str, Any] = {
         "action_name": action_name,
         "side_effect_class": side_effect,

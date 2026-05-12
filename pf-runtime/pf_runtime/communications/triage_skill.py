@@ -31,9 +31,10 @@ import time
 import uuid
 from collections.abc import Awaitable, Callable, Iterable
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from pf_runtime.communications.account_registry import (
     AccountRegistry,
@@ -41,8 +42,13 @@ from pf_runtime.communications.account_registry import (
     RegistryValidationError,
     ScopeViolationError,
 )
+from pf_runtime.communications.calendar_extraction import (
+    extract_meeting_time,
+    extract_meeting_url,
+)
 from pf_runtime.communications.clients import CredentialExpiredError
 from pf_runtime.communications.clients.gmail import GmailClient
+from pf_runtime.communications.clients.google_calendar import GoogleCalendarClient
 from pf_runtime.communications.clients.graph import GraphClient
 from pf_runtime.communications.clients.imap_hostgator import ImapHostgatorClient
 from pf_runtime.communications.filing import suggest_label
@@ -54,6 +60,7 @@ from pf_runtime.communications.providers import (
 )
 from pf_runtime.communications.rules import SiloRules, TriageRules
 from pf_runtime.communications.schema import (
+    AccountConfig,
     ActionType,
     NormalizedMessage,
     Provider,
@@ -171,6 +178,17 @@ _CONFIDENCE_BUCKET_FLOAT: dict[str, float] = {
 }
 
 
+# Phase 5 — calendar correlation. SCHEDULE-bucket messages may include a
+# proposed meeting time and/or a conference URL. The freebusy window we
+# probe is [proposed_start - 0, proposed_start + 1h) — we assume a 1h
+# default duration since the body rarely carries a true end time.
+_SCHEDULE_DEFAULT_DURATION = timedelta(hours=1)
+# Operator timezone for natural-language time references ("Tuesday 2pm").
+# Hardcoded to America/Chicago for v1 — when multi-tenant SCHEDULE support
+# lands, this becomes a per-profile config.
+_OPERATOR_TZ = ZoneInfo("America/Chicago")
+
+
 def _dedupe_key(msg: NormalizedMessage) -> str:
     """Compute a cross-account dedupe key for ``msg``.
 
@@ -198,6 +216,114 @@ def _dedupe_key(msg: NormalizedMessage) -> str:
     return f"hash:{hashlib.sha256(digest_input).hexdigest()}"
 
 
+def _build_calendar_client(
+    *,
+    profile_slug: str,
+    mail_account_id: str,
+) -> GoogleCalendarClient | None:
+    """Build a :class:`GoogleCalendarClient` for the mail account's twin.
+
+    Twin convention: the calendar account_id is ``{mail_account_id}-calendar``.
+    Both accounts share the same OAuth grant (the provisioner writes the
+    access token under ``PF_GMAIL_TOKEN_{ACCT}_CALENDAR`` alongside the
+    mail token). When the twin's refreshable credentials are not available
+    — operator hasn't run the provisioner with the calendar scope, or any
+    other failure — we return ``None`` and the SCHEDULE-bucket flow proceeds
+    without a freebusy check.
+    """
+    try:
+        from pf_runtime.oauth.google import RefreshableGoogleCredentials
+
+        twin_account_id = f"{mail_account_id}-calendar"
+        creds = RefreshableGoogleCredentials.from_env(
+            twin_account_id, profile=profile_slug
+        )
+        twin_entry = RegistryEntry(
+            account=AccountConfig(
+                account_id=twin_account_id,
+                provider=Provider.GOOGLE_CALENDAR,
+                address="",
+                scopes=(
+                    "https://www.googleapis.com/auth/calendar.readonly",
+                ),
+                read_only=True,
+            ),
+            credentials_present=True,
+        )
+        return GoogleCalendarClient(
+            twin_entry, access_token=creds.get_access_token()
+        )
+    except Exception:
+        log.warning(
+            "PFRT_CALENDAR_TWIN_UNAVAILABLE mail_account=%s",
+            mail_account_id,
+            exc_info=True,
+        )
+        return None
+
+
+def _intervals_overlap(
+    a_start: datetime, a_end: datetime, b_start: datetime, b_end: datetime
+) -> bool:
+    """Half-open interval overlap: [a_start, a_end) ∩ [b_start, b_end)."""
+    return a_start < b_end and b_start < a_end
+
+
+def _correlate_schedule(
+    *,
+    msg: NormalizedMessage,
+    profile_slug: str,
+    now: datetime,
+) -> dict[str, Any]:
+    """Pull SCHEDULE-bucket calendar metadata from a message.
+
+    Returns a dict suitable for passing to ``runtime_action_payload``'s
+    ``calendar_metadata`` kwarg. Keys present only when their value is
+    defensible:
+
+    * ``proposed_start_iso`` — ISO 8601 string when extraction found a time.
+    * ``meeting_url`` — Zoom/Teams/Meet URL when present in the body.
+    * ``freebusy_conflict`` — bool only when we ran a freebusy check
+      (extraction succeeded AND calendar twin available).
+    """
+    body = msg.snippet or ""
+    metadata: dict[str, Any] = {}
+
+    meeting_url = extract_meeting_url(body)
+    if meeting_url:
+        metadata["meeting_url"] = meeting_url
+
+    proposed_start = extract_meeting_time(body, now=now, tz=_OPERATOR_TZ)
+    if proposed_start is None:
+        return metadata
+    metadata["proposed_start_iso"] = proposed_start.isoformat()
+
+    calendar = _build_calendar_client(
+        profile_slug=profile_slug, mail_account_id=msg.account_id
+    )
+    if calendar is None:
+        # No twin — emit the start time but omit conflict (we can't compute it).
+        return metadata
+
+    window_end = proposed_start + _SCHEDULE_DEFAULT_DURATION
+    try:
+        busy = calendar.freebusy(proposed_start, window_end)
+    except Exception:
+        log.warning(
+            "PFRT_FREEBUSY_FAIL account=%s",
+            msg.account_id,
+            exc_info=True,
+        )
+        return metadata
+
+    conflict = any(
+        _intervals_overlap(proposed_start, window_end, b_start, b_end)
+        for b_start, b_end in busy
+    )
+    metadata["freebusy_conflict"] = conflict
+    return metadata
+
+
 async def _emit_proposal_to_pfos(
     *,
     entry: RegistryEntry,
@@ -210,6 +336,7 @@ async def _emit_proposal_to_pfos(
     run_id: str,
     priority: str | None = None,
     label_suggestion: str | None = None,
+    calendar_metadata: dict[str, Any] | None = None,
 ) -> bool:
     """Emit one proposed action (and todo, when NEEDS_ALEX_TODAY) to PFOS.
 
@@ -240,6 +367,7 @@ async def _emit_proposal_to_pfos(
         trace_id=run_id,
         priority=priority,
         label_suggestion=label_suggestion,
+        calendar_metadata=calendar_metadata,
     )
     try:
         action_ok = await emit_action(action_body, silo=silo)
@@ -681,6 +809,20 @@ async def _triage_account(
                 silo_rules=rules_for_silo,
             )
 
+            # Phase 5: SCHEDULE-bucket calendar correlation. Extract the
+            # proposed time + meeting URL, run a freebusy check against the
+            # operator's calendar twin, and downgrade priority to P3 on
+            # conflict (per the protocol matrix).
+            calendar_metadata: dict[str, Any] | None = None
+            if classification.bucket is TriageBucket.SCHEDULE:
+                calendar_metadata = _correlate_schedule(
+                    msg=msg,
+                    profile_slug=profile_slug,
+                    now=datetime.now(UTC),
+                )
+                if calendar_metadata.get("freebusy_conflict") is True:
+                    priority = "P3"
+
             # Phase 2: emit to PFOS. Failures are non-fatal — the local
             # SQLite row is the durable source of truth; mark_dirty wires
             # the cycle-to-cycle retry path (Phase 6 stability work
@@ -696,6 +838,7 @@ async def _triage_account(
                 run_id=run_id,
                 priority=priority,
                 label_suggestion=label_suggestion,
+                calendar_metadata=calendar_metadata,
             )
             if not emit_ok:
                 with contextlib.suppress(KeyError):

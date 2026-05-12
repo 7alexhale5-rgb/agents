@@ -43,6 +43,62 @@ def _store(tmp_path: Path) -> SyncStateStore:
 
 
 # ---------------------------------------------------------------------------
+# Hostname derivation — Stream A4 fix for the yehovah-hostgator gaierror
+# ---------------------------------------------------------------------------
+
+
+def test_derive_imap_host_from_address() -> None:
+    """The IMAP host is derived from the account address as `mail.<domain>`.
+    Pre-fix the default factory hardcoded `imap.hostgator.com` which NXDOMAIN'd
+    for accounts on custom domains like yehovahbuilders.com (where Hostgator
+    serves IMAP at mail.<domain>)."""
+    from pf_runtime.communications.clients.imap_hostgator import _derive_imap_host
+
+    assert _derive_imap_host(_entry()) == "mail.yehovahbuilders.com"
+
+
+def test_derive_imap_host_strips_subaddress_and_case() -> None:
+    """RFC 5233 subaddressing (`alex+tag@domain.com`) and casing don't
+    affect the derived host."""
+    from pf_runtime.communications.account_registry import IMAPSettings
+    from pf_runtime.communications.clients.imap_hostgator import _derive_imap_host
+
+    entry = RegistryEntry(
+        account=AccountConfig(
+            account_id="imap-1",
+            provider=Provider.IMAP_HOSTGATOR,
+            address="Alex+folder@Example.COM",
+            scopes=(),
+            read_only=True,
+        ),
+        imap=IMAPSettings(),
+        credentials_present=True,
+    )
+    assert _derive_imap_host(entry) == "mail.example.com"
+
+
+def test_derive_imap_host_rejects_missing_domain() -> None:
+    """A malformed address with no `@` is a registry validation problem;
+    surface clearly instead of producing a bogus `mail.` host."""
+    from pf_runtime.communications.account_registry import IMAPSettings
+    from pf_runtime.communications.clients.imap_hostgator import _derive_imap_host
+
+    bad = RegistryEntry(
+        account=AccountConfig(
+            account_id="imap-1",
+            provider=Provider.IMAP_HOSTGATOR,
+            address="no-at-sign",
+            scopes=(),
+            read_only=True,
+        ),
+        imap=IMAPSettings(),
+        credentials_present=True,
+    )
+    with pytest.raises(ValueError, match="address"):
+        _derive_imap_host(bad)
+
+
+# ---------------------------------------------------------------------------
 # Fake IMAP server
 # ---------------------------------------------------------------------------
 
@@ -484,14 +540,12 @@ def test_parse_uid_search_handles_strings_and_garbage(tmp_path: Path) -> None:
 
 
 def test_default_imap_factory_returns_imap4_ssl() -> None:
-    """Smoke: the production factory is callable and returns an IMAP4_SSL."""
+    """Smoke: the production factory is callable and constructs an IMAP4_SSL
+    against the address-derived host."""
     import imaplib
 
     from pf_runtime.communications.clients.imap_hostgator import _default_imap_factory
 
-    # We can't actually connect, but we can verify the function exists and is
-    # bound to imaplib.IMAP4_SSL via type. Calling it would attempt a real
-    # network connect, so we patch IMAP4_SSL to capture args.
     captured: dict[str, Any] = {}
 
     class _StubSSL:
@@ -502,7 +556,7 @@ def test_default_imap_factory_returns_imap4_ssl() -> None:
     real = imaplib.IMAP4_SSL
     imaplib.IMAP4_SSL = _StubSSL  # type: ignore[misc,assignment]
     try:
-        _default_imap_factory()
+        _default_imap_factory(_entry())
     finally:
         imaplib.IMAP4_SSL = real  # type: ignore[misc]
-    assert captured == {"host": "imap.hostgator.com", "port": 993}
+    assert captured == {"host": "mail.yehovahbuilders.com", "port": 993}

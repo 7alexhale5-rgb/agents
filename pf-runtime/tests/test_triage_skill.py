@@ -1209,3 +1209,312 @@ async def test_dedupe_only_collapses_across_different_accounts(
     assert found is not None
     assert found["also_seen_in"] == ["gmail-1"]
     assert found["also_seen_count"] == 1
+
+
+# ---------------------------------------------------------------------------
+# 8. Phase 5 — SCHEDULE-bucket calendar correlation
+# ---------------------------------------------------------------------------
+
+
+def _calendar_twin_entry(account_id: str = "gmail-1-calendar") -> RegistryEntry:
+    return RegistryEntry(
+        account=AccountConfig(
+            account_id=account_id,
+            provider=Provider.GOOGLE_CALENDAR,
+            address="alex@example.com",
+            scopes=("https://www.googleapis.com/auth/calendar.readonly",),
+            read_only=True,
+        ),
+        credentials_present=True,
+    )
+
+
+def _schedule_gmail_raw(body_snippet: str) -> dict[str, Any]:
+    """A Gmail payload whose snippet contains a meeting proposal."""
+    return {
+        "id": "m-sched-1",
+        "threadId": "thr-sched-1",
+        "snippet": body_snippet,
+        "payload": {
+            "headers": [
+                {"name": "From", "value": "client@example.com"},
+                {"name": "To", "value": "alex@example.com"},
+                {"name": "Subject", "value": "Quick sync?"},
+                {"name": "Date", "value": "Mon, 11 May 2026 15:00:00 +0000"},
+            ],
+            "parts": [],
+        },
+    }
+
+
+@pytest.mark.asyncio
+async def test_schedule_bucket_emits_calendar_metadata(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """SCHEDULE-classified message → emit_action body carries the meeting
+    time, conflict flag, and meeting URL in params_json."""
+    captured_actions: list[dict[str, Any]] = []
+
+    async def fake_emit_action(body: dict[str, Any], *, silo: str) -> bool:
+        captured_actions.append(body)
+        return True
+
+    monkeypatch.setattr(
+        "pf_runtime.communications.triage_skill.emit_action", fake_emit_action
+    )
+
+    # No conflict — calendar reports empty busy list.
+    class _CalendarStub:
+        def freebusy(self, _tmin: Any, _tmax: Any) -> list[Any]:
+            return []
+
+    monkeypatch.setattr(
+        "pf_runtime.communications.triage_skill._build_calendar_client",
+        lambda *_a, **_kw: _CalendarStub(),
+    )
+
+    raw = [
+        _schedule_gmail_raw(
+            "Can we meet Tuesday at 2pm? Zoom: https://zoom.us/j/12345"
+        )
+    ]
+
+    def factory(_e: RegistryEntry, _s: SyncStateStore) -> Any:
+        return FakeClient(raw=raw)
+
+    scripted = json.dumps(
+        {
+            "results": [
+                {
+                    "bucket": "schedule",
+                    "confidence": "high",
+                    "rationale": "proposes Tuesday 2pm sync",
+                }
+            ]
+        }
+    )
+
+    result = await _triage_account(
+        entry=_gmail_entry("gmail-1"),
+        adapter=ScriptedAdapter([scripted]),
+        proposal_tool=_proposal_tool(tmp_path),
+        sync_store=_store(tmp_path),
+        classifier_model="model",
+        profile_slug="personal",
+        run_id="run-cal-1",
+        client_factory=factory,
+        batch_size=10,
+    )
+    assert result.proposed == 1
+    assert len(captured_actions) == 1
+    params = captured_actions[0]["params_json"]
+    assert params["proposed_start_iso"]  # populated
+    assert "zoom.us/j/12345" in params["meeting_url"]
+    assert params["freebusy_conflict"] is False
+    # No conflict → priority is P2 per the SCHEDULE row of the protocol matrix.
+    assert params["priority"] == "P2"
+
+
+@pytest.mark.asyncio
+async def test_schedule_bucket_conflict_downgrades_to_p3(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """When freebusy reports overlap with the proposed start, set
+    `freebusy_conflict=true` AND downgrade priority to P3."""
+    from datetime import UTC, datetime
+
+    captured_actions: list[dict[str, Any]] = []
+
+    async def fake_emit_action(body: dict[str, Any], *, silo: str) -> bool:
+        captured_actions.append(body)
+        return True
+
+    monkeypatch.setattr(
+        "pf_runtime.communications.triage_skill.emit_action", fake_emit_action
+    )
+
+    class _BusyCalendarStub:
+        def freebusy(
+            self, _tmin: Any, _tmax: Any
+        ) -> list[tuple[datetime, datetime]]:
+            return [
+                (
+                    datetime(2026, 5, 12, 19, 0, tzinfo=UTC),  # 2pm CT
+                    datetime(2026, 5, 12, 20, 0, tzinfo=UTC),
+                )
+            ]
+
+    monkeypatch.setattr(
+        "pf_runtime.communications.triage_skill._build_calendar_client",
+        lambda *_a, **_kw: _BusyCalendarStub(),
+    )
+
+    raw = [_schedule_gmail_raw("Tuesday at 2pm CT works?")]
+
+    def factory(_e: RegistryEntry, _s: SyncStateStore) -> Any:
+        return FakeClient(raw=raw)
+
+    scripted = json.dumps(
+        {
+            "results": [
+                {
+                    "bucket": "schedule",
+                    "confidence": "high",
+                    "rationale": "proposes Tuesday 2pm",
+                }
+            ]
+        }
+    )
+
+    result = await _triage_account(
+        entry=_gmail_entry("gmail-1"),
+        adapter=ScriptedAdapter([scripted]),
+        proposal_tool=_proposal_tool(tmp_path),
+        sync_store=_store(tmp_path),
+        classifier_model="model",
+        profile_slug="personal",
+        run_id="run-cal-2",
+        client_factory=factory,
+        batch_size=10,
+    )
+    assert result.proposed == 1
+    params = captured_actions[0]["params_json"]
+    assert params["freebusy_conflict"] is True
+    assert params["priority"] == "P3"
+
+
+@pytest.mark.asyncio
+async def test_schedule_bucket_no_time_extracted_skips_freebusy(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """When extract_meeting_time returns None, we skip the calendar
+    lookup entirely (no `proposed_start_iso`, no `freebusy_conflict` key,
+    priority stays at the protocol default P2)."""
+    captured_actions: list[dict[str, Any]] = []
+
+    async def fake_emit_action(body: dict[str, Any], *, silo: str) -> bool:
+        captured_actions.append(body)
+        return True
+
+    monkeypatch.setattr(
+        "pf_runtime.communications.triage_skill.emit_action", fake_emit_action
+    )
+
+    calendar_called: list[bool] = []
+
+    class _AssertNotCalledStub:
+        def freebusy(self, *_a: Any, **_kw: Any) -> list[Any]:
+            calendar_called.append(True)
+            return []
+
+    monkeypatch.setattr(
+        "pf_runtime.communications.triage_skill._build_calendar_client",
+        lambda *_a, **_kw: _AssertNotCalledStub(),
+    )
+
+    # Body has no defensible time reference — ambiguous "by 2pm" deadline.
+    raw = [_schedule_gmail_raw("Need this back by 2pm please")]
+
+    def factory(_e: RegistryEntry, _s: SyncStateStore) -> Any:
+        return FakeClient(raw=raw)
+
+    scripted = json.dumps(
+        {
+            "results": [
+                {
+                    "bucket": "schedule",
+                    "confidence": "high",
+                    "rationale": "vague deadline",
+                }
+            ]
+        }
+    )
+
+    result = await _triage_account(
+        entry=_gmail_entry("gmail-1"),
+        adapter=ScriptedAdapter([scripted]),
+        proposal_tool=_proposal_tool(tmp_path),
+        sync_store=_store(tmp_path),
+        classifier_model="model",
+        profile_slug="personal",
+        run_id="run-cal-3",
+        client_factory=factory,
+        batch_size=10,
+    )
+    assert result.proposed == 1
+    assert calendar_called == []
+    params = captured_actions[0]["params_json"]
+    assert "proposed_start_iso" not in params
+    assert "freebusy_conflict" not in params
+    # Default SCHEDULE priority is P2 per protocol matrix.
+    assert params["priority"] == "P2"
+
+
+@pytest.mark.asyncio
+async def test_schedule_bucket_calendar_twin_missing_skips_gracefully(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """When the calendar twin account is missing (operator hasn't run the
+    OAuth provisioner for the calendar scope), still emit the action with
+    proposed_start_iso + meeting_url, but omit freebusy_conflict (we can't
+    check)."""
+    captured_actions: list[dict[str, Any]] = []
+
+    async def fake_emit_action(body: dict[str, Any], *, silo: str) -> bool:
+        captured_actions.append(body)
+        return True
+
+    monkeypatch.setattr(
+        "pf_runtime.communications.triage_skill.emit_action", fake_emit_action
+    )
+
+    # Return None to signal no twin available.
+    monkeypatch.setattr(
+        "pf_runtime.communications.triage_skill._build_calendar_client",
+        lambda *_a, **_kw: None,
+    )
+
+    raw = [
+        _schedule_gmail_raw(
+            "Can we meet Tuesday at 2pm? https://meet.google.com/abc-defg-hij"
+        )
+    ]
+
+    def factory(_e: RegistryEntry, _s: SyncStateStore) -> Any:
+        return FakeClient(raw=raw)
+
+    scripted = json.dumps(
+        {
+            "results": [
+                {
+                    "bucket": "schedule",
+                    "confidence": "high",
+                    "rationale": "proposes time",
+                }
+            ]
+        }
+    )
+
+    result = await _triage_account(
+        entry=_gmail_entry("gmail-1"),
+        adapter=ScriptedAdapter([scripted]),
+        proposal_tool=_proposal_tool(tmp_path),
+        sync_store=_store(tmp_path),
+        classifier_model="model",
+        profile_slug="personal",
+        run_id="run-cal-4",
+        client_factory=factory,
+        batch_size=10,
+    )
+    assert result.proposed == 1
+    params = captured_actions[0]["params_json"]
+    assert params["proposed_start_iso"]
+    assert "meet.google.com/abc-defg-hij" in params["meeting_url"]
+    # Without a twin, we can't compute conflict — omit the key.
+    assert "freebusy_conflict" not in params
+    # Priority falls back to default P2 (no conflict downgrade possible).
+    assert params["priority"] == "P2"

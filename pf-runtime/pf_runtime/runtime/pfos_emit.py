@@ -258,6 +258,8 @@ def runtime_action_payload(
     draft_text: str | None = None,
     also_seen_in: tuple[str, ...] | None = None,
     trace_id: str | None = None,
+    priority: str | None = None,
+    label_suggestion: str | None = None,
 ) -> dict[str, Any]:
     """Build the body for ``POST /api/silos/<silo>/agent-action``.
 
@@ -282,6 +284,10 @@ def runtime_action_payload(
         params["rationale_preview"] = rationale[:500]
     if draft_text:
         params["draft_text"] = draft_text[:2000]
+    if priority:
+        params["priority"] = priority
+    if label_suggestion:
+        params["label_suggestion"] = label_suggestion
     body: dict[str, Any] = {
         "action_name": action_name,
         "side_effect_class": side_effect,

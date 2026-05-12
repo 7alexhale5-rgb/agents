@@ -45,11 +45,14 @@ from pf_runtime.communications.clients import CredentialExpiredError
 from pf_runtime.communications.clients.gmail import GmailClient
 from pf_runtime.communications.clients.graph import GraphClient
 from pf_runtime.communications.clients.imap_hostgator import ImapHostgatorClient
+from pf_runtime.communications.filing import suggest_label
+from pf_runtime.communications.priority import compute_priority
 from pf_runtime.communications.providers import (
     normalize_gmail_message,
     normalize_graph_message,
     normalize_imap_message,
 )
+from pf_runtime.communications.rules import SiloRules, TriageRules
 from pf_runtime.communications.schema import (
     ActionType,
     NormalizedMessage,
@@ -205,6 +208,8 @@ async def _emit_proposal_to_pfos(
     rationale: str,
     confidence: float,
     run_id: str,
+    priority: str | None = None,
+    label_suggestion: str | None = None,
 ) -> bool:
     """Emit one proposed action (and todo, when NEEDS_ALEX_TODAY) to PFOS.
 
@@ -233,6 +238,8 @@ async def _emit_proposal_to_pfos(
         sender=msg.sender,
         subject=msg.subject,
         trace_id=run_id,
+        priority=priority,
+        label_suggestion=label_suggestion,
     )
     try:
         action_ok = await emit_action(action_body, silo=silo)
@@ -351,6 +358,7 @@ async def triage_all_accounts(
     profile_slug: str = "personal",
     client_factory: ClientFactory | None = None,
     batch_size: int = 10,
+    rules: TriageRules | None = None,
 ) -> TriageRunResult:
     """Run one triage pass across every credentialled account in ``registry``.
 
@@ -363,6 +371,7 @@ async def triage_all_accounts(
     started_perf = time.perf_counter()
     run_id = str(uuid.uuid4())
     factory = client_factory if client_factory is not None else _default_client_factory
+    triage_rules = rules if rules is not None else TriageRules.empty()
 
     accounts_total = len(registry.entries)
     # Filter to mail providers only — calendar twins share OAuth with their
@@ -399,6 +408,7 @@ async def triage_all_accounts(
             run_id=run_id,
             client_factory=factory,
             batch_size=batch_size,
+            silo_rules=triage_rules.for_silo(entry.silo),
         )
         results.append(result)
         if result.error is not None:
@@ -460,6 +470,7 @@ async def _triage_account(
     run_id: str,
     client_factory: ClientFactory,
     batch_size: int,
+    silo_rules: SiloRules | None = None,
 ) -> AccountTriageResult:
     """Triage one account end-to-end. Failures are captured, never raised."""
     account_id = entry.account.account_id
@@ -552,6 +563,7 @@ async def _triage_account(
     classified_count = 0
     proposed_count = 0
     tool_context = ToolContext(profile_slug=profile_slug, session_id=run_id)
+    rules_for_silo = silo_rules if silo_rules is not None else SiloRules()
 
     for batch in _chunk(messages, batch_size):
         try:
@@ -615,6 +627,23 @@ async def _triage_account(
             )
             proposed_count += 1
 
+            # Phase 4 operator protocol: derive priority + filing label
+            # from the bucket + per-silo rules. priority is the WHEN axis,
+            # label_suggestion is the WHERE axis. Both land in the agent_action
+            # row's params_json so PFOS sorts + renders them without a
+            # schema change.
+            priority = compute_priority(
+                bucket=classification.bucket,
+                msg=msg,
+                silo_rules=rules_for_silo,
+            )
+            label_suggestion = suggest_label(
+                silo=entry.silo,
+                bucket=classification.bucket,
+                msg=msg,
+                silo_rules=rules_for_silo,
+            )
+
             # Phase 2: emit to PFOS. Failures are non-fatal — the local
             # SQLite row is the durable source of truth; mark_dirty wires
             # the cycle-to-cycle retry path (Phase 6 stability work
@@ -628,6 +657,8 @@ async def _triage_account(
                 rationale=classification.rationale,
                 confidence=_CONFIDENCE_BUCKET_FLOAT.get(classification.confidence, 0.5),
                 run_id=run_id,
+                priority=priority,
+                label_suggestion=label_suggestion,
             )
             if not emit_ok:
                 with contextlib.suppress(KeyError):

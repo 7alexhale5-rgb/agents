@@ -28,6 +28,7 @@ from pf_runtime.communications.account_registry import (
     RegistryEntry,
 )
 from pf_runtime.communications.proposal_store import ProposalStore
+from pf_runtime.communications.rules import TriageRules
 from pf_runtime.communications.sync_state_store import SyncStateStore
 from pf_runtime.communications.tools import CreateProposalTool
 from pf_runtime.communications.triage_skill import TriageRunResult, triage_all_accounts
@@ -245,6 +246,12 @@ def _handle_triage(args: argparse.Namespace) -> int:
     sync_store = SyncStateStore(db_path)
     adapter = _build_adapter(profile)
 
+    # Phase 4: load operator triage rules from the personal profile.
+    # Missing-file fallback returns empty rules (all messages land at P3,
+    # no label suggestions); the cycle still runs.
+    rules_path = home / "profiles" / args.profile / "triage-rules.yaml"
+    rules = TriageRules.load(rules_path)
+
     result = asyncio.run(
         triage_all_accounts(
             registry,
@@ -253,6 +260,7 @@ def _handle_triage(args: argparse.Namespace) -> int:
             sync_store=sync_store,
             classifier_model=args.model,
             profile_slug=args.profile,
+            rules=rules,
         )
     )
 

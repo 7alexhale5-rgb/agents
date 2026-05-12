@@ -98,6 +98,22 @@ def test_ambiguous_time_only_returns_none() -> None:
     assert extract_meeting_time(body, now=_NOW, tz=_CT) is None
 
 
+def test_three_letter_weekday_abbreviation() -> None:
+    """Common abbreviations ("Tue", "Wed") match the same as the long form."""
+    body = "Confirmed for Tue 2pm CT?"
+    result = extract_meeting_time(body, now=_NOW, tz=_CT)
+    assert result is not None
+    assert result.weekday() == 1  # Tuesday
+    assert result.hour == 14
+
+
+def test_word_containing_weekday_letters_not_matched() -> None:
+    """`monthly` must not match the `mon` prefix — `\\b` boundary protects us."""
+    body = "Our monthly review is at 3pm one day."
+    # `mon` would not be a standalone word, so this should fall through.
+    assert extract_meeting_time(body, now=_NOW, tz=_CT) is None
+
+
 def test_past_weekday_resolves_to_next_week() -> None:
     # _NOW is Monday. "Monday 9am" should resolve to NEXT Monday, not today.
     body = "Monday at 9am?"

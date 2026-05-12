@@ -56,13 +56,34 @@ _ICS_DTSTART_RE = re.compile(
     re.IGNORECASE,
 )
 
-# "Tuesday at 2pm" / "tuesday 2:30 PM" / "Tue 14:00"
+# "Tuesday at 2pm" / "tuesday 2:30 PM" / "Tue 14:00" — accept the 3-letter
+# abbreviations too, but anchor on the long form so "monthly" doesn't match
+# via "mon".
 _WEEKDAY_TIME_RE = re.compile(
-    r"\b(?P<day>monday|tuesday|wednesday|thursday|friday|saturday|sunday)"
-    r"\b[\s,]*(?:at\s+)?"
+    r"\b(?P<day>"
+    r"mon(?:day)?|tue(?:sday)?|wed(?:nesday)?|thu(?:rsday)?|"
+    r"fri(?:day)?|sat(?:urday)?|sun(?:day)?"
+    r")\b[\s,]*(?:at\s+)?"
     r"(?P<time>\d{1,2}(?::\d{2})?\s*(?:am|pm)|noon|\d{1,2}:\d{2})",
     re.IGNORECASE,
 )
+
+
+_WEEKDAY_ABBREV: dict[str, str] = {
+    "mon": "monday",
+    "tue": "tuesday",
+    "wed": "wednesday",
+    "thu": "thursday",
+    "fri": "friday",
+    "sat": "saturday",
+    "sun": "sunday",
+}
+
+
+def _normalize_weekday(token: str) -> str:
+    """Map ``Tue`` / ``tuesday`` (any casing) → the canonical key for ``_WEEKDAYS``."""
+    lower = token.lower()
+    return _WEEKDAY_ABBREV.get(lower, lower)
 
 # "tomorrow at 3pm" / "today at noon"
 _RELATIVE_DAY_TIME_RE = re.compile(
@@ -165,7 +186,7 @@ def extract_meeting_time(
     # 4. Weekday + time ("Tuesday at 2pm"). Resolves to next occurrence.
     m = _WEEKDAY_TIME_RE.search(body)
     if m:
-        target_weekday = _WEEKDAYS[m.group("day").lower()]
+        target_weekday = _WEEKDAYS[_normalize_weekday(m.group("day"))]
         hour, minute = _parse_time_token(m.group("time"))
         if hour is not None:
             target = _next_weekday(now, target_weekday, hour, minute, tz)

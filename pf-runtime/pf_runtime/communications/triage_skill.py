@@ -343,6 +343,43 @@ def _default_client_factory(entry: RegistryEntry, sync_store: SyncStateStore) ->
     )
 
 
+def make_refreshing_client_factory(profile_slug: str) -> ClientFactory:
+    """Build a client factory that auto-refreshes Google/Microsoft access tokens.
+
+    Used by the production CLI under launchd. Cached access tokens live in
+    ``~/.hermes/profiles/{slug}/oauth-cache/{account_id}.json``; refresh only
+    fires when the cache is missing or within EXPIRY_SAFETY_MARGIN_S of expiry.
+    Tests keep using :func:`_default_client_factory` or inject mocks directly.
+
+    IMAP and other static-secret providers fall through to the default factory.
+    """
+    def _factory(entry: RegistryEntry, sync_store: SyncStateStore) -> Any:
+        provider = entry.account.provider
+        account_id = entry.account.account_id
+        try:
+            if provider is Provider.GOOGLE_MAIL:
+                from pf_runtime.oauth.google import RefreshableGoogleCredentials
+                google_creds = RefreshableGoogleCredentials.from_env(
+                    account_id, profile=profile_slug
+                )
+                return GmailClient(
+                    entry, sync_store, access_token=google_creds.get_access_token()
+                )
+            if provider is Provider.MICROSOFT_GRAPH:
+                from pf_runtime.oauth.microsoft import RefreshableMicrosoftCredentials
+                ms_creds = RefreshableMicrosoftCredentials.from_env(
+                    account_id, profile=profile_slug
+                )
+                return GraphClient(
+                    entry, sync_store, access_token=ms_creds.get_access_token()
+                )
+        except ValueError as exc:
+            raise CredentialExpiredError(str(exc)) from exc
+        return _default_client_factory(entry, sync_store)
+
+    return _factory
+
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------

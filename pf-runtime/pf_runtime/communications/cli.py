@@ -31,17 +31,23 @@ from pf_runtime.communications.proposal_store import ProposalStore
 from pf_runtime.communications.rules import TriageRules
 from pf_runtime.communications.sync_state_store import SyncStateStore
 from pf_runtime.communications.tools import CreateProposalTool
-from pf_runtime.communications.triage_skill import TriageRunResult, triage_all_accounts
+from pf_runtime.communications.triage_skill import (
+    TriageRunResult,
+    make_refreshing_client_factory,
+    triage_all_accounts,
+)
 from pf_runtime.config import load_profile
-from pf_runtime.runtime.model_adapter import ModelAdapter, OpenRouterAdapter
+from pf_runtime.runtime.model_adapter import ModelAdapter, OpenRouterAdapter, _load_dotenv
 
 DEFAULT_PROFILE_SLUG = "personal"
-# Phase 3 default: claude-haiku-4-5 (~$5/day at hourly cadence). Higher
+# Phase 3 default: claude-haiku-4.5 (~$5/day at hourly cadence). Higher
 # accuracy on ambiguous NEEDS_ALEX_TODAY classifications matters more
 # than the ~$5/day delta vs cerebras-llama-3.1-8b. Drop to
-# `openrouter/google/gemini-2.0-flash` via PF_TRIAGE_CLASSIFIER_MODEL env
-# var or --model flag if monthly cost becomes the binding constraint.
-DEFAULT_CLASSIFIER_MODEL = "openrouter/anthropic/claude-haiku-4-5"
+# `google/gemini-2.0-flash` via PF_TRIAGE_CLASSIFIER_MODEL env var or
+# --model flag if monthly cost becomes the binding constraint. Slug is
+# bare `vendor/model[:tag]` — the adapter posts directly to OpenRouter's
+# /chat/completions, no LiteLLM `openrouter/` prefix.
+DEFAULT_CLASSIFIER_MODEL = "anthropic/claude-haiku-4.5"
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _DEFAULT_MANIFEST = (
@@ -210,6 +216,13 @@ def _handle_triage(args: argparse.Namespace) -> int:
         print(f"profile not found: {exc}", file=sys.stderr)
         return 1
 
+    # Load profile .env into os.environ. launchd/cron does NOT source the
+    # profile dotenv, so without this the account_registry, PFOS emit, and
+    # provider clients all see empty credentials. setdefault preserves any
+    # explicit shell override.
+    for k, v in _load_dotenv(profile.env_path).items():
+        os.environ.setdefault(k, v)
+
     registry_path = (
         Path(args.registry)
         if args.registry
@@ -260,6 +273,7 @@ def _handle_triage(args: argparse.Namespace) -> int:
             sync_store=sync_store,
             classifier_model=args.model,
             profile_slug=args.profile,
+            client_factory=make_refreshing_client_factory(args.profile),
             rules=rules,
         )
     )

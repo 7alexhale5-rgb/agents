@@ -368,7 +368,8 @@ async def test_proposal_filtering(tmp_path: Path) -> None:
     2. medium + needs_reply     → NOT proposed (low confidence)
     3. low + promotion          → NOT proposed
     4. high + fyi               → NOT proposed (non-proposable bucket)
-    5. high + needs_alex_today  → NOT proposed (digest-only bucket)
+    5. high + needs_alex_today  → proposed (FOLLOW_UP_TASK; Phase 2 addition —
+       NEEDS_ALEX_TODAY now lands a real PFOS task plus an agent_actions row)
     """
     entry = _gmail_entry()
     raw = [
@@ -416,16 +417,20 @@ async def test_proposal_filtering(tmp_path: Path) -> None:
     )
     assert result.fetched == 5
     assert result.classified == 5
-    assert result.proposed == 1
+    assert result.proposed == 2
 
-    # Only the first message should have triggered a proposal.
-    assert proposal_spy.await_count == 1
-    args, _ = proposal_spy.await_args
-    payload = args[0]
-    assert payload["target_id"] == "m1"
-    assert payload["action_type"] == "reply_draft"
-    assert payload["confidence_bucket"] == "high"
-    assert payload["action_id"] == "gmail-1-m1-reply_draft"
+    assert proposal_spy.await_count == 2
+    by_target = {
+        call.args[0]["target_id"]: call.args[0]
+        for call in proposal_spy.await_args_list
+    }
+    assert set(by_target) == {"m1", "m5"}
+    assert by_target["m1"]["action_type"] == "reply_draft"
+    assert by_target["m1"]["confidence_bucket"] == "high"
+    assert by_target["m1"]["action_id"] == "gmail-1-m1-reply_draft"
+    assert by_target["m5"]["action_type"] == "follow_up_task"
+    assert by_target["m5"]["confidence_bucket"] == "high"
+    assert by_target["m5"]["action_id"] == "gmail-1-m5-follow_up_task"
 
 
 # ---------------------------------------------------------------------------
@@ -547,15 +552,15 @@ async def test_golden_mailbox_classification_and_proposals(tmp_path: Path) -> No
     assert result.classified == 10
 
     # Proposable subset = NEEDS_REPLY (g1, g9) + PROMOTION (g2, g10) +
-    # SCHEDULE (g3) + RELEASE_UPDATE (g4) + NOISE (g5) = 7. The 3 digest-only
-    # buckets (NEEDS_ALEX_TODAY g6, WAITING g7, FYI g8) are deliberately
-    # excluded from the proposal queue per spec.
-    assert result.proposed == 7
+    # SCHEDULE (g3) + RELEASE_UPDATE (g4) + NOISE (g5) + NEEDS_ALEX_TODAY
+    # (g6, Phase 2) = 8. The 2 remaining digest-only buckets (WAITING g7,
+    # FYI g8) stay excluded from the proposal queue per spec.
+    assert result.proposed == 8
 
     proposed_target_ids = {
         c.args[0]["target_id"] for c in proposal_spy.await_args_list
     }
-    assert proposed_target_ids == {"g1", "g2", "g3", "g4", "g5", "g9", "g10"}
+    assert proposed_target_ids == {"g1", "g2", "g3", "g4", "g5", "g6", "g9", "g10"}
 
     # Spot-check action mapping for one message of each proposable bucket.
     action_by_target = {
@@ -567,6 +572,7 @@ async def test_golden_mailbox_classification_and_proposals(tmp_path: Path) -> No
     assert action_by_target["g3"] == "calendar_hold"
     assert action_by_target["g4"] == "label"
     assert action_by_target["g5"] == "archive"
+    assert action_by_target["g6"] == "follow_up_task"
 
 
 # ---------------------------------------------------------------------------
@@ -1003,11 +1009,16 @@ def test_normalize_unsupported_provider_raises() -> None:
 
 
 def test_module_constants_match_spec() -> None:
-    """Lock the bucket→action mapping and proposable set to spec."""
+    """Lock the bucket→action mapping and proposable set to spec.
+
+    Phase 2 added NEEDS_ALEX_TODAY → FOLLOW_UP_TASK so the urgent bucket
+    lands a real PFOS todo on each cycle (not just a digest line).
+    """
     from pf_runtime.communications.schema import ActionType
 
     expected_proposable = frozenset(
         {
+            TriageBucket.NEEDS_ALEX_TODAY,
             TriageBucket.NEEDS_REPLY,
             TriageBucket.SCHEDULE,
             TriageBucket.PROMOTION,
@@ -1017,6 +1028,7 @@ def test_module_constants_match_spec() -> None:
     )
     assert expected_proposable == triage_skill._PROPOSABLE_BUCKETS
     expected_action_map = {
+        TriageBucket.NEEDS_ALEX_TODAY: ActionType.FOLLOW_UP_TASK,
         TriageBucket.NEEDS_REPLY: ActionType.REPLY_DRAFT,
         TriageBucket.SCHEDULE: ActionType.CALENDAR_HOLD,
         TriageBucket.PROMOTION: ActionType.UNSUBSCRIBE_DRAFT,
@@ -1024,3 +1036,176 @@ def test_module_constants_match_spec() -> None:
         TriageBucket.RELEASE_UPDATE: ActionType.LABEL,
     }
     assert expected_action_map == triage_skill._BUCKET_TO_DEFAULT_ACTION
+
+
+# ---------------------------------------------------------------------------
+# Phase 3: cross-account dedupe — same RFC 822 Message-ID across mailboxes
+# collapses to one proposal with also_seen_in covering both accounts.
+# ---------------------------------------------------------------------------
+
+
+def _gmail_raw_with_rfc822(
+    message_id: str,
+    sender: str,
+    subject: str,
+    snippet: str,
+    *,
+    rfc822_id: str,
+) -> dict[str, Any]:
+    """Gmail payload with an explicit Message-ID header for dedupe."""
+    return {
+        "id": message_id,
+        "threadId": f"thr-{message_id}",
+        "snippet": snippet,
+        "payload": {
+            "headers": [
+                {"name": "From", "value": sender},
+                {"name": "To", "value": "alex@example.com"},
+                {"name": "Subject", "value": subject},
+                {"name": "Date", "value": "Thu, 8 May 2026 12:00:00 +0000"},
+                {"name": "Message-ID", "value": rfc822_id},
+            ],
+            "parts": [],
+        },
+    }
+
+
+@pytest.mark.asyncio
+async def test_cross_account_dedupe_collapses_to_one_proposal(tmp_path: Path) -> None:
+    """A thread reaching gmail-1 and gmail-2 with the same RFC 822
+    Message-ID should produce ONE proposal with also_seen_in covering
+    both account_ids. The second cycle hits ``find_by_dedupe`` and
+    calls ``append_also_seen`` instead of inserting a duplicate row."""
+    rfc822 = "<thread-abc@mail.gmail.com>"
+    raw_per_account = {
+        "gmail-1": [
+            _gmail_raw_with_rfc822(
+                "m-1-acct-a",
+                "boss@example.com",
+                "Reply please",
+                "snippet",
+                rfc822_id=rfc822,
+            ),
+        ],
+        "gmail-2": [
+            _gmail_raw_with_rfc822(
+                "m-1-acct-b",  # different per-mailbox message_id
+                "boss@example.com",
+                "Reply please",
+                "snippet",
+                rfc822_id=rfc822,  # same RFC 822 Message-ID
+            ),
+        ],
+    }
+
+    def factory(entry: RegistryEntry, _s: SyncStateStore) -> Any:
+        return FakeClient(raw=raw_per_account[entry.account.account_id])
+
+    # One scripted classifier response per cycle (one batch per account).
+    scripted = json.dumps(
+        {
+            "results": [
+                {
+                    "bucket": "needs_reply",
+                    "confidence": "high",
+                    "rationale": "direct ask",
+                }
+            ]
+        }
+    )
+
+    # Two accounts share an underlying proposal_tool so the SQLite
+    # store is the same DB across both _triage_account calls.
+    proposal_tool = _proposal_tool(tmp_path)
+    sync_store = _store(tmp_path)
+    common_kwargs = {
+        "proposal_tool": proposal_tool,
+        "sync_store": sync_store,
+        "classifier_model": "model",
+        "profile_slug": "personal",
+        "run_id": "run-dedupe",
+        "client_factory": factory,
+        "batch_size": 10,
+    }
+
+    # First account: classifier returns needs_reply -> proposal inserted.
+    result_a = await _triage_account(
+        entry=_gmail_entry("gmail-1"),
+        adapter=ScriptedAdapter([scripted]),
+        **common_kwargs,
+    )
+    # Second account: same RFC 822 ID -> dedupe hit, no second insert.
+    result_b = await _triage_account(
+        entry=_gmail_entry("gmail-2"),
+        adapter=ScriptedAdapter([scripted]),
+        **common_kwargs,
+    )
+
+    assert result_a.proposed == 1
+    assert result_b.proposed == 0  # dedupe path skipped the insert
+
+    # The single surviving proposal has both account_ids on its trail.
+    proposals = proposal_tool.store.list(status="proposed")
+    assert len(proposals) == 1
+    found = proposal_tool.store.find_by_dedupe(f"rfc822:{rfc822}")
+    assert found is not None
+    assert set(found["also_seen_in"]) == {"gmail-1", "gmail-2"}
+    assert found["also_seen_count"] == 2
+
+
+@pytest.mark.asyncio
+async def test_dedupe_only_collapses_across_different_accounts(
+    tmp_path: Path,
+) -> None:
+    """If the same account legitimately re-classifies a message (e.g.
+    a re-run of a previous cycle), the dedupe check should NOT add the
+    account to its own also_seen_in trail — the early-skip only fires
+    when the existing row belongs to a *different* account."""
+    rfc822 = "<self-dup@example.com>"
+    raw = [
+        _gmail_raw_with_rfc822(
+            "m1",
+            "boss@example.com",
+            "Reply",
+            "snip",
+            rfc822_id=rfc822,
+        )
+    ]
+
+    def factory(_e: RegistryEntry, _s: SyncStateStore) -> Any:
+        return FakeClient(raw=raw)
+
+    scripted = json.dumps(
+        {
+            "results": [
+                {
+                    "bucket": "needs_reply",
+                    "confidence": "high",
+                    "rationale": "direct ask",
+                }
+            ]
+        }
+    )
+    proposal_tool = _proposal_tool(tmp_path)
+    sync_store = _store(tmp_path)
+
+    result_first = await _triage_account(
+        entry=_gmail_entry("gmail-1"),
+        adapter=ScriptedAdapter([scripted]),
+        proposal_tool=proposal_tool,
+        sync_store=sync_store,
+        classifier_model="model",
+        profile_slug="personal",
+        run_id="r-1",
+        client_factory=factory,
+        batch_size=10,
+    )
+    assert result_first.proposed == 1
+
+    # Same account, same message: a re-run should NOT collapse via the
+    # cross-account skip; the insert collision is handled separately by
+    # SQLite's primary-key constraint on action_id, not by this skip.
+    found = proposal_tool.store.find_by_dedupe(f"rfc822:{rfc822}")
+    assert found is not None
+    assert found["also_seen_in"] == ["gmail-1"]
+    assert found["also_seen_count"] == 1

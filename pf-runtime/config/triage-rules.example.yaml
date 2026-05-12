@@ -1,0 +1,67 @@
+# Operator-editable triage rules for the per-source protocol.
+#
+# Copy this file to your Hermes profile and tune the lists:
+#   cp pf-runtime/config/triage-rules.example.yaml ~/.hermes/profiles/personal/triage-rules.yaml
+#
+# Schema:
+#   silos:
+#     <silo>:
+#       vips:
+#         p0:  list of address-or-domain patterns; matched senders escalate to P0
+#         any: list of patterns; matched senders bump priority floor to P1
+#       role_hints:
+#         - { matches: <pattern>, label_suffix: <role> }
+#
+# Pattern syntax:
+#   exact:         josh@kohoconsulting.com
+#   domain glob:   *@kohoconsulting.com
+#   local glob:    noreply@*
+#   shorthand:     kohoconsulting.com  (equivalent to *@kohoconsulting.com)
+#
+# role_hints are first-match-wins. Order more specific patterns first.
+
+silos:
+  koho:
+    vips:
+      p0: []
+      any:
+        - "*@kohoconsulting.com"
+    role_hints:
+      - { matches: "billing@*", label_suffix: "Billing" }
+      - { matches: "legal@*", label_suffix: "Legal" }
+      - { matches: "*@kohoconsulting.com", label_suffix: "Internal" }
+      # Add specific client routings here, e.g.:
+      # - { matches: "josh@externalclient.com", label_suffix: "Clients/Josh" }
+
+  ctox:
+    vips:
+      p0: []
+      any:
+        - "*@ctox.com"
+    role_hints:
+      - { matches: "billing@*", label_suffix: "Billing" }
+      - { matches: "*@ctox.com", label_suffix: "Internal" }
+      - { matches: "press@*", label_suffix: "Press" }
+      - { matches: "investor@*", label_suffix: "Investors" }
+      - { matches: "support@*", label_suffix: "Customers" }
+
+  yeh:
+    vips:
+      p0: []
+      any:
+        - "*@yehovahbuilders.com"
+    role_hints:
+      - { matches: "billing@*", label_suffix: "Billing" }
+      - { matches: "*@yehovahbuilders.com", label_suffix: "Internal" }
+      - { matches: "ops@*", label_suffix: "Ops" }
+      - { matches: "sales@*", label_suffix: "Sales" }
+
+  prettyfly:
+    vips:
+      p0: []
+      any: []
+    role_hints:
+      - { matches: "noreply@*", label_suffix: "Newsletters" }
+      - { matches: "newsletter@*", label_suffix: "Newsletters" }
+      - { matches: "billing@*", label_suffix: "Billing" }
+      - { matches: "support@*", label_suffix: "Customers" }

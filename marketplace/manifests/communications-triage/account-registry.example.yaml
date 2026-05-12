@@ -1,5 +1,17 @@
 # Copy to the tenant runtime profile and fill OAuth credential references.
 # Do not store client secrets or refresh tokens in this file.
+#
+# Token material lives in <profile>/.env, NOT here:
+#   PF_GMAIL_TOKEN_GMAIL_1 .. PF_GMAIL_TOKEN_GMAIL_4
+#   PF_GMAIL_TOKEN_GMAIL_1_CALENDAR .. PF_GMAIL_TOKEN_GMAIL_4_CALENDAR
+#   PF_GRAPH_TOKEN_KOHO_M365
+#   PF_IMAP_PASSWORD_YEHOVAH_HOSTGATOR
+# The loader auto-resolves <PROVIDER_PREFIX><ACCOUNT_ID_UPPER_UNDERSCORE>.
+#
+# Google Calendar entries share their OAuth grant with the matching gmail-N entry.
+# The provisioner (`pf_runtime.oauth.provision google --account gmail-N
+# --write-also gmail-N-calendar`) populates both PF_GMAIL_TOKEN_GMAIL_N and
+# PF_GMAIL_TOKEN_GMAIL_N_CALENDAR atomically from a single OAuth consent.
 
 accounts:
   - account_id: gmail-1
@@ -9,11 +21,27 @@ accounts:
       - https://www.googleapis.com/auth/gmail.readonly
     read_only: true
 
+  - account_id: gmail-1-calendar
+    provider: google_calendar
+    address: alex@example-gmail-1.com
+    scopes:
+      - https://www.googleapis.com/auth/calendar.events.readonly
+      - https://www.googleapis.com/auth/calendar.freebusy
+    read_only: true
+
   - account_id: gmail-2
     provider: google_mail
     address: alex@example-gmail-2.com
     scopes:
       - https://www.googleapis.com/auth/gmail.readonly
+    read_only: true
+
+  - account_id: gmail-2-calendar
+    provider: google_calendar
+    address: alex@example-gmail-2.com
+    scopes:
+      - https://www.googleapis.com/auth/calendar.events.readonly
+      - https://www.googleapis.com/auth/calendar.freebusy
     read_only: true
 
   - account_id: gmail-3
@@ -23,6 +51,14 @@ accounts:
       - https://www.googleapis.com/auth/gmail.readonly
     read_only: true
 
+  - account_id: gmail-3-calendar
+    provider: google_calendar
+    address: alex@example-gmail-3.com
+    scopes:
+      - https://www.googleapis.com/auth/calendar.events.readonly
+      - https://www.googleapis.com/auth/calendar.freebusy
+    read_only: true
+
   - account_id: gmail-4
     provider: google_mail
     address: alex@example-gmail-4.com
@@ -30,11 +66,12 @@ accounts:
       - https://www.googleapis.com/auth/gmail.readonly
     read_only: true
 
-  - account_id: gmail-5
-    provider: google_mail
-    address: alex@example-gmail-5.com
+  - account_id: gmail-4-calendar
+    provider: google_calendar
+    address: alex@example-gmail-4.com
     scopes:
-      - https://www.googleapis.com/auth/gmail.readonly
+      - https://www.googleapis.com/auth/calendar.events.readonly
+      - https://www.googleapis.com/auth/calendar.freebusy
     read_only: true
 
   - account_id: koho-m365

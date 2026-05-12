@@ -41,7 +41,7 @@ import http.server
 import json
 import os
 import socket
-import subprocess
+import subprocess  # nosec B404 - intentional, used to spawn the OS default browser
 import sys
 import threading
 import time
@@ -147,9 +147,9 @@ def _free_port(preferred: int) -> int:
 def _open_url(url: str) -> None:
     """Open ``url`` in the OS default browser. Falls back to printing on failure."""
     if sys.platform == "darwin":
-        subprocess.run(["/usr/bin/open", url], check=False)
+        subprocess.run(["/usr/bin/open", url], check=False)  # nosec B603 - fixed binary, fixed-shape args
     elif sys.platform.startswith("linux"):
-        subprocess.run(["xdg-open", url], check=False)
+        subprocess.run(["xdg-open", url], check=False)  # nosec B603 B607 - PATH lookup intentional on Linux
     else:
         print(f"open this URL in your browser:\n  {url}")
 

@@ -9,8 +9,10 @@ requires-python = ">=3.11"
 
 # Production deps will populate as sub-phases ship.
 # pyyaml is required by communications/account_registry.py (Slice 1).
+# urllib3 floor patches CVE-2026-44431 / CVE-2026-44432 (transitive via requests).
 dependencies = [
     "pyyaml>=6.0",
+    "urllib3>=2.7.0",
 ]
 
 [project.optional-dependencies]

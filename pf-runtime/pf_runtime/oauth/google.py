@@ -88,8 +88,8 @@ class RefreshableGoogleCredentials:
         """Return a valid access token, refreshing if expired (or near-expiry)."""
         cached = _read_cache(self.profile, self.account_id)
         if cached and cached["expires_at"] > time.time() + EXPIRY_SAFETY_MARGIN_S:
-            return cached["access_token"]
-        return self.refresh()["access_token"]
+            return str(cached["access_token"])
+        return str(self.refresh()["access_token"])
 
     def refresh(self) -> dict[str, Any]:
         """Mint a fresh access token via Google's token endpoint, cache it, return the cache record."""

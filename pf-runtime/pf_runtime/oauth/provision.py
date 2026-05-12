@@ -97,9 +97,9 @@ class _CallbackHandler(http.server.BaseHTTPRequestHandler):
             self.end_headers()
             return
         params = urllib.parse.parse_qs(parsed.query)
-        code = (params.get("code") or [None])[0]
-        error = (params.get("error") or [None])[0]
-        state = (params.get("state") or [None])[0]
+        code = next(iter(params.get("code", [])), None)
+        error = next(iter(params.get("error", [])), None)
+        state = next(iter(params.get("state", [])), None)
         # Stash captured state FIRST so the main thread sees it even if the
         # response write blocks or the connection drops mid-flight.
         _CallbackHandler.captured = _CapturedCode(code=code, error=error, state=state)

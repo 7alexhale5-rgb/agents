@@ -13,6 +13,9 @@
   20 reject, 20 paired redacted events, and no provider execution. The next
   packet still shows May 13 residue, so Atlas should plan durable stale
   resolution before another manual sweep.
+- Completed the durable PFOS stale-expiry catch-up: 264 stale inbox/calendar
+  proposals expired, 264 paired redacted events recorded, zero provider
+  execution, and fresh `memory.*` proposals left untouched.
 - Ran the first live PFOS-backed Atlas weekly brief after the cost fix; the run
   returned `finish_reason=stop` with no degraded marker, no receipt
   hallucination, and no execution claim.

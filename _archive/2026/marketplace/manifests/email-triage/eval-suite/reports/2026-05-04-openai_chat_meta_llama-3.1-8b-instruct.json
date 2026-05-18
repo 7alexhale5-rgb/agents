@@ -1,0 +1,106 @@
+{
+  "evalId": "eval-Z28-2026-05-04T23:08:40",
+  "results": {
+    "version": 3,
+    "timestamp": "2026-05-04T23:08:40.409Z",
+    "prompts": [],
+    "results": [],
+    "stats": {
+      "successes": 0,
+      "failures": 0,
+      "errors": 0,
+      "tokenUsage": {
+        "prompt": 0,
+        "completion": 0,
+        "cached": 0,
+        "total": 0,
+        "numRequests": 0,
+        "completionDetails": {
+          "reasoning": 0,
+          "acceptedPrediction": 0,
+          "rejectedPrediction": 0,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0
+        },
+        "assertions": {
+          "total": 0,
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "numRequests": 0,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          }
+        }
+      },
+      "durationMs": 2,
+      "evaluationDurationMs": 2
+    }
+  },
+  "config": {
+    "tags": {},
+    "description": "email-triage golden dataset regression — gate is in-run statistical stability, not calendar nights",
+    "prompts": [
+      "file:///Users/alexhale/Projects/agents/marketplace/manifests/email-triage/eval-suite/prompts/categorize.txt"
+    ],
+    "providers": [
+      {
+        "id": "mistral:mistral-medium-latest"
+      },
+      {
+        "id": "openai:chat:nvidia/llama-3.1-nemotron-nano-8b-v1",
+        "config": {
+          "apiBaseUrl": "https://integrate.api.nvidia.com/v1",
+          "apiKey": "[REDACTED]"
+        }
+      },
+      {
+        "id": "openrouter:nvidia/nemotron-nano-9b-v2"
+      },
+      {
+        "id": "anthropic:claude-sonnet-4-6"
+      }
+    ],
+    "tests": [
+      "file://golden.jsonl"
+    ],
+    "scenarios": [],
+    "env": {},
+    "defaultTest": {
+      "options": {
+        "transform": "file://transform.js"
+      },
+      "assert": [
+        {
+          "type": "javascript",
+          "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+        },
+        {
+          "type": "javascript",
+          "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+        }
+      ],
+      "vars": {},
+      "metadata": {}
+    },
+    "outputPath": [
+      "reports/2026-05-04-openai_chat_meta_llama-3.1-8b-instruct.json"
+    ],
+    "extensions": [],
+    "metadata": {},
+    "evaluateOptions": {}
+  },
+  "shareableUrl": null,
+  "metadata": {
+    "promptfooVersion": "0.121.5",
+    "nodeVersion": "v24.13.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "exportedAt": "2026-05-04T23:08:40.419Z",
+    "evaluationCreatedAt": "2026-05-04T23:08:40.409Z"
+  }
+}

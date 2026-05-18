@@ -1,0 +1,1942 @@
+{
+  "evalId": "eval-lOx-2026-05-04T21:49:02",
+  "results": {
+    "version": 3,
+    "timestamp": "2026-05-04T21:49:02.373Z",
+    "prompts": [
+      {
+        "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+        "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+        "id": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "provider": "anthropic:claude-sonnet-4-6",
+        "metrics": {
+          "score": 0,
+          "testPassCount": 0,
+          "testFailCount": 0,
+          "testErrorCount": 30,
+          "assertPassCount": 0,
+          "assertFailCount": 0,
+          "totalLatencyMs": 5455,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 30,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "namedScoreWeights": {},
+          "cost": 0
+        }
+      }
+    ],
+    "results": [
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "588a844e-c5dd-470c-9206-9ee626bc3aec",
+        "latencyMs": 241,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: no-reply@verizon.com\nSubject: Your Verizon bill is ready\nBody: Your monthly bill of $89.45 is now available.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Your Verizon bill is ready",
+            "from": "no-reply@verizon.com",
+            "body": "Your monthly bill of $89.45 is now available."
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {
+          "subject": "Your Verizon bill is ready",
+          "from": "no-reply@verizon.com",
+          "body": "Your monthly bill of $89.45 is now available."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "281ebae3-2356-40bd-aaa9-89c4df1f7003",
+        "latencyMs": 180,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: marc@acmelaw.com\nSubject: Following up on the contract\nBody: Hi Alex — circling back on the LLC operating agreement we discussed Tuesday. Can you sign by Friday? Need it for the Monday close.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Following up on the contract",
+            "from": "marc@acmelaw.com",
+            "body": "Hi Alex — circling back on the LLC operating agreement we discussed Tuesday. Can you sign by Friday? Need it for the Monday close."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 4,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "vars": {
+          "subject": "Following up on the contract",
+          "from": "marc@acmelaw.com",
+          "body": "Hi Alex — circling back on the LLC operating agreement we discussed Tuesday. Can you sign by Friday? Need it for the Monday close."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "784558f2-a6ca-4d33-afd3-80995b724003",
+        "latencyMs": 129,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: marketing@randomstore.com\nSubject: Don't miss our Memorial Day SALE 🎉🎉🎉\nBody: Get 20% off everything this weekend!",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Don't miss our Memorial Day SALE 🎉🎉🎉",
+            "from": "marketing@randomstore.com",
+            "body": "Get 20% off everything this weekend!"
+          },
+          "expected_category": "delete",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 2,
+        "vars": {
+          "subject": "Don't miss our Memorial Day SALE 🎉🎉🎉",
+          "from": "marketing@randomstore.com",
+          "body": "Get 20% off everything this weekend!"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "cb82dee0-30eb-4dc8-9619-da4bee584ebc",
+        "latencyMs": 1986,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: hello@somenewsletter.com\nSubject: Weekly newsletter: 5 things in AI\nBody: This week in AI: Anthropic, OpenAI, ...",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Weekly newsletter: 5 things in AI",
+            "from": "hello@somenewsletter.com",
+            "body": "This week in AI: Anthropic, OpenAI, ..."
+          },
+          "expected_category": "unsubscribe",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 3,
+        "vars": {
+          "subject": "Weekly newsletter: 5 things in AI",
+          "from": "hello@somenewsletter.com",
+          "body": "This week in AI: Anthropic, OpenAI, ..."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "b990e0c1-fdb8-42b6-964b-bad3c2c48016",
+        "latencyMs": 94,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: receipts@stripe.com\nSubject: Your Stripe receipt\nBody: Receipt for $99.00 — thanks!",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Your Stripe receipt",
+            "from": "receipts@stripe.com",
+            "body": "Receipt for $99.00 — thanks!"
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 4,
+        "vars": {
+          "subject": "Your Stripe receipt",
+          "from": "receipts@stripe.com",
+          "body": "Receipt for $99.00 — thanks!"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "3d985cc0-61a2-4fb1-b1bb-a94536e149fd",
+        "latencyMs": 110,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: mom@gmail.com\nSubject: Mom: are you coming Sunday?\nBody: Just checking — Sunday dinner at 6?",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Mom: are you coming Sunday?",
+            "from": "mom@gmail.com",
+            "body": "Just checking — Sunday dinner at 6?"
+          },
+          "expected_category": "respond",
+          "expected_urgency": 5,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 5,
+        "vars": {
+          "subject": "Mom: are you coming Sunday?",
+          "from": "mom@gmail.com",
+          "body": "Just checking — Sunday dinner at 6?"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "146ae522-aef1-4a7c-946b-2191b5f9249b",
+        "latencyMs": 183,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: cpa@firmcpa.com\nSubject: Tax return — needs your signature\nBody: Your 2025 1040 is ready. Please sign by 4/15.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Tax return — needs your signature",
+            "from": "cpa@firmcpa.com",
+            "body": "Your 2025 1040 is ready. Please sign by 4/15."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 5,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 6,
+        "vars": {
+          "subject": "Tax return — needs your signature",
+          "from": "cpa@firmcpa.com",
+          "body": "Your 2025 1040 is ready. Please sign by 4/15."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "9380afe3-2e15-474a-8261-ca396dd0bf88",
+        "latencyMs": 179,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@calendar.google.com\nSubject: Calendar invite — coffee with John\nBody: John has invited you to a meeting.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Calendar invite — coffee with John",
+            "from": "noreply@calendar.google.com",
+            "body": "John has invited you to a meeting."
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 2,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 7,
+        "vars": {
+          "subject": "Calendar invite — coffee with John",
+          "from": "noreply@calendar.google.com",
+          "body": "John has invited you to a meeting."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "c90e36bf-5cb7-4eed-a7bd-16d4b1f18c42",
+        "latencyMs": 123,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: invitations@linkedin.com\nSubject: [Invitation] LinkedIn — Sara wants to connect\nBody: Sara Chen wants to connect with you on LinkedIn.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "[Invitation] LinkedIn — Sara wants to connect",
+            "from": "invitations@linkedin.com",
+            "body": "Sara Chen wants to connect with you on LinkedIn."
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 2,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 8,
+        "vars": {
+          "subject": "[Invitation] LinkedIn — Sara wants to connect",
+          "from": "invitations@linkedin.com",
+          "body": "Sara Chen wants to connect with you on LinkedIn."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "de677ebc-6278-47e7-bf17-49d27242101a",
+        "latencyMs": 89,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: alerts@ach.example.com\nSubject: $3,200 deposit pending\nBody: A $3,200.00 ACH deposit is pending in your account.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "$3,200 deposit pending",
+            "from": "alerts@ach.example.com",
+            "body": "A $3,200.00 ACH deposit is pending in your account."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 4,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 9,
+        "vars": {
+          "subject": "$3,200 deposit pending",
+          "from": "alerts@ach.example.com",
+          "body": "A $3,200.00 ACH deposit is pending in your account."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "a092e0b6-d138-4627-8bc3-eb3ada2a2c19",
+        "latencyMs": 77,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: lp@familyoffice.com\nSubject: RE: Investor update Q2\nBody: Got it. Will review and revert.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "RE: Investor update Q2",
+            "from": "lp@familyoffice.com",
+            "body": "Got it. Will review and revert."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 3,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 10,
+        "vars": {
+          "subject": "RE: Investor update Q2",
+          "from": "lp@familyoffice.com",
+          "body": "Got it. Will review and revert."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "8ed94411-7ed6-4595-9c84-029a1b627cf8",
+        "latencyMs": 116,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: shipping@amazon.com\nSubject: Order shipped 📦\nBody: Your order has shipped.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Order shipped 📦",
+            "from": "shipping@amazon.com",
+            "body": "Your order has shipped."
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 11,
+        "vars": {
+          "subject": "Order shipped 📦",
+          "from": "shipping@amazon.com",
+          "body": "Your order has shipped."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "54079414-83a7-44c2-b1a1-649898f07dcf",
+        "latencyMs": 193,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: support@phishingbank.fake\nSubject: URGENT: re-verify your bank account NOW\nBody: Click here to verify.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "URGENT: re-verify your bank account NOW",
+            "from": "support@phishingbank.fake",
+            "body": "Click here to verify."
+          },
+          "expected_category": "delete",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 12,
+        "vars": {
+          "subject": "URGENT: re-verify your bank account NOW",
+          "from": "support@phishingbank.fake",
+          "body": "Click here to verify."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "d9609030-bf59-4eea-aaa5-534101eba6ea",
+        "latencyMs": 90,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: anthony@yehovah.builders\nSubject: Quick question on the Excerpa PR\nBody: Does the migration script handle the empty contact case?",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Quick question on the Excerpa PR",
+            "from": "anthony@yehovah.builders",
+            "body": "Does the migration script handle the empty contact case?"
+          },
+          "expected_category": "respond",
+          "expected_urgency": 4,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 13,
+        "vars": {
+          "subject": "Quick question on the Excerpa PR",
+          "from": "anthony@yehovah.builders",
+          "body": "Does the migration script handle the empty contact case?"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "5939d542-c5de-421a-a839-3f24f0c7623b",
+        "latencyMs": 100,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@somelist.com\nSubject: Unsubscribe successful\nBody: You have been unsubscribed.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Unsubscribe successful",
+            "from": "noreply@somelist.com",
+            "body": "You have been unsubscribed."
+          },
+          "expected_category": "delete",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 14,
+        "vars": {
+          "subject": "Unsubscribe successful",
+          "from": "noreply@somelist.com",
+          "body": "You have been unsubscribed."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "bd833cbd-4d29-4b01-85e0-ecab1c99807e",
+        "latencyMs": 99,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@reddit.com\nSubject: Daily digest: 12 new posts in r/agentic\nBody: 12 new posts in your subscribed subreddits.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Daily digest: 12 new posts in r/agentic",
+            "from": "noreply@reddit.com",
+            "body": "12 new posts in your subscribed subreddits."
+          },
+          "expected_category": "unsubscribe",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 15,
+        "vars": {
+          "subject": "Daily digest: 12 new posts in r/agentic",
+          "from": "noreply@reddit.com",
+          "body": "12 new posts in your subscribed subreddits."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "d6fe71f8-515f-492b-9cff-53b39b1da386",
+        "latencyMs": 86,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: billing@anthropic.com\nSubject: FYI: pricing update on Anthropic Sonnet\nBody: Effective May 15, Sonnet pricing changes.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "FYI: pricing update on Anthropic Sonnet",
+            "from": "billing@anthropic.com",
+            "body": "Effective May 15, Sonnet pricing changes."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 3,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 16,
+        "vars": {
+          "subject": "FYI: pricing update on Anthropic Sonnet",
+          "from": "billing@anthropic.com",
+          "body": "Effective May 15, Sonnet pricing changes."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "73e41fd7-207c-4569-b321-7cd273d0d277",
+        "latencyMs": 96,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: no-reply@spotify.com\nSubject: Your weekly Spotify Wrapped\nBody: Here's what you listened to this week!",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Your weekly Spotify Wrapped",
+            "from": "no-reply@spotify.com",
+            "body": "Here's what you listened to this week!"
+          },
+          "expected_category": "delete",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 17,
+        "vars": {
+          "subject": "Your weekly Spotify Wrapped",
+          "from": "no-reply@spotify.com",
+          "body": "Here's what you listened to this week!"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "aff0af4b-8b77-40e2-8266-42de5e0bd66d",
+        "latencyMs": 94,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: delta@delta.com\nSubject: Booking confirmation — flight to ATL\nBody: Your flight on June 15 is confirmed.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Booking confirmation — flight to ATL",
+            "from": "delta@delta.com",
+            "body": "Your flight on June 15 is confirmed."
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 2,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 18,
+        "vars": {
+          "subject": "Booking confirmation — flight to ATL",
+          "from": "delta@delta.com",
+          "body": "Your flight on June 15 is confirmed."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "e9ac31f2-b5aa-4d22-a9d9-264e30063b62",
+        "latencyMs": 79,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: marc@koho.consulting\nSubject: Marc — quick chat tomorrow?\nBody: Free at 2pm? Want to align on Friday's demo.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Marc — quick chat tomorrow?",
+            "from": "marc@koho.consulting",
+            "body": "Free at 2pm? Want to align on Friday's demo."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 4,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 19,
+        "vars": {
+          "subject": "Marc — quick chat tomorrow?",
+          "from": "marc@koho.consulting",
+          "body": "Free at 2pm? Want to align on Friday's demo."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "dd0a9048-6847-469f-8576-7053df1c9096",
+        "latencyMs": 145,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: renewals@registrar.com\nSubject: Domain renewal: prettyflyforai.com expires in 30 days\nBody: Renew now to avoid loss of service.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Domain renewal: prettyflyforai.com expires in 30 days",
+            "from": "renewals@registrar.com",
+            "body": "Renew now to avoid loss of service."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 4,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 20,
+        "vars": {
+          "subject": "Domain renewal: prettyflyforai.com expires in 30 days",
+          "from": "renewals@registrar.com",
+          "body": "Renew now to avoid loss of service."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "04e796ad-9276-4f1a-9d7d-e43b4210c45c",
+        "latencyMs": 132,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@github.com\nSubject: [GitHub] PR #67 was approved\nBody: Your PR was approved.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "[GitHub] PR #67 was approved",
+            "from": "noreply@github.com",
+            "body": "Your PR was approved."
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 2,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 21,
+        "vars": {
+          "subject": "[GitHub] PR #67 was approved",
+          "from": "noreply@github.com",
+          "body": "Your PR was approved."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "1718ddcb-c8ad-4e64-abd7-9ddfae28e41d",
+        "latencyMs": 127,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: feedback@slack.com\nSubject: Slack: 5 new messages in #consultops\nBody: 5 new messages.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Slack: 5 new messages in #consultops",
+            "from": "feedback@slack.com",
+            "body": "5 new messages."
+          },
+          "expected_category": "delete",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 22,
+        "vars": {
+          "subject": "Slack: 5 new messages in #consultops",
+          "from": "feedback@slack.com",
+          "body": "5 new messages."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "2d0166b0-723c-4054-b4e0-48da92acca62",
+        "latencyMs": 119,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: alerts@consultops.koho.consulting\nSubject: ConsultOps Marc: lead routing failed for prospect 1234\nBody: Routing pipeline error for prospect ID 1234.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "ConsultOps Marc: lead routing failed for prospect 1234",
+            "from": "alerts@consultops.koho.consulting",
+            "body": "Routing pipeline error for prospect ID 1234."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 5,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 23,
+        "vars": {
+          "subject": "ConsultOps Marc: lead routing failed for prospect 1234",
+          "from": "alerts@consultops.koho.consulting",
+          "body": "Routing pipeline error for prospect ID 1234."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "03fa465f-8964-46bd-b22c-ad469d3eec87",
+        "latencyMs": 88,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@vercel.com\nSubject: Your domain transfer is complete\nBody: The domain transfer is complete.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Your domain transfer is complete",
+            "from": "noreply@vercel.com",
+            "body": "The domain transfer is complete."
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 24,
+        "vars": {
+          "subject": "Your domain transfer is complete",
+          "from": "noreply@vercel.com",
+          "body": "The domain transfer is complete."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "a160f9c9-bd13-42a4-a6da-7e0ba2dbe1e7",
+        "latencyMs": 99,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: events@somefirm.com\nSubject: Webinar replay: Building agentic systems in 2026\nBody: Watch the replay here.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Webinar replay: Building agentic systems in 2026",
+            "from": "events@somefirm.com",
+            "body": "Watch the replay here."
+          },
+          "expected_category": "delete",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 25,
+        "vars": {
+          "subject": "Webinar replay: Building agentic systems in 2026",
+          "from": "events@somefirm.com",
+          "body": "Watch the replay here."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "44a03cb4-1648-4828-bda9-253c72460ef4",
+        "latencyMs": 113,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@honcho.dev\nSubject: Your Honcho preview deploy is ready\nBody: Preview deploy at honcho-preview-abc.fly.dev",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Your Honcho preview deploy is ready",
+            "from": "noreply@honcho.dev",
+            "body": "Preview deploy at honcho-preview-abc.fly.dev"
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 2,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 26,
+        "vars": {
+          "subject": "Your Honcho preview deploy is ready",
+          "from": "noreply@honcho.dev",
+          "body": "Preview deploy at honcho-preview-abc.fly.dev"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "2bed4d17-7bb0-4071-ba98-0cc75291c7e4",
+        "latencyMs": 95,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: imran@alif.build\nSubject: Hi! Saw your tweet on Hermes\nBody: Loved your thread. Want to chat about how you set up the Antfarm pipeline?",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Hi! Saw your tweet on Hermes",
+            "from": "imran@alif.build",
+            "body": "Loved your thread. Want to chat about how you set up the Antfarm pipeline?"
+          },
+          "expected_category": "respond",
+          "expected_urgency": 3,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 27,
+        "vars": {
+          "subject": "Hi! Saw your tweet on Hermes",
+          "from": "imran@alif.build",
+          "body": "Loved your thread. Want to chat about how you set up the Antfarm pipeline?"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "8ffe5765-7db7-4643-81e2-5d4e4b57f86d",
+        "latencyMs": 96,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@stripe.com\nSubject: Action required: 2FA code\nBody: Your 2FA code is 482910. Expires in 5 min.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Action required: 2FA code",
+            "from": "noreply@stripe.com",
+            "body": "Your 2FA code is 482910. Expires in 5 min."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 5,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 28,
+        "vars": {
+          "subject": "Action required: 2FA code",
+          "from": "noreply@stripe.com",
+          "body": "Your 2FA code is 482910. Expires in 5 min."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error",
+        "gradingResult": null,
+        "id": "27c0151f-6e38-4a2b-890a-909af016c8a9",
+        "latencyMs": 97,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: marketing@swagcompany.com\nSubject: Free swag for AI builders 🎁\nBody: Claim your free hoodie!",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "anthropic:claude-sonnet-4-6",
+          "label": ""
+        },
+        "response": {
+          "error": "API call error: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits., status 400, type invalid_request_error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Free swag for AI builders 🎁",
+            "from": "marketing@swagcompany.com",
+            "body": "Claim your free hoodie!"
+          },
+          "expected_category": "delete",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 29,
+        "vars": {
+          "subject": "Free swag for AI builders 🎁",
+          "from": "marketing@swagcompany.com",
+          "body": "Claim your free hoodie!"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      }
+    ],
+    "stats": {
+      "successes": 0,
+      "failures": 0,
+      "errors": 30,
+      "tokenUsage": {
+        "prompt": 0,
+        "completion": 0,
+        "cached": 0,
+        "total": 0,
+        "numRequests": 30,
+        "completionDetails": {
+          "reasoning": 0,
+          "acceptedPrediction": 0,
+          "rejectedPrediction": 0,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0
+        },
+        "assertions": {
+          "total": 0,
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "numRequests": 0,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          }
+        }
+      },
+      "durationMs": 1999,
+      "evaluationDurationMs": 1999
+    }
+  },
+  "config": {
+    "description": "email-triage golden dataset regression — runs nightly, pass-rate floor 0.85",
+    "prompts": [
+      "file://prompts/categorize.txt"
+    ],
+    "providers": [
+      {
+        "id": "openrouter:nvidia/nemotron-nano-9b-v2"
+      },
+      {
+        "id": "mistral:mistral-medium-latest"
+      },
+      {
+        "id": "anthropic:claude-sonnet-4-6"
+      }
+    ],
+    "tests": [
+      "file://golden.jsonl"
+    ],
+    "defaultTest": {
+      "options": {
+        "transform": "file://transform.js"
+      },
+      "assert": [
+        {
+          "type": "equals",
+          "transformValue": "output.category",
+          "value": "{{expected_category}}"
+        },
+        {
+          "type": "javascript",
+          "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+        }
+      ]
+    },
+    "outputPath": [
+      "reports/2026-05-04-baseline-sonnet.json"
+    ],
+    "extensions": []
+  },
+  "shareableUrl": null,
+  "metadata": {
+    "promptfooVersion": "0.121.5",
+    "nodeVersion": "v24.13.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "exportedAt": "2026-05-04T21:49:04.419Z",
+    "evaluationCreatedAt": "2026-05-04T21:49:02.373Z"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "sku": "personal-baseline",
+  "name": "Personal \u2014 Chief of Staff",
+  "version": "1.0.0",
+  "category": "personal",
+  "department": "c-suite",
+  "tagline": "Voice-first agent that takes the load off your daily life",
+  "tier": "chief-of-staff",
+  "depends_on": [
+    "4d-senses",
+    "obsidian"
+  ],
+  "channels": [
+    "slack",
+    "telegram",
+    "voice",
+    "obsidian",
+    "cli"
+  ],
+  "model_routing": {
+    "default": "openrouter:nemotron-free",
+    "drafting": "mistral:medium",
+    "reasoning": "anthropic:claude-sonnet-4-6",
+    "strategic": "anthropic:claude-opus-4-7",
+    "voice_stt": "groq:whisper-turbo",
+    "voice_tts": "google:tts-standard"
+  },
+  "memory_axes": [
+    "working",
+    "episodic",
+    "procedural"
+  ],
+  "memory_axes_phase_1_5": [
+    "working",
+    "episodic",
+    "semantic_via_honcho",
+    "procedural"
+  ],
+  "guardrails": [
+    "outbound_human_approval",
+    "no_money_movement",
+    "money_pipeline_readonly",
+    "pii_redaction"
+  ],
+  "sla": {
+    "uptime": 99.0,
+    "p95_latency_seconds": 30,
+    "voice_reply_p95_seconds": 8
+  },
+  "compatible_with": [],
+  "pricing_ref": "./pricing.yaml",
+  "publish": false,
+  "internal_only": true
+}

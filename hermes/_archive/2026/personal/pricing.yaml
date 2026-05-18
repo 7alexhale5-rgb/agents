@@ -1,0 +1,33 @@
+# Pricing for the personal profile
+# Internal-only — not published to the marketplace catalog.
+# When clients buy a similar SKU it's `email-triage`, `daily-digest`, etc., not `personal`.
+
+internal_only: true
+billable_to_alex: false
+
+# If we ever published a "Chief of Staff" SKU based on this profile, here's the shape:
+hypothetical_external_tiers:
+  starter:
+    monthly_price: 99
+    actions_per_day: 50
+    model_floor: openrouter:free-rotation
+    memory: episodic+procedural
+    channels: [telegram]
+    sla_uptime: 99.0
+  pro:
+    monthly_price: 299
+    actions_per_day: 500
+    model_floor: mistral:medium
+    memory: episodic+semantic_via_honcho+procedural
+    channels: [telegram, slack, voice, obsidian]
+    sla_uptime: 99.5
+  scale:
+    monthly_price: 1499
+    actions_per_day: unlimited
+    model_floor: anthropic:sonnet-4-6
+    memory: full_5_axes
+    channels: unlimited
+    sla_uptime: 99.9
+    custom_skills_included: 10
+
+byok_keys: [anthropic_or_openai_or_openrouter, telegram_bot_token]

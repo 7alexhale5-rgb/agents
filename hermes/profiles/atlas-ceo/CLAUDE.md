@@ -21,6 +21,7 @@ PFOS approval rows; it does not execute work.
 | Priority decision request | `SOUL.md`, `DOCTRINE.md`, current request, `fleet.snapshot` when facts are needed, `BUSINESS.md`, `MEMORY.md` | decision-memo |
 | Approval-needed proposal | `SOUL.md`, `DOCTRINE.md`, verified source packet, `BUSINESS.md` | approval-proposal-draft |
 | Strategy or operator doctrine request | `SOUL.md`, `DOCTRINE.md`, current request, relevant source signals | decision-memo |
+| Cross-session handoff | current profile docs, latest plan, latest validation output, relevant handoff docs | generate-handoff |
 
 ## Model routing
 

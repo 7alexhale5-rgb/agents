@@ -17,7 +17,8 @@
     "business-scorecard-brief",
     "decision-memo",
     "weekly-ceo-operating-loop",
-    "approval-proposal-draft"
+    "approval-proposal-draft",
+    "generate-handoff"
   ],
   "tools": [
     "fleet.snapshot",

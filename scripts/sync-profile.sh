@@ -29,7 +29,7 @@ fi
 # Files we sync (versioned → runtime AND runtime → versioned)
 TRACKED=(
   "CLAUDE.md" "SOUL.md" "DOCTRINE.md" "USER.md" "BUSINESS.md" "MEMORY.md"
-  "manifest.json" "pricing.yaml" "config.yaml"
+  "manifest.json" "a2a-card.json" "pricing.yaml" "config.yaml"
   ".env.example" "PAUSED.template" "changelog.md"
 )
 

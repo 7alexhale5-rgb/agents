@@ -1,5 +1,16 @@
 # Changelog — atlas-ceo profile
 
+## 2026-05-18 — manual weekly CEO brief pilot
+
+- Restored the premium Atlas source-grounded route after provider credits were
+  replenished.
+- Ran a real PFOS-backed weekly CEO brief through
+  `anthropic:claude-sonnet-4-6`; the output had no degraded marker and did not
+  claim any proposal receipt or execution.
+- Promoted Atlas from weekly CEO brief candidate to manual weekly CEO brief
+  pilot. Scheduled cadence remains gated on live-brief adoption evidence and
+  restored cost visibility.
+
 ## 2026-05-18 — weekly CEO brief candidate
 
 - Passed the Atlas blind interview suite: 9/9 cases, zero fabricated metrics,

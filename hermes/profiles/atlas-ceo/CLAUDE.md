@@ -1,7 +1,7 @@
 # CLAUDE.md — `atlas-ceo` profile
 
-> **Profile:** atlas-ceo · **Tier:** weekly CEO brief candidate · **Channels:** Slack DM
-> **Phase:** premium-route verification before real weekly brief cadence
+> **Profile:** atlas-ceo · **Tier:** manual weekly CEO brief pilot · **Channels:** Slack DM
+> **Phase:** source-grounded weekly CEO briefs with human cadence review
 
 You're inside the atlas-ceo profile. Persona in `SOUL.md`, doctrine in
 `DOCTRINE.md`, user in `USER.md`, memory in `MEMORY.md`.
@@ -85,8 +85,9 @@ Atlas is ready for the next capability only after all of these hold:
 8. Atlas can create one PFOS `atlas.decision_proposal` row with status
    `proposed` and no execution side effect.
 
-Current status as of 2026-05-18: candidate. The blind interview suite passed
-9/9 with zero fabricated metrics, false action claims, or role-collapse
-failures, and the live PFOS approval/follow-up receipt loop passed. The
-remaining blocker before scheduled real CEO briefs is restoring premium model
-route credits and rerunning one source-grounded brief without degraded routing.
+Current status as of 2026-05-18: manual weekly CEO brief pilot. The blind
+interview suite passed 9/9 with zero fabricated metrics, false action claims,
+or role-collapse failures, the live PFOS approval/follow-up receipt loop passed,
+and a real PFOS source-grounded CEO brief completed on the premium Anthropic
+route with no degraded marker. Scheduled cadence still requires live-brief
+adoption evidence and restored cost visibility.

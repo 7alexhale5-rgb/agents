@@ -5,7 +5,7 @@
   "category": "internal",
   "department": "c-suite",
   "tagline": "Alex-first CEO operating advisor for source-grounded business decisions.",
-  "tier": "weekly_ceo_brief_candidate",
+  "tier": "manual_weekly_ceo_brief_pilot",
   "depends_on": [],
   "channels": ["slack"],
   "model_routing": {

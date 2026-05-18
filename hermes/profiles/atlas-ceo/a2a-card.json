@@ -3,7 +3,7 @@
   "agent_id": "atlas-ceo",
   "version": "0.1.0",
   "description": "Alex-first CEO operating advisor. Atlas turns verified PFOS and PF Runtime source packets into CEO briefs, decision memos, and approval-needed action proposals.",
-  "tier": "weekly_ceo_brief_candidate",
+  "tier": "manual_weekly_ceo_brief_pilot",
   "side_effects": ["read", "proposal_write_only"],
   "eval_suite_uri": "eval/promptfoo.yaml",
   "cost_envelope": {
@@ -38,5 +38,5 @@
       "publish_client_facing_output"
     ]
   },
-  "stamped_at": "2026-05-18T00:00:00Z"
+  "stamped_at": "2026-05-18T04:02:32Z"
 }

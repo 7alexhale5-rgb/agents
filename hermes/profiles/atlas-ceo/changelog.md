@@ -1,5 +1,21 @@
 # Changelog — atlas-ceo profile
 
+## 2026-05-18 — first weekly brief adoption proof
+
+- Restored PFOS cost visibility in production source packets: the Atlas packet
+  now returns `business_scorecard.costs.available=true` through the
+  `agent_events` rollup and no longer reports `sqlite3 CLI not found`.
+- Ran the first live PFOS-backed Atlas weekly brief after the cost fix; the run
+  returned `finish_reason=stop` with no degraded marker, no receipt
+  hallucination, and no execution claim.
+- Adopted the operating decision
+  `clear_pending_approval_queue_before_new_surface_area`.
+- Recorded a redacted PFOS evidence event
+  `atlas.weekly_brief.adopted` as
+  `6f7464af-4ac1-4cb1-92c4-de85b30c0776`.
+- Kept Atlas at manual weekly CEO brief pilot until the pending queue-triage
+  follow-through is completed.
+
 ## 2026-05-18 — manual weekly CEO brief pilot
 
 - Restored the premium Atlas source-grounded route after provider credits were

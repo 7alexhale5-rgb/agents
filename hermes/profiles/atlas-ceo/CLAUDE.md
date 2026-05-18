@@ -88,6 +88,9 @@ Atlas is ready for the next capability only after all of these hold:
 Current status as of 2026-05-18: manual weekly CEO brief pilot. The blind
 interview suite passed 9/9 with zero fabricated metrics, false action claims,
 or role-collapse failures, the live PFOS approval/follow-up receipt loop passed,
-and a real PFOS source-grounded CEO brief completed on the premium Anthropic
-route with no degraded marker. Scheduled cadence still requires live-brief
-adoption evidence and restored cost visibility.
+and real PFOS source-grounded CEO briefs completed on the premium Anthropic
+route with no degraded marker. PFOS cost visibility is restored through the
+production source packet, and the first live adoption proof changed the
+operating priority to clearing the pending PFOS approval queue before adding
+new Atlas or fleet surface area. Scheduled cadence still requires one
+queue-triage follow-through after that adoption decision.

@@ -78,6 +78,7 @@ async def test_handle_inbound_schedules_pfos_emit_when_configured(
     emit_mock.assert_awaited_once()
     call_kw = emit_mock.call_args[0][0]
     assert call_kw["type"] == "STATE_CHANGED"
+    assert call_kw["trace_id"] == "sess-99"
     assert call_kw["data"]["kind"] == "pf_runtime_reply"
     assert call_kw["data"]["session_id"] == "sess-99"
 

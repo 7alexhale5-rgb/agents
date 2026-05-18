@@ -198,6 +198,7 @@ def _schedule_pfos_reply_event(
     assistant_reply: str,
     session_id: str,
     inbound_preview: str,
+    trace_id: str,
 ) -> None:
     task = asyncio.create_task(
         _safe_pfos_reply_event(
@@ -206,6 +207,7 @@ def _schedule_pfos_reply_event(
             assistant_reply=assistant_reply,
             session_id=session_id,
             inbound_preview=inbound_preview,
+            trace_id=trace_id,
         ),
     )
     _background_pfos_tasks.add(task)
@@ -219,6 +221,7 @@ async def _safe_pfos_reply_event(
     assistant_reply: str,
     session_id: str,
     inbound_preview: str,
+    trace_id: str,
 ) -> None:
     """Fire-and-forget PFOS writeback; failures must not affect channel I/O."""
     try:
@@ -228,6 +231,7 @@ async def _safe_pfos_reply_event(
             text_preview=assistant_reply,
             session_id=session_id,
             inbound_preview=inbound_preview,
+            trace_id=trace_id,
         )
         await emit_agent_event(payload)
     except Exception:
@@ -378,6 +382,7 @@ async def _handle_inbound(
             assistant_reply=assistant_reply,
             session_id=result.session_id,
             inbound_preview=inbound.text,
+            trace_id=result.session_id,
         )
     await channel.ack(inbound.message_id)
 

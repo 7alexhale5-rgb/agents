@@ -684,6 +684,7 @@ def _triage_start_payload(
         "agent_slug": AGENT_SLUG,
         "skill_slug": SKILL_SLUG,
         "cwd_project": profile_slug,
+        "trace_id": run_id,
     }
 
 
@@ -710,6 +711,7 @@ def _triage_end_payload(
         "agent_slug": AGENT_SLUG,
         "skill_slug": SKILL_SLUG,
         "cwd_project": profile_slug,
+        "trace_id": run_id,
     }
 
 
@@ -734,6 +736,7 @@ def _triage_error_payload(
         "agent_slug": AGENT_SLUG,
         "skill_slug": SKILL_SLUG,
         "cwd_project": profile_slug,
+        "trace_id": run_id,
         "parent_run_id": run_id,
     }
 

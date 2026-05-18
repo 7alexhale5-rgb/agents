@@ -474,11 +474,14 @@ async def test_triage_all_accounts_emits_start_errors_end_in_order(
     ]
     err_payload = triage_emits[1]
     assert err_payload["type"] == "ERROR"
+    assert err_payload["trace_id"] == run.run_id
     assert err_payload["parent_run_id"] == run.run_id
     assert err_payload["data"]["account_id"] == "gmail-bad"
     assert err_payload["data"]["provider"] == "google_mail"
 
     end_payload = triage_emits[2]
+    assert triage_emits[0]["trace_id"] == run.run_id
+    assert end_payload["trace_id"] == run.run_id
     assert end_payload["data"]["accounts_scanned"] == 2
     assert end_payload["data"]["errors"] == 1
     assert end_payload["data"]["proposals_created"] == 0

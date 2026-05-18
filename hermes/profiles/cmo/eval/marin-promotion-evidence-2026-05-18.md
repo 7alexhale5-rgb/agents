@@ -14,6 +14,7 @@
 - Buyer-signal-router pre-hardening eval: 7/14 on 2026-05-18. Smoke route passed all seven fixtures; Sonnet failed all seven because labels were rendered as bold Markdown and underscores were escaped. One semantic risk also appeared: the accepted/no-reply case treated an approved workflow-question DM artifact as a named workflow.
 - Buyer-signal-router post-hardening eval: `promptfoo eval -c hermes/profiles/cmo/eval/buyer-signal-router.promptfoo.yaml --no-cache` passed 14/14 on 2026-05-18 across Haiku and Sonnet.
 - Dogfood baseline: current three live connection notes must route to wait / route not open / named workflow none / proposed reply none / no workaround DM.
+- Live dogfood memo: `~/Projects/marketing/_inbox/cmo-readouts/2026-05-18-buyer-signal-current-three.md` routes the current three connection-note records to wait / route not open / named workflow none / proposed reply none / no workaround DM.
 - Static safety scan after the passing eval found 0 unsafe output hits, 0 accepted/no-reply named-workflow artifact hits, and 0 non-`none` proposed replies for dogfood/negative/stop outputs.
 
 ## Hardening Decision
@@ -34,6 +35,12 @@ Marin can be considered for the next Karpathy rung for buyer-signal routing only
 - dogfood current-three-notes output preserves the wait/no-route/no-workflow/no-reply decision;
 - no output recommends automation, external sends, PFOS/CRM/tooling work, scraping, cold email, bulk Apollo, publishing, or volume increase;
 - at least one real route-open or reply case is reviewed by Alex and accepted as good judgment.
+
+## Next 1% Queue
+
+1. Ask Alex to accept or reject the live current-three dogfood memo.
+2. When the first route opens or reply arrives, run Marin on that live signal and record Alex's acceptance or correction.
+3. Only after the live route/reply case is accepted, plan the next profile move; Viper rung 1 is the likely candidate, while Quill waits for buyer language.
 
 ## Audit Notes
 

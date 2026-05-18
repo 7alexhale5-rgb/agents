@@ -42,6 +42,7 @@ Atlas is at rung 3 — use it as the reference shape. Every new profile starts a
 - **agentskills.io / SKILL.md** for every procedural skill — progressive disclosure (metadata → body → referenced files)
 - **MCP for tools, A2A for agents** — never blur the line
 - **One ADR per architectural decision** in `_meta/decisions/`, dated, never edit historical ADRs
+- **1% closeout discipline** — after each completed task, name the next obvious 1% move. When Alex asks for planning around it, produce a decision-complete plan, then autonomously execute up to the next three small, safe 1% moves unless a real blocker appears.
 
 ## Source-of-truth ↔ runtime
 

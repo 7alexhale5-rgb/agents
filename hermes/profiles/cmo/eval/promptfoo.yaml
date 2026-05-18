@@ -14,12 +14,14 @@ prompts:
     {{fixture}}
 
 providers:
-  - id: openrouter:nvidia/nemotron-3-nano-30b-a3b:free
-    label: haiku-smoke-equivalent
+  - id: anthropic:claude-haiku-4-5
+    label: haiku-smoke
     config:
-      apiKeyEnvar: OPENROUTER_API_KEY
+      showThinking: false
   - id: anthropic:claude-sonnet-4-6
     label: sonnet-real-review
+    config:
+      showThinking: false
 
 defaultTest:
   assert:

@@ -69,8 +69,9 @@ CMO is ready for the next phase only after all of these hold:
 5. The Weekly Readout passes the kill-list check (does not propose any killed item).
 6. Alex reviews the readout and confirms it's coherent enough that he would have made the same decision (or names the gap if not).
 7. Eval suite: 4 fixtures (continue / narrow / rewrite / pause routing) passes ≥80% on both Haiku and Sonnet.
+8. Buyer-signal-router gate: 7 fixtures (no-reply / accepted / positive / correction / referral / negative / stop) passes 100% on the smoke model and Sonnet, including the accepted/no-reply rule that approved messages and workflow-question DMs are not named workflows.
 
-Current status as of 2026-05-18: Phase 2 product gate passed. Alex reviewed the first AI Ops Audit weekly readout and confirmed the `continue, hold volume, wait for route` call was accurate. Phase 3 may plan Quill + Viper next, but no Phase 3 scaffold exists yet.
+Current status as of 2026-05-18: Phase 2 product gate passed for weekly decision readouts. Alex reviewed the first AI Ops Audit weekly readout and confirmed the `continue, hold volume, wait for route` call was accurate. Buyer-signal-router cleared its synthetic Haiku/Sonnet eval gate, but Marin remains rung 2/propose-only until a real route-open or reply case is accepted by Alex. Phase 3 may plan Quill + Viper next only after Marin's intake/router gate is clean.
 
 ## Communication shape
 

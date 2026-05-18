@@ -43,15 +43,17 @@ Use the signal classes and reason codes from the First Response Operating Packet
 
 1. **Source pass** — identify the ledger record, signal source, date, company/person, current route status, reply status, outcome, and next decision. If a value is missing, write `unknown` rather than guessing.
 2. **Classify** — choose exactly one signal class and one reason code from the table above.
-3. **Workflow gate** — decide whether a named workflow exists. If none exists, write `named_workflow: none` and do not recommend WORKS Review, diagnostic CTA, content scaling, channel scaling, or automation.
+3. **Workflow gate** — decide whether a named workflow exists. If the source says `Named workflow: <specific workflow>` or the buyer clearly names/validates a workflow, copy that workflow exactly. If the source says `Named workflows: 0` or no workflow is present, write `Named workflow: none` and do not recommend WORKS Review, diagnostic CTA, content scaling, channel scaling, or automation. Approved message names, DM labels, message refs, and "workflow-question DM" artifacts are not workflows.
 4. **Allowed action** — choose exactly one next manual action from the First Response Operating Packet or Weekly Revenue Loop Manual Action Menu.
-5. **Reply proposal gate** — include a proposed reply only when the route has opened. If the route is still closed, write `proposed_reply: none`.
+5. **Reply proposal gate** — include a proposed reply only when the route has opened. If the route is still closed, write `Proposed reply: none`. Keep this field to `none`, an exact approved vault message reference, or a one-sentence manual reply intent; do not draft polished copy.
 6. **Ledger proposal** — name the ledger fields Alex should update. Do not write the ledger directly.
 7. **Client-health check** — add a warning if the action would crowd out active Koho or Yehovah obligations. Default to `no client-health conflict identified` when no evidence suggests crowd-out.
 8. **Stop condition** — name the condition that stops all follow-up.
 9. **Safety check** — confirm the memo does not recommend sending, publishing, automating, scraping, scaling, changing systems, or adopting tools without human approval.
 
 ## Output shape
+
+Use plain text only. The first line is exactly `Buyer Signal Router Memo`. Every field label below appears exactly once, with the value on the same line. Do not use Markdown headings, bold labels, bullets inside fields, escaped underscores, or prose-wrapped labels.
 
 ```text
 Buyer Signal Router Memo
@@ -82,6 +84,7 @@ For the current first three live connection notes, all still `not_connected` wit
 ## Anti-patterns to avoid
 
 - Treating an acceptance as permission to pitch WORKS Review
+- Treating an approved DM, approved message reference, or workflow-question DM label as a named workflow
 - Treating generic curiosity, likes, or profile views as buyer workflow signal
 - Recommending follow-up when the route has not opened
 - Recommending automation, Unipile, cold email, paid ads, CRM, PFOS, bulk Apollo, website publishing, or more outreach volume

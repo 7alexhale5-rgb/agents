@@ -69,7 +69,7 @@ CMO is ready for the next phase only after all of these hold:
 6. Alex reviews the readout and confirms it's coherent enough that he would have made the same decision (or names the gap if not).
 7. Eval suite: 4 fixtures (continue / narrow / rewrite / pause routing) passes ≥80% on both Haiku and Sonnet.
 
-Current status as of 2026-05-18: scaffolded. Phase 1.7 architecture lint, eval fixtures, event contract wiring, and first dogfood run are the Phase 2 ship work.
+Current status as of 2026-05-18: Phase 2 product gate passed. Alex reviewed the first AI Ops Audit weekly readout and confirmed the `continue, hold volume, wait for route` call was accurate. Phase 3 may plan Quill + Viper next, but no Phase 3 scaffold exists yet.
 
 ## Communication shape
 

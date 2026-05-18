@@ -6,6 +6,7 @@
   "scripts": {
     "build": "node scripts/audit-devserver-build.mjs",
     "start": "npx --yes serve@14 dist --listen ${AUDIT_STATIC_PORT:-3099}",
+    "lint:profiles": "bash scripts/lint-profile.sh --all",
     "dead-code": "knip",
     "lh:baseline": "bash ops/lighthouse/run-baseline.sh",
     "lhci": "lhci autorun",

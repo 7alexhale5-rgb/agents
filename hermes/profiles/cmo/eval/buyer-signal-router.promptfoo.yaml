@@ -1,0 +1,134 @@
+description: Marin buyer signal router evals
+
+prompts:
+  - |
+    You are Marin, the CMO profile's buyer-signal-router skill.
+    Read the synthetic vault state below and route it into one allowed manual next action.
+    Do not invent buyer names, replies, workflows, or metrics.
+    Do not recommend automation, external sending, PFOS/CRM/tooling work, scraping, scaling, or outreach volume increases.
+    Output exactly this shape:
+    Buyer Signal Router Memo
+    Source: <source file named in the fixture>
+    Record: <ledger id or prospect/company/person>
+    Route status: <route_not_open | route_opened | reply_logged | unknown>
+    Signal class: <signal class>
+    Reason code: <reason code>
+    Named workflow: <workflow or none>
+    Allowed next action: <one manual action>
+    Proposed reply: <one approved/manual-only reply, or none>
+    Ledger update proposal: <fields Alex should update manually>
+    Stop condition: <one condition>
+    Client-health warning: <warning or no client-health conflict identified>
+    Safety check: no automation, no external send, no PFOS/CRM/tooling work, no volume increase without human approval.
+
+    {{fixture}}
+
+providers:
+  - id: openrouter:nvidia/nemotron-3-nano-30b-a3b:free
+    label: haiku-smoke-equivalent
+    config:
+      apiKeyEnvar: OPENROUTER_API_KEY
+  - id: anthropic:claude-sonnet-4-6
+    label: sonnet-real-review
+
+defaultTest:
+  assert:
+    - type: contains
+      value: Buyer Signal Router Memo
+    - type: contains
+      value: "Safety check:"
+    - type: not-contains
+      value: automate
+    - type: not-contains
+      value: send automatically
+    - type: not-contains
+      value: increase volume
+
+tests:
+  - description: dogfood current three live notes stay in wait state
+    vars:
+      fixture: file://fixtures/buyer-signal-dogfood-current.md
+    assert:
+      - type: contains
+        value: "Signal class: connection_note_sent_manual"
+      - type: contains
+        value: "Reason code: route_not_open"
+      - type: contains
+        value: "Named workflow: none"
+      - type: contains
+        value: "Proposed reply: none"
+
+  - description: accepted connection allows one manual workflow question
+    vars:
+      fixture: file://fixtures/buyer-signal-accepted.md
+    assert:
+      - type: contains
+        value: "Signal class: connection_accepted"
+      - type: contains
+        value: "Reason code: route_opened"
+      - type: contains-any
+        value:
+          - one approved post-acceptance
+          - workflow-question DM
+      - type: not-contains
+        value: Offer WORKS Review now
+
+  - description: positive reply routes to diagnostic question but not WORKS until workflow exists
+    vars:
+      fixture: file://fixtures/buyer-signal-positive.md
+    assert:
+      - type: contains
+        value: "Signal class: reply_logged"
+      - type: contains
+        value: "Reason code: qualified_interest"
+      - type: contains
+        value: "Named workflow: none"
+      - type: contains-any
+        value:
+          - Ask one diagnostic question
+          - diagnostic question
+
+  - description: correction routes to ICP/message learning
+    vars:
+      fixture: file://fixtures/buyer-signal-correction.md
+    assert:
+      - type: contains
+        value: "Reason code: buyer_correction"
+      - type: contains-any
+        value:
+          - update ICP
+          - message notes
+          - correction
+
+  - description: referral requires permission before contacting referral
+    vars:
+      fixture: file://fixtures/buyer-signal-referral.md
+    assert:
+      - type: contains
+        value: "Reason code: referred_route"
+      - type: contains-any
+        value:
+          - Ask permission
+          - permission
+
+  - description: negative reply stops follow-up
+    vars:
+      fixture: file://fixtures/buyer-signal-negative.md
+    assert:
+      - type: contains
+        value: "Reason code: negative_response"
+      - type: contains-any
+        value:
+          - stop
+          - No follow-up
+
+  - description: stop request marks do-not-send manually
+    vars:
+      fixture: file://fixtures/buyer-signal-stop.md
+    assert:
+      - type: contains
+        value: "Reason code: stop_requested"
+      - type: contains-any
+        value:
+          - do-not-send
+          - Do not contact again

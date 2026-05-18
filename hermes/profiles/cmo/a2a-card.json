@@ -13,6 +13,7 @@
   "channels": ["inbox_draft_only"],
   "skills": [
     "weekly-review",
+    "buyer-signal-router",
     "campaign-brief-draft",
     "kill-list-enforce",
     "generate-handoff"

@@ -5,6 +5,8 @@
 - Restored PFOS cost visibility in production source packets: the Atlas packet
   now returns `business_scorecard.costs.available=true` through the
   `agent_events` rollup and no longer reports `sqlite3 CLI not found`.
+- Produced a no-mutation PFOS approval queue triage artifact for the 20
+  packet-visible pending actions: 0 approve, 9 reject, 11 expire.
 - Ran the first live PFOS-backed Atlas weekly brief after the cost fix; the run
   returned `finish_reason=stop` with no degraded marker, no receipt
   hallucination, and no execution claim.

@@ -7,6 +7,8 @@
   `agent_events` rollup and no longer reports `sqlite3 CLI not found`.
 - Produced a no-mutation PFOS approval queue triage artifact for the 20
   packet-visible pending actions: 0 approve, 9 reject, 11 expire.
+- Cleared those 20 stale packet-visible actions in production as rejected
+  stale-context decisions, with 20 paired redacted events and no execution.
 - Ran the first live PFOS-backed Atlas weekly brief after the cost fix; the run
   returned `finish_reason=stop` with no degraded marker, no receipt
   hallucination, and no execution claim.

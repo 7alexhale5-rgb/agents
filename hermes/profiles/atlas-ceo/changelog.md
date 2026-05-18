@@ -9,6 +9,10 @@
   packet-visible pending actions: 0 approve, 9 reject, 11 expire.
 - Cleared those 20 stale packet-visible actions in production as rejected
   stale-context decisions, with 20 paired redacted events and no execution.
+- Cleared a second packet-visible stale backlog batch in production: 0 approve,
+  20 reject, 20 paired redacted events, and no provider execution. The next
+  packet still shows May 13 residue, so Atlas should plan durable stale
+  resolution before another manual sweep.
 - Ran the first live PFOS-backed Atlas weekly brief after the cost fix; the run
   returned `finish_reason=stop` with no degraded marker, no receipt
   hallucination, and no execution claim.

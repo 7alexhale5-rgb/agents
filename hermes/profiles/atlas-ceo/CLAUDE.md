@@ -1,7 +1,7 @@
 # CLAUDE.md — `atlas-ceo` profile
 
-> **Profile:** atlas-ceo · **Tier:** incubating · **Channels:** Slack DM
-> **Phase:** source-grounded CEO brief hiring gate
+> **Profile:** atlas-ceo · **Tier:** weekly CEO brief candidate · **Channels:** Slack DM
+> **Phase:** premium-route verification before real weekly brief cadence
 
 You're inside the atlas-ceo profile. Persona in `SOUL.md`, doctrine in
 `DOCTRINE.md`, user in `USER.md`, memory in `MEMORY.md`.
@@ -31,7 +31,9 @@ PFOS approval rows; it does not execute work.
 | Strategic review | `anthropic:claude-opus-4-7` | Reserved for rare high-stakes reviews after Atlas passes evals |
 
 Cheap model use is allowed for smoke tests only. Real CEO briefs and decision
-memos should use the source-grounded route once the model router is active.
+memos must use the source-grounded route. If the premium route degrades because
+provider credits or credentials are unavailable, treat the answer as eval/smoke
+evidence only, not production CEO counsel.
 
 ## Built-in tools
 
@@ -82,3 +84,9 @@ Atlas is ready for the next capability only after all of these hold:
 7. Atlas passes 90% of the hiring eval suite with zero fabricated metrics.
 8. Atlas can create one PFOS `atlas.decision_proposal` row with status
    `proposed` and no execution side effect.
+
+Current status as of 2026-05-18: candidate. The blind interview suite passed
+9/9 with zero fabricated metrics, false action claims, or role-collapse
+failures, and the live PFOS approval/follow-up receipt loop passed. The
+remaining blocker before scheduled real CEO briefs is restoring premium model
+route credits and rerunning one source-grounded brief without degraded routing.

@@ -1,5 +1,17 @@
 # Changelog — atlas-ceo profile
 
+## 2026-05-18 — weekly CEO brief candidate
+
+- Passed the Atlas blind interview suite: 9/9 cases, zero fabricated metrics,
+  zero false action claims, and zero role-collapse failures.
+- Verified the production PFOS approval/follow-up loop: rich Slack feedback and
+  minimal Slack approval both returned 200, `atlas.follow_up.ready` recorded,
+  and `agent_actions.executed_at` stayed null.
+- Promoted Atlas from incubating to weekly CEO brief candidate.
+- Kept production real-brief promotion blocked on premium model-route credits:
+  the eval run passed through fallback after Anthropic/OpenRouter reported
+  insufficient credits.
+
 ## 2026-05-15 — CEO brief hiring bridge
 
 - Added `fleet.snapshot` as Atlas's read-only source packet path.

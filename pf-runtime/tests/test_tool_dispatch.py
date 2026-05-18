@@ -122,6 +122,63 @@ async def test_run_session_dispatches_tool_and_finishes(tmp_path: Path) -> None:
 
 
 @pytest.mark.asyncio
+async def test_run_session_dispatches_leading_tool_json_with_trailing_text(
+    tmp_path: Path,
+) -> None:
+    profile = _profile(tmp_path)
+    tool = _EchoTool()
+    adapter = _SequenceAdapter(
+        [
+            json.dumps(
+                {
+                    "tool_call": {
+                        "name": "test.echo",
+                        "arguments": {"text": "receipt-first"},
+                    }
+                }
+            )
+            + " fake receipt text",
+            "Tool result received.",
+        ]
+    )
+
+    result = await run_session(
+        profile,
+        InboundMessage(channel="cli", profile_slug="personal", user_id="alex", text="echo"),
+        model_adapter=adapter,
+        tools=[tool],
+    )
+
+    assert result.steps == 2
+    assert tool.calls == 1
+    assert result.messages[-1].content == "Tool result received."
+    assert any(m["role"] == "tool" for m in adapter.messages[-1])
+
+
+@pytest.mark.asyncio
+async def test_run_session_dispatches_prefixed_loose_tool_json(tmp_path: Path) -> None:
+    profile = _profile(tmp_path)
+    tool = _EchoTool()
+    adapter = _SequenceAdapter(
+        [
+            '[DEGRADED_MODEL_ROUTE]\n{"name":"test.echo","arguments":{"text":"loose"}}',
+            "Tool result received.",
+        ]
+    )
+
+    result = await run_session(
+        profile,
+        InboundMessage(channel="cli", profile_slug="personal", user_id="alex", text="echo"),
+        model_adapter=adapter,
+        tools=[tool],
+    )
+
+    assert result.steps == 2
+    assert tool.calls == 1
+    assert result.messages[-1].content == "Tool result received."
+
+
+@pytest.mark.asyncio
 async def test_run_session_enforces_cost_ceiling(tmp_path: Path) -> None:
     profile = _profile(tmp_path)
     adapter = _SequenceAdapter(["This answer is long enough."])

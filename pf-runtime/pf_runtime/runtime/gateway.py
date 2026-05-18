@@ -33,6 +33,7 @@ from pf_runtime.channels.adapter_base import (
     ChannelError,
     ChannelRegistry,
 )
+from pf_runtime.channels.slack import atlas_decision_card_blocks
 from pf_runtime.config import OutboundMessage, Profile, load_profile
 from pf_runtime.dream.post_session import DreamLoop, PostSessionJob
 from pf_runtime.memory import MemoryStack
@@ -40,9 +41,10 @@ from pf_runtime.memory.tier1_soul import SoulReader
 from pf_runtime.memory.tier2_buffer import BufferStore
 from pf_runtime.memory.tier3_episodic import episodic_client_from_env
 from pf_runtime.memory.tier4_skills import default_skill_registry
+from pf_runtime.runtime.builtin_tools import builtin_tools_for_profile
 from pf_runtime.runtime.inbound_ledger import SqliteInboundLedger
 from pf_runtime.runtime.loop import run_session
-from pf_runtime.runtime.model_adapter import ModelAdapter, OpenRouterAdapter
+from pf_runtime.runtime.model_adapter import ModelAdapter, RoutingModelAdapter
 from pf_runtime.runtime.pfos_emit import (
     emit_agent_event,
     runtime_reply_payload,
@@ -105,7 +107,10 @@ async def run_gateway(
 
     profile = load_profile(profile_slug, hermes_home=hermes_home)
     init_sentry_from_profile(profile, component="gateway")
-    adapter: ModelAdapter = OpenRouterAdapter(env_path=profile.env_path)
+    adapter: ModelAdapter = RoutingModelAdapter(
+        env_path=profile.env_path,
+        fallback_model=profile.model,
+    )
 
     # Build the memory stack ONCE for the lifetime of the gateway. Mirrors
     # __main__._run() but uses the manual open()/close() lifecycle since
@@ -119,6 +124,7 @@ async def run_gateway(
         episodic=episodic_client_from_env(),
         skills=default_skill_registry(hermes_home),
     )
+    tools = builtin_tools_for_profile(profile)
 
     dream_loop = DreamLoop(hermes_home)
     dream_loop.start()
@@ -146,7 +152,7 @@ async def run_gateway(
 
         consumer_tasks = [
             asyncio.create_task(
-                _consume_inbound(ch, profile, adapter, memory, dream_loop),
+                _consume_inbound(ch, profile, adapter, memory, dream_loop, tools),
             )
             for ch in channels
         ]
@@ -234,6 +240,7 @@ async def _consume_inbound(
     adapter: ModelAdapter,
     memory: MemoryStack,
     dream_loop: DreamLoop,
+    tools: list[Any] | None = None,
 ) -> None:
     """Per-channel consumer loop with reconnect-epoch resilience.
 
@@ -253,7 +260,7 @@ async def _consume_inbound(
             async for inbound in channel.receive():
                 try:
                     await _handle_inbound(
-                        channel, inbound, profile, adapter, memory, dream_loop,
+                        channel, inbound, profile, adapter, memory, dream_loop, tools,
                     )
                 except Exception:
                     _log.exception(
@@ -281,7 +288,7 @@ async def _consume_inbound(
                 _MAX_BACKOFF_SECONDS,
                 _BASE_BACKOFF_SECONDS * (2 ** (epoch_attempts - 1)),
             )
-            delay = base_delay * (0.5 + random.random())  # noqa: S311 nosec B311 — jitter, not crypto
+            delay = base_delay * (0.5 + random.random())  # nosec B311
             _log.warning(
                 "channel %s error (%s); reconnect attempt %d/%d in %.2fs",
                 channel.name,
@@ -307,6 +314,7 @@ async def _handle_inbound(
     adapter: ModelAdapter,
     memory: MemoryStack,
     dream_loop: DreamLoop,
+    tools: list[Any] | None = None,
 ) -> None:
     """Drive a single inbound through ``run_session`` and reply via channel."""
     # ``inbound`` is an InboundMessage; typed loosely here so test stubs can
@@ -323,6 +331,7 @@ async def _handle_inbound(
         inbound,
         model_adapter=adapter,
         memory=memory,
+        tools=tools,
     )
 
     assistant_reply = ""
@@ -333,6 +342,22 @@ async def _handle_inbound(
     if not assistant_reply:
         return
 
+    outbound_metadata = {"thread_ts": inbound.metadata.get("thread_ts", "")}
+    if channel.name == "slack":
+        card = result.metadata.get("atlas_slack_decision_card")
+        if isinstance(card, dict):
+            base_url = ""
+            if profile.env_path.exists():
+                env_text = profile.env_path.read_text(encoding="utf-8")
+                for raw in env_text.splitlines():
+                    if raw.strip().startswith("PFOS_BASE_URL="):
+                        base_url = raw.partition("=")[2].strip().strip('"').strip("'")
+                        break
+            outbound_metadata["blocks"] = atlas_decision_card_blocks(
+                card,
+                base_url=base_url,
+            )
+
     outbound = OutboundMessage(
         channel=channel.name,
         profile_slug=profile.slug,
@@ -341,7 +366,7 @@ async def _handle_inbound(
         # resolve to a D… via conversations.open).
         target_user_id=inbound.metadata.get("channel_id", inbound.user_id),
         text=assistant_reply,
-        metadata={"thread_ts": inbound.metadata.get("thread_ts", "")},
+        metadata=outbound_metadata,
         in_reply_to=inbound.message_id,
         message_id=f"{channel.name}-reply-{inbound.message_id}",
     )

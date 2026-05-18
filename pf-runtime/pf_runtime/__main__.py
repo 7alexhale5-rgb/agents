@@ -21,8 +21,9 @@ from pf_runtime.memory.tier1_soul import SoulReader
 from pf_runtime.memory.tier2_buffer import BufferStore
 from pf_runtime.memory.tier3_episodic import episodic_client_from_env
 from pf_runtime.memory.tier4_skills import default_skill_registry
+from pf_runtime.runtime.builtin_tools import builtin_tools_for_profile
 from pf_runtime.runtime.loop import run_session
-from pf_runtime.runtime.model_adapter import OpenRouterAdapter
+from pf_runtime.runtime.model_adapter import RoutingModelAdapter
 from pf_runtime.runtime.sentry_init import init_sentry_from_profile
 
 
@@ -79,7 +80,7 @@ def _build_parser() -> argparse.ArgumentParser:
 async def _run(profile_slug: str, message: str, hermes_home: Path) -> None:
     profile = load_profile(profile_slug, hermes_home=hermes_home)
     init_sentry_from_profile(profile, component="cli")
-    adapter = OpenRouterAdapter(env_path=profile.env_path)
+    adapter = RoutingModelAdapter(env_path=profile.env_path, fallback_model=profile.model)
 
     # Build the memory stack. BufferStore is used as a context manager so
     # the SQLite connection is properly closed after the session completes.
@@ -104,6 +105,7 @@ async def _run(profile_slug: str, message: str, hermes_home: Path) -> None:
             inbound,
             model_adapter=adapter,
             memory=memory,
+            tools=builtin_tools_for_profile(profile),
         )
 
     # Extract reply outside the context manager (connection already closed).

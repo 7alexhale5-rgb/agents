@@ -38,9 +38,9 @@ import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
-GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
+GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"  # nosec B105
 EXPIRY_SAFETY_MARGIN_S = 60
 
 
@@ -71,7 +71,7 @@ class RefreshableGoogleCredentials:
     refresh_token: str
 
     @classmethod
-    def from_env(cls, account_id: str, *, profile: str = "personal") -> "RefreshableGoogleCredentials":
+    def from_env(cls, account_id: str, *, profile: str = "personal") -> RefreshableGoogleCredentials:
         # Load profile .env into os.environ if not already set
         _load_profile_env(profile)
         cid = os.environ.get("PF_GOOGLE_OAUTH_CLIENT_ID")
@@ -88,8 +88,8 @@ class RefreshableGoogleCredentials:
         """Return a valid access token, refreshing if expired (or near-expiry)."""
         cached = _read_cache(self.profile, self.account_id)
         if cached and cached["expires_at"] > time.time() + EXPIRY_SAFETY_MARGIN_S:
-            return cached["access_token"]
-        return self.refresh()["access_token"]
+            return str(cached["access_token"])
+        return str(self.refresh()["access_token"])
 
     def refresh(self) -> dict[str, Any]:
         """Mint a fresh access token via Google's token endpoint, cache it, return the cache record."""
@@ -105,7 +105,7 @@ class RefreshableGoogleCredentials:
             headers={"Content-Type": "application/x-www-form-urlencoded"},
             method="POST",
         )
-        with urllib.request.urlopen(req, timeout=15) as resp:  # nosec B310 - fixed host
+        with urllib.request.urlopen(req, timeout=15) as resp:  # nosec B310
             payload = json.loads(resp.read().decode("utf-8"))
         if "access_token" not in payload:
             raise RuntimeError(f"refresh failed: no access_token in response: {payload}")
@@ -135,7 +135,7 @@ def _read_cache(profile: str, account_id: str) -> dict[str, Any] | None:
     if not path.is_file():
         return None
     try:
-        return json.loads(path.read_text())  # type: ignore[no-any-return]
+        return cast(dict[str, Any], json.loads(path.read_text()))
     except (json.JSONDecodeError, OSError):
         return None
 

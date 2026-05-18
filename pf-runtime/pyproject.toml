@@ -50,7 +50,7 @@ dev = [
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-extend-exclude = ["runtime-state", "stubs/*.pyi", ".planning"]
+extend-exclude = ["runtime-state", "stubs/*.pyi", ".planning", "_archive"]
 
 [tool.ruff.lint]
 select = [
@@ -69,9 +69,15 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["S101", "S105", "S106", "S603"]
+"tests/**/*.py" = ["S101", "S105", "S106", "S107", "S603"]
 # urllib to fixed OpenRouter HTTPS URL only (no user-controlled scheme)
 "pf_runtime/runtime/model_adapter.py" = ["S310"]
+# Fixed Google OAuth HTTPS endpoint; token values are read from env/profile.
+"pf_runtime/oauth/google.py" = ["S105", "S310"]
+# Operator-supplied PFOS HTTP(S) URLs are validated by _ensure_http_url first.
+"pf_runtime/runtime/builtin_tools.py" = ["S310"]
+# Reconnect jitter is not used for crypto.
+"pf_runtime/runtime/gateway.py" = ["S311"]
 # Operator-supplied PFOS HTTPS URL (http allowed for local dev); see _url_is_httpish.
 "pf_runtime/runtime/pfos_emit.py" = ["S310"]
 # Provider clients call only fixed Gmail/Graph HTTPS endpoints; constructor

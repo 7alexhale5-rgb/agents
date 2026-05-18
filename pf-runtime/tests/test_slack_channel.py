@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -57,6 +58,8 @@ def _make_app_mock(*, auth_user_id: str = "UBOT") -> MagicMock:
     app.client = MagicMock()
     app.client.auth_test = AsyncMock(return_value={"user_id": auth_user_id})
     app.client.chat_postMessage = AsyncMock(return_value={"ok": True})
+    app.client.chat_update = AsyncMock(return_value={"ok": True})
+    app.client.views_open = AsyncMock(return_value={"ok": True})
     app.client.conversations_open = AsyncMock(
         return_value={"channel": {"id": "D123"}}
     )
@@ -70,6 +73,8 @@ def _make_app_mock(*, auth_user_id: str = "UBOT") -> MagicMock:
         return wrapper
 
     app.event = MagicMock(side_effect=_event_decorator)
+    app.action = MagicMock(side_effect=_event_decorator)
+    app.view = MagicMock(side_effect=_event_decorator)
     return app
 
 
@@ -86,6 +91,41 @@ def _make_handler_mock() -> MagicMock:
     handler.start_async = AsyncMock(side_effect=_never_returns)
     handler.close_async = AsyncMock(return_value=None)
     return handler
+
+
+def _atlas_feedback_view_body(
+    *,
+    verdict: str = "approve",
+    feedback_code: str = "good_call",
+    feedback_note: str = "",
+) -> dict[str, Any]:
+    return {
+        "view": {
+            "private_metadata": json.dumps(
+                {
+                    "action_id": "action-1",
+                    "silo_slug": "prettyfly",
+                    "verdict": verdict,
+                    "channel_id": "D123",
+                    "message_ts": "1700000000.000100",
+                    "slack_user_id": "USLACKALEX",
+                },
+                separators=(",", ":"),
+            ),
+            "state": {
+                "values": {
+                    "feedback_code": {
+                        "feedback_code": {
+                            "selected_option": {"value": feedback_code}
+                        }
+                    },
+                    "feedback_note": {
+                        "feedback_note": {"value": feedback_note}
+                    },
+                }
+            },
+        }
+    }
 
 
 # --------------------------------------------------------------------------- #
@@ -372,6 +412,212 @@ async def test_send_posts_to_thread_when_thread_ts_present(env_file: Path) -> No
         text="threaded hi",
         thread_ts="1700000000.000100",
     )
+
+
+@pytest.mark.asyncio
+async def test_send_posts_block_kit_blocks_when_present(env_file: Path) -> None:
+    from pf_runtime.config import OutboundMessage
+
+    ch = SlackChannel(profile_slug="atlas-ceo", env_path=env_file)
+    app = _make_app_mock()
+    ch._app = app
+    ch._connected = True
+
+    blocks = [{"type": "section", "text": {"type": "mrkdwn", "text": "Proposal"}}]
+    msg = OutboundMessage(
+        channel="slack",
+        profile_slug="atlas-ceo",
+        target_user_id="D123",
+        text="Atlas proposal",
+        metadata={"blocks": blocks, "thread_ts": "1700000000.000100"},
+        message_id="out-blocks",
+    )
+    await ch.send(msg)
+
+    app.client.chat_postMessage.assert_awaited_once_with(
+        channel="D123",
+        text="Atlas proposal",
+        thread_ts="1700000000.000100",
+        blocks=blocks,
+    )
+
+
+@pytest.mark.asyncio
+async def test_atlas_slack_button_opens_feedback_modal(
+    env_file: Path,
+) -> None:
+    await asyncio.to_thread(
+        env_file.write_text,
+        "SLACK_BOT_TOKEN=xoxb-test-bot\n"
+        "SLACK_APP_TOKEN=xapp-test-app\n"
+        "PFOS_BASE_URL=https://os.prettyflyforai.com\n"
+        "PFOS_ATLAS_DECIDE_TOKEN=decide-token\n",
+        encoding="utf-8",
+    )
+    ch = SlackChannel(profile_slug="atlas-ceo", env_path=env_file)
+    app = _make_app_mock()
+    ch._app = app
+
+    await ch._on_atlas_decision_action(
+        {
+            "trigger_id": "trigger-1",
+            "user": {"id": "USLACKALEX"},
+            "actions": [
+                {
+                    "value": '{"action_id":"action-1","silo_slug":"prettyfly"}',
+                }
+            ],
+            "container": {"channel_id": "D123", "message_ts": "1700000000.000100"},
+            "message": {"blocks": []},
+        },
+        "approve",
+    )
+
+    app.client.views_open.assert_awaited_once()
+    view = app.client.views_open.await_args.kwargs["view"]
+    assert view["callback_id"] == "atlas_decision_feedback"
+    assert view["private_metadata"]
+    assert "Feedback" in json.dumps(view)
+    app.client.chat_update.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_atlas_slack_feedback_submit_calls_pfos_and_updates_message(
+    env_file: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    await asyncio.to_thread(
+        env_file.write_text,
+        "SLACK_BOT_TOKEN=xoxb-test-bot\n"
+        "SLACK_APP_TOKEN=xapp-test-app\n"
+        "PFOS_BASE_URL=https://os.prettyflyforai.com\n"
+        "PFOS_ATLAS_DECIDE_TOKEN=decide-token\n",
+        encoding="utf-8",
+    )
+    ch = SlackChannel(profile_slug="atlas-ceo", env_path=env_file)
+    app = _make_app_mock()
+    ch._app = app
+
+    calls: list[dict[str, object]] = []
+
+    async def fake_patch(**kwargs: object) -> dict[str, object]:
+        calls.append(kwargs)
+        return {
+            "ok": True,
+            "status": "approved",
+            "action_id": "action-1",
+            "event_id": "event-1",
+            "follow_up_event_id": "follow-up-1",
+            "execution_triggered": False,
+        }
+
+    monkeypatch.setattr("pf_runtime.channels.slack._patch_pfos_decision", fake_patch)
+
+    await ch._on_atlas_decision_feedback_submission(
+        _atlas_feedback_view_body(
+            verdict="approve",
+            feedback_code="good_call",
+            feedback_note="Useful and timely.",
+        )
+    )
+
+    assert calls == [
+        {
+            "base_url": "https://os.prettyflyforai.com",
+            "token": "decide-token",
+            "silo_slug": "prettyfly",
+            "action_id": "action-1",
+            "verdict": "approve",
+            "slack_user_id": "USLACKALEX",
+            "feedback_code": "good_call",
+            "feedback_note": "Useful and timely.",
+        }
+    ]
+    app.client.chat_update.assert_awaited_once()
+    update_kwargs = app.client.chat_update.await_args.kwargs
+    assert update_kwargs["channel"] == "D123"
+    assert update_kwargs["ts"] == "1700000000.000100"
+    assert "approved" in update_kwargs["text"].lower()
+    assert "good call" in update_kwargs["text"].lower()
+    assert ch._inbound_queue.qsize() == 1
+    follow_up = ch._inbound_queue.get_nowait()
+    assert follow_up.message_id == "atlas-follow-up-follow-up-1"
+    assert follow_up.metadata["synthetic"] == "atlas_approval_follow_up"
+    assert follow_up.metadata["atlas_follow_up_event_id"] == "follow-up-1"
+    assert follow_up.metadata["atlas_source_action_id"] == "action-1"
+    assert "record atlas.follow_up.ready" in follow_up.text
+
+
+@pytest.mark.asyncio
+async def test_atlas_slack_duplicate_click_updates_as_already_resolved(
+    env_file: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    await asyncio.to_thread(
+        env_file.write_text,
+        "SLACK_BOT_TOKEN=xoxb-test-bot\n"
+        "SLACK_APP_TOKEN=xapp-test-app\n"
+        "PFOS_BASE_URL=https://os.prettyflyforai.com\n"
+        "PFOS_ATLAS_DECIDE_TOKEN=decide-token\n",
+        encoding="utf-8",
+    )
+    ch = SlackChannel(profile_slug="atlas-ceo", env_path=env_file)
+    app = _make_app_mock()
+    ch._app = app
+
+    async def fake_patch(**kwargs: object) -> dict[str, object]:
+        del kwargs
+        return {"ok": False, "error": "already_resolved", "current_status": "approved"}
+
+    monkeypatch.setattr("pf_runtime.channels.slack._patch_pfos_decision", fake_patch)
+
+    await ch._on_atlas_decision_feedback_submission(
+        _atlas_feedback_view_body(verdict="approve", feedback_code="good_call")
+    )
+
+    assert "already approved" in app.client.chat_update.await_args.kwargs["text"].lower()
+    assert ch._inbound_queue.qsize() == 0
+
+
+@pytest.mark.asyncio
+async def test_atlas_slack_reject_does_not_enqueue_follow_up(
+    env_file: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    await asyncio.to_thread(
+        env_file.write_text,
+        "SLACK_BOT_TOKEN=xoxb-test-bot\n"
+        "SLACK_APP_TOKEN=xapp-test-app\n"
+        "PFOS_BASE_URL=https://os.prettyflyforai.com\n"
+        "PFOS_ATLAS_DECIDE_TOKEN=decide-token\n",
+        encoding="utf-8",
+    )
+    ch = SlackChannel(profile_slug="atlas-ceo", env_path=env_file)
+    app = _make_app_mock()
+    ch._app = app
+
+    async def fake_patch(**kwargs: object) -> dict[str, object]:
+        del kwargs
+        return {
+            "ok": True,
+            "status": "rejected",
+            "action_id": "action-1",
+            "event_id": "event-1",
+            "execution_triggered": False,
+        }
+
+    monkeypatch.setattr("pf_runtime.channels.slack._patch_pfos_decision", fake_patch)
+
+    await ch._on_atlas_decision_feedback_submission(
+        _atlas_feedback_view_body(
+            verdict="reject",
+            feedback_code="missing_context",
+            feedback_note="Need current pipeline signal.",
+        )
+    )
+
+    assert "rejected" in app.client.chat_update.await_args.kwargs["text"].lower()
+    assert ch._inbound_queue.qsize() == 0
 
 
 @pytest.mark.asyncio

@@ -21,11 +21,14 @@ import asyncio
 import contextlib
 import json
 import logging
+import urllib.error
+import urllib.request
 import uuid
 from collections import OrderedDict
 from collections.abc import AsyncIterator
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
+from urllib.parse import urlparse
 
 from pf_runtime.channels.adapter_base import (
     Channel,
@@ -107,6 +110,8 @@ class SlackChannel(Channel):
             raise ChannelAuthError(f"SLACK_APP_TOKEN missing in {env_path}")
         self._bot_token: str = bot_token
         self._app_token: str = app_token
+        self._pfos_base_url: str = env.get("PFOS_BASE_URL", "").rstrip("/")
+        self._atlas_decide_token: str = env.get("PFOS_ATLAS_DECIDE_TOKEN", "")
 
         self._app: Any | None = None
         self._handler: Any | None = None
@@ -203,6 +208,28 @@ class SlackChannel(Channel):
             @app.event("assistant_thread_context_changed")
             async def _handle_thread_context(event: dict[str, Any]) -> None:
                 return
+
+            @app.action("atlas_decision_approve")
+            async def _handle_atlas_approve(ack: Any, body: dict[str, Any]) -> None:
+                await ack()
+                await self._on_atlas_decision_action(body, "approve")
+
+            @app.action("atlas_decision_reject")
+            async def _handle_atlas_reject(ack: Any, body: dict[str, Any]) -> None:
+                await ack()
+                await self._on_atlas_decision_action(body, "reject")
+
+            @app.action("atlas_decision_open_pfos")
+            async def _handle_atlas_open_pfos(ack: Any, body: dict[str, Any]) -> None:
+                del body
+                await ack()
+
+            @app.view("atlas_decision_feedback")
+            async def _handle_atlas_feedback_view(
+                ack: Any, body: dict[str, Any]
+            ) -> None:
+                await ack()
+                await self._on_atlas_decision_feedback_submission(body)
 
             self._app = app
 
@@ -421,6 +448,9 @@ class SlackChannel(Channel):
         thread_ts = msg.metadata.get("thread_ts")
         if thread_ts:
             post_kwargs["thread_ts"] = thread_ts
+        blocks = msg.metadata.get("blocks")
+        if isinstance(blocks, list):
+            post_kwargs["blocks"] = blocks
 
         try:
             await self._app.client.chat_postMessage(**post_kwargs)
@@ -464,3 +494,477 @@ class SlackChannel(Channel):
     async def ack(self, message_id: str) -> None:
         """Socket Mode acks at the transport layer; nothing to do here."""
         return
+
+    async def _on_atlas_decision_action(
+        self,
+        body: dict[str, Any],
+        verdict: str,
+    ) -> None:
+        """Open a small feedback modal before resolving an Atlas proposal."""
+        if self._app is None:
+            return
+        value = _first_action_value(body)
+        action_id = str(value.get("action_id") or "").strip()
+        silo_slug = str(value.get("silo_slug") or "prettyfly").strip()
+        slack_user_id = str((body.get("user") or {}).get("id") or "").strip()
+        channel_id = _slack_action_channel_id(body)
+        message_ts = _slack_action_message_ts(body)
+
+        if not action_id or not channel_id or not message_ts:
+            return
+
+        if not self._pfos_base_url or not self._atlas_decide_token:
+            await self._update_atlas_decision_message(
+                channel_id=channel_id,
+                message_ts=message_ts,
+                text="Atlas decision could not be recorded: PFOS decide token is not configured.",
+            )
+            return
+
+        trigger_id = str(body.get("trigger_id") or "").strip()
+        if not trigger_id:
+            await self._update_atlas_decision_message(
+                channel_id=channel_id,
+                message_ts=message_ts,
+                text="Atlas decision could not be recorded: Slack did not provide a modal trigger.",
+            )
+            return
+
+        try:
+            await self._app.client.views_open(
+                trigger_id=trigger_id,
+                view=atlas_decision_feedback_modal(
+                    action_id=action_id,
+                    silo_slug=silo_slug,
+                    verdict=verdict,
+                    channel_id=channel_id,
+                    message_ts=message_ts,
+                    slack_user_id=slack_user_id,
+                ),
+            )
+        except SlackApiError as e:
+            err = e.response.get("error", "") if hasattr(e, "response") else ""
+            await self._update_atlas_decision_message(
+                channel_id=channel_id,
+                message_ts=message_ts,
+                text=f"Atlas decision feedback modal could not open: {err or e}.",
+            )
+
+    async def _on_atlas_decision_feedback_submission(
+        self,
+        body: dict[str, Any],
+    ) -> None:
+        """Resolve Atlas decision feedback modal through PFOS, then update Slack."""
+        if self._app is None:
+            return
+        metadata = _view_private_metadata(body)
+        action_id = str(metadata.get("action_id") or "").strip()
+        silo_slug = str(metadata.get("silo_slug") or "prettyfly").strip()
+        verdict = str(metadata.get("verdict") or "").strip()
+        slack_user_id = str(metadata.get("slack_user_id") or "").strip()
+        channel_id = str(metadata.get("channel_id") or "").strip()
+        message_ts = str(metadata.get("message_ts") or "").strip()
+        feedback_code = _view_feedback_code(body)
+        feedback_note = _view_feedback_note(body)
+
+        if verdict not in {"approve", "reject"} or not action_id:
+            return
+        if not channel_id or not message_ts:
+            return
+        if not self._pfos_base_url or not self._atlas_decide_token:
+            await self._update_atlas_decision_message(
+                channel_id=channel_id,
+                message_ts=message_ts,
+                text="Atlas decision could not be recorded: PFOS decide token is not configured.",
+            )
+            return
+
+        result = await _patch_pfos_decision(
+            base_url=self._pfos_base_url,
+            token=self._atlas_decide_token,
+            silo_slug=silo_slug,
+            action_id=action_id,
+            verdict=verdict,
+            slack_user_id=slack_user_id,
+            feedback_code=feedback_code,
+            feedback_note=feedback_note,
+        )
+        status = str(result.get("status") or result.get("current_status") or "")
+        if result.get("ok") is True:
+            feedback_label = _atlas_feedback_label(feedback_code)
+            text = (
+                f"Atlas proposal {status}. Feedback: {feedback_label}. "
+                "Decision recorded; no execution was triggered."
+            )
+            follow_up_event_id = str(result.get("follow_up_event_id") or "").strip()
+            if verdict == "approve" and follow_up_event_id:
+                await self._enqueue_atlas_follow_up(
+                    channel_id=channel_id,
+                    message_ts=message_ts,
+                    slack_user_id=slack_user_id,
+                    source_action_id=action_id,
+                    follow_up_event_id=follow_up_event_id,
+                )
+        elif result.get("error") == "already_resolved" and status:
+            text = f"Atlas proposal was already {status}. No execution was triggered."
+        else:
+            text = f"Atlas decision could not be recorded: {result.get('error', 'unknown_error')}."
+
+        await self._update_atlas_decision_message(
+            channel_id=channel_id,
+            message_ts=message_ts,
+            text=text,
+        )
+
+    async def _enqueue_atlas_follow_up(
+        self,
+        *,
+        channel_id: str,
+        message_ts: str,
+        slack_user_id: str,
+        source_action_id: str,
+        follow_up_event_id: str,
+    ) -> None:
+        msg = InboundMessage(
+            channel="slack",
+            profile_slug=self.profile_slug,
+            user_id=slack_user_id,
+            text=(
+                "Approved decision follow-up requested. Use the verified "
+                f"source packet for atlas.follow_up.queued event {follow_up_event_id} "
+                f"and source action {source_action_id}. Produce the five-field "
+                "follow-up brief and record atlas.follow_up.ready. Do not execute, "
+                "dispatch, send externally, create tasks, spend, deploy, or edit files."
+            ),
+            message_id=f"atlas-follow-up-{follow_up_event_id}",
+            metadata={
+                "channel_id": channel_id,
+                "ts": message_ts,
+                "thread_ts": message_ts,
+                "synthetic": "atlas_approval_follow_up",
+                "atlas_follow_up_event_id": follow_up_event_id,
+                "atlas_source_action_id": source_action_id,
+            },
+        )
+        await self._inbound_queue.put(msg)
+
+    async def _update_atlas_decision_message(
+        self,
+        *,
+        channel_id: str,
+        message_ts: str,
+        text: str,
+    ) -> None:
+        if self._app is None:
+            return
+        blocks = [
+            {
+                "type": "section",
+                "text": {"type": "mrkdwn", "text": text},
+            }
+        ]
+        try:
+            await self._app.client.chat_update(
+                channel=channel_id,
+                ts=message_ts,
+                text=text,
+                blocks=blocks,
+            )
+        except SlackApiError as e:
+            err = e.response.get("error", "") if hasattr(e, "response") else ""
+            _log.warning("Slack atlas decision update failed: %s", err or e)
+
+
+ATLAS_FEEDBACK_OPTIONS: tuple[tuple[str, str], ...] = (
+    ("good_call", "Good call"),
+    ("wrong_priority", "Wrong priority"),
+    ("missing_context", "Missing context"),
+    ("too_vague", "Too vague"),
+    ("too_risky", "Too risky"),
+    ("not_now", "Not now"),
+    ("needs_revision", "Needs revision"),
+    ("other", "Other"),
+)
+
+
+def atlas_decision_feedback_modal(
+    *,
+    action_id: str,
+    silo_slug: str,
+    verdict: str,
+    channel_id: str,
+    message_ts: str,
+    slack_user_id: str,
+) -> dict[str, Any]:
+    """Build the Slack feedback modal for Atlas approve/reject decisions."""
+    default_code = "good_call" if verdict == "approve" else "needs_revision"
+    metadata = {
+        "action_id": action_id,
+        "silo_slug": silo_slug,
+        "verdict": verdict,
+        "channel_id": channel_id,
+        "message_ts": message_ts,
+        "slack_user_id": slack_user_id,
+    }
+    options = [
+        {
+            "text": {"type": "plain_text", "text": label},
+            "value": code,
+        }
+        for code, label in ATLAS_FEEDBACK_OPTIONS
+    ]
+    initial_option = next(
+        option for option in options if option["value"] == default_code
+    )
+    title = "Approve Atlas?" if verdict == "approve" else "Reject Atlas?"
+    return {
+        "type": "modal",
+        "callback_id": "atlas_decision_feedback",
+        "private_metadata": json.dumps(metadata, separators=(",", ":")),
+        "title": {"type": "plain_text", "text": title},
+        "submit": {"type": "plain_text", "text": "Record"},
+        "close": {"type": "plain_text", "text": "Cancel"},
+        "blocks": [
+            {
+                "type": "input",
+                "block_id": "feedback_code",
+                "label": {"type": "plain_text", "text": "Feedback"},
+                "element": {
+                    "type": "static_select",
+                    "action_id": "feedback_code",
+                    "options": options,
+                    "initial_option": initial_option,
+                },
+            },
+            {
+                "type": "input",
+                "block_id": "feedback_note",
+                "optional": True,
+                "label": {"type": "plain_text", "text": "Optional note"},
+                "element": {
+                    "type": "plain_text_input",
+                    "action_id": "feedback_note",
+                    "multiline": True,
+                    "max_length": 500,
+                },
+            },
+        ],
+    }
+
+
+def atlas_decision_card_blocks(card: dict[str, Any], *, base_url: str = "") -> list[dict[str, Any]]:
+    """Build a compact, safe Atlas approval card for Slack DMs."""
+    action_id = str(card.get("action_id") or "").strip()
+    silo_slug = str(card.get("silo_slug") or "prettyfly").strip()
+    title = _truncate_slack_text(str(card.get("title") or "Atlas decision proposal"), 140)
+    summary = _truncate_slack_text(
+        str(card.get("summary") or "Atlas is asking for a decision."),
+        220,
+    )
+    priority = _truncate_slack_text(str(card.get("priority") or "normal"), 32)
+    risk = _truncate_slack_text(str(card.get("risk_level") or "medium"), 32)
+    pfos_href = str(card.get("pfos_href") or "/agents/atlas-ceo")
+    url = _internal_pfos_url(base_url, pfos_href)
+    value = json.dumps(
+        {"action_id": action_id, "silo_slug": silo_slug},
+        separators=(",", ":"),
+        sort_keys=True,
+    )
+    elements: list[dict[str, Any]] = [
+        {
+            "type": "button",
+            "text": {"type": "plain_text", "text": "Approve"},
+            "style": "primary",
+            "action_id": "atlas_decision_approve",
+            "value": value,
+        },
+        {
+            "type": "button",
+            "text": {"type": "plain_text", "text": "Reject"},
+            "action_id": "atlas_decision_reject",
+            "value": value,
+        },
+    ]
+    if url:
+        elements.append(
+            {
+                "type": "button",
+                "text": {"type": "plain_text", "text": "Open PFOS"},
+                "url": url,
+                "action_id": "atlas_decision_open_pfos",
+                "value": value,
+            }
+        )
+    return [
+        {
+            "type": "section",
+            "text": {"type": "mrkdwn", "text": f"*{title}*\n{summary}"},
+        },
+        {
+            "type": "context",
+            "elements": [
+                {
+                    "type": "mrkdwn",
+                    "text": f"Priority: `{priority}` · Risk: `{risk}` · payload redacted",
+                }
+            ],
+        },
+        {"type": "actions", "elements": elements},
+    ]
+
+
+def _first_action_value(body: dict[str, Any]) -> dict[str, Any]:
+    actions = body.get("actions")
+    if not isinstance(actions, list) or not actions:
+        return {}
+    raw = actions[0].get("value") if isinstance(actions[0], dict) else None
+    if not isinstance(raw, str):
+        return {}
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError:
+        return {}
+    return parsed if isinstance(parsed, dict) else {}
+
+
+def _slack_action_channel_id(body: dict[str, Any]) -> str:
+    container = body.get("container")
+    if isinstance(container, dict) and isinstance(container.get("channel_id"), str):
+        return str(container["channel_id"])
+    channel = body.get("channel")
+    if isinstance(channel, dict) and isinstance(channel.get("id"), str):
+        return str(channel["id"])
+    return ""
+
+
+def _slack_action_message_ts(body: dict[str, Any]) -> str:
+    container = body.get("container")
+    if isinstance(container, dict) and isinstance(container.get("message_ts"), str):
+        return str(container["message_ts"])
+    message = body.get("message")
+    if isinstance(message, dict) and isinstance(message.get("ts"), str):
+        return str(message["ts"])
+    return ""
+
+
+def _view_private_metadata(body: dict[str, Any]) -> dict[str, Any]:
+    view = body.get("view")
+    raw = view.get("private_metadata") if isinstance(view, dict) else None
+    if not isinstance(raw, str):
+        return {}
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError:
+        return {}
+    return parsed if isinstance(parsed, dict) else {}
+
+
+def _view_state_values(body: dict[str, Any]) -> dict[str, Any]:
+    view = body.get("view")
+    state = view.get("state") if isinstance(view, dict) else None
+    values = state.get("values") if isinstance(state, dict) else None
+    return values if isinstance(values, dict) else {}
+
+
+def _view_feedback_code(body: dict[str, Any]) -> str:
+    values = _view_state_values(body)
+    block = values.get("feedback_code")
+    action = block.get("feedback_code") if isinstance(block, dict) else None
+    selected = action.get("selected_option") if isinstance(action, dict) else None
+    raw = selected.get("value") if isinstance(selected, dict) else None
+    return raw if isinstance(raw, str) and _atlas_feedback_label(raw) else "other"
+
+
+def _view_feedback_note(body: dict[str, Any]) -> str:
+    values = _view_state_values(body)
+    block = values.get("feedback_note")
+    action = block.get("feedback_note") if isinstance(block, dict) else None
+    raw = action.get("value") if isinstance(action, dict) else None
+    if not isinstance(raw, str):
+        return ""
+    return " ".join(raw.split()).strip()[:500]
+
+
+def _atlas_feedback_label(code: str) -> str:
+    return dict(ATLAS_FEEDBACK_OPTIONS).get(code, "Other")
+
+
+def _truncate_slack_text(value: str, limit: int) -> str:
+    text = " ".join(value.split())
+    return text if len(text) <= limit else f"{text[: max(limit - 1, 0)]}…"
+
+
+def _internal_pfos_url(base_url: str, href: str) -> str:
+    if not base_url or not href.startswith("/") or href.startswith("//"):
+        return ""
+    return f"{base_url.rstrip('/')}{href}"
+
+
+async def _patch_pfos_decision(
+    *,
+    base_url: str,
+    token: str,
+    silo_slug: str,
+    action_id: str,
+    verdict: str,
+    slack_user_id: str,
+    feedback_code: str = "",
+    feedback_note: str = "",
+) -> dict[str, Any]:
+    url = f"{base_url.rstrip('/')}/api/silos/{silo_slug}/agent-action/{action_id}"
+    _ensure_http_url(url)
+
+    def _sync() -> dict[str, Any]:
+        payload = {
+            "verdict": verdict,
+            "slack_user_id": slack_user_id,
+        }
+        if feedback_code:
+            payload["feedback_code"] = feedback_code
+        if feedback_note:
+            payload["feedback_note"] = feedback_note
+        body = json.dumps(
+            payload,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        req = urllib.request.Request(  # noqa: S310
+            url,
+            data=body,
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json",
+            },
+            method="PATCH",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=20) as resp:  # noqa: S310 # nosec B310
+                return _read_json_response(resp)
+        except urllib.error.HTTPError as exc:
+            raw = exc.read().decode("utf-8", errors="replace")
+            try:
+                parsed = json.loads(raw)
+            except json.JSONDecodeError:
+                parsed = {"error": f"http_{exc.code}"}
+            if isinstance(parsed, dict):
+                parsed.setdefault("ok", False)
+                return parsed
+            return {"ok": False, "error": f"http_{exc.code}"}
+        except urllib.error.URLError as exc:
+            return {"ok": False, "error": str(exc.reason)}
+
+    return await asyncio.to_thread(_sync)
+
+
+def _ensure_http_url(url: str) -> None:
+    parsed = urlparse(url)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        raise RuntimeError("PFOS URL must be http(s)")
+
+
+def _read_json_response(resp: Any) -> dict[str, Any]:
+    body = resp.read().decode("utf-8", errors="replace")
+    try:
+        data = json.loads(body)
+    except json.JSONDecodeError:
+        return {"ok": False, "error": "invalid_json"}
+    return data if isinstance(data, dict) else {"ok": False, "error": "invalid_json"}

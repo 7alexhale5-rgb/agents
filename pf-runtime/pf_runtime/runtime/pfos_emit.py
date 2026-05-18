@@ -7,6 +7,11 @@ points no-op (reversible kill-switch per integration plan).
 Optional: set ``PFOS_AGENT_EVENT_REQUIRE_HTTPS=1`` (or ``true``) to reject
 non-``https`` URLs in production.
 
+Optional: set ``PFOS_JOURNAL_EVENT_MIRROR=1`` to mirror each PFOS payload to
+stdout as an ``event="agent_event"`` JSON line for the PFOS Phase 4.13
+journalctl bridge. Set ``PFOS_JOURNAL_SERVICE`` to the systemd unit/process
+name when it differs from the default ``pf-runtime``.
+
 Payload shape matches PFOS ``AgentEventWritePayload`` / ``isAgentEventPayload``.
 PFOS accepts ``surface="pf_runtime"`` for runtime-originated events; the
 ``data.kind="pf_runtime_reply"`` marker keeps reply events filterable inside
@@ -21,6 +26,7 @@ import os
 import urllib.error
 import urllib.request
 from collections.abc import Mapping
+from datetime import UTC, datetime
 from typing import Any
 from urllib.parse import urlparse
 
@@ -30,6 +36,8 @@ _PFOS_EVENT_URL_ENV_KEY = "PFOS_AGENT_EVENT_URL"
 # Name of the env var that holds the bearer token (value is never embedded in code).
 _PFOS_EVENT_AUTH_ENV_KEY = "PFOS_AGENT_EVENT_TOKEN"
 _PFOS_REQUIRE_HTTPS_ENV_KEY = "PFOS_AGENT_EVENT_REQUIRE_HTTPS"
+_PFOS_JOURNAL_MIRROR_ENV_KEY = "PFOS_JOURNAL_EVENT_MIRROR"
+_PFOS_JOURNAL_SERVICE_ENV_KEY = "PFOS_JOURNAL_SERVICE"
 
 
 def _env_truthy(key: str) -> bool:
@@ -79,6 +87,7 @@ def runtime_reply_payload(
     out: dict[str, Any] = {
         "type": "STATE_CHANGED",
         "data": data,
+        "agent_slug": profile_slug,
         "surface": "pf_runtime",
         "cwd_project": profile_slug,
     }
@@ -164,8 +173,55 @@ def _post_json(url: str, token: str, body: dict[str, Any]) -> tuple[int, str]:
         return 0, ""
 
 
+def _journal_row_from_payload(payload: Mapping[str, Any]) -> dict[str, Any] | None:
+    event_type = payload.get("type")
+    if not isinstance(event_type, str) or not event_type:
+        return None
+
+    data_raw = payload.get("data")
+    data = dict(data_raw) if isinstance(data_raw, Mapping) else {}
+    status_raw = payload.get("status")
+    service = os.environ.get(_PFOS_JOURNAL_SERVICE_ENV_KEY, "pf-runtime").strip()
+    if not service:
+        service = "pf-runtime"
+    agent_slug = payload.get("agent_slug")
+    if not isinstance(agent_slug, str) or not agent_slug:
+        agent_slug = payload.get("cwd_project")
+
+    row: dict[str, Any] = {
+        "event": "agent_event",
+        "timestamp": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
+        "service": service,
+        "type": event_type,
+        "status": status_raw if isinstance(status_raw, str) and status_raw else "approved",
+        "data": data,
+    }
+    if isinstance(agent_slug, str) and agent_slug:
+        row["agent_slug"] = agent_slug
+    for key in ("trace_id", "surface", "cwd_project", "skill_slug", "parent_run_id"):
+        value = payload.get(key)
+        if isinstance(value, str) and value:
+            row[key] = value
+    return row
+
+
+def _emit_journal_mirror(payload: Mapping[str, Any]) -> None:
+    """Mirror a PFOS payload to stdout as journalctl-readable ground truth."""
+    if not _env_truthy(_PFOS_JOURNAL_MIRROR_ENV_KEY):
+        return
+    try:
+        row = _journal_row_from_payload(payload)
+        if row is None:
+            return
+        print(json.dumps(row, separators=(",", ":"), default=str), flush=True)
+    except Exception:
+        _log.warning("pfos journal mirror failed", exc_info=True)
+
+
 def emit_agent_event_sync(payload: Mapping[str, Any]) -> bool:
     """POST ``payload`` to PFOS. No-op when not configured. True on HTTP 2xx."""
+    payload_dict = dict(payload)
+    _emit_journal_mirror(payload_dict)
     if not is_configured():
         return False
     url = os.environ[_PFOS_EVENT_URL_ENV_KEY].strip()
@@ -176,7 +232,7 @@ def emit_agent_event_sync(payload: Mapping[str, Any]) -> bool:
         else:
             _log.warning("pfos agent-event URL must be http(s) with a host")
         return False
-    status, _ = _post_json(url, token, dict(payload))
+    status, _ = _post_json(url, token, payload_dict)
     if 200 <= status < 300:
         return True
     if status:

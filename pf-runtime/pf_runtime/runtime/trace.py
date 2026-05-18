@@ -6,6 +6,8 @@ import logging
 import os
 import time
 from decimal import Decimal
+from pathlib import Path
+from typing import Any
 
 _log = logging.getLogger(__name__)
 
@@ -18,6 +20,7 @@ def emit_session_trace(
     latency_ms: float,
     finish_reason: str,
     cost_usd: Decimal,
+    trace_jsonl_path: Path | str | None = None,
 ) -> None:
     """Emit one structured log line; optionally send a Langfuse span when configured."""
     payload = {
@@ -31,6 +34,7 @@ def emit_session_trace(
         "cost_usd": str(cost_usd),
     }
     _log.info("trace %s", json.dumps(payload, ensure_ascii=False))
+    _append_jsonl(trace_jsonl_path, payload)
 
     public = os.environ.get("LANGFUSE_PUBLIC_KEY", "")
     secret = os.environ.get("LANGFUSE_SECRET_KEY", "")
@@ -69,6 +73,7 @@ def emit_tool_trace(
     success: bool,
     error_class: str,
     latency_ms: float,
+    trace_jsonl_path: Path | str | None = None,
 ) -> None:
     """Emit a TRACE_SCHEMA-compatible tool_call line without raw arguments."""
     payload = {
@@ -85,3 +90,17 @@ def emit_tool_trace(
         "ts": time.time(),
     }
     _log.info("trace %s", json.dumps(payload, ensure_ascii=False))
+    _append_jsonl(trace_jsonl_path, payload)
+
+
+def _append_jsonl(path: Path | str | None, payload: dict[str, Any]) -> None:
+    if not path:
+        return
+    trace_path = Path(path).expanduser()
+    try:
+        trace_path.parent.mkdir(parents=True, exist_ok=True)
+        with trace_path.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(payload, ensure_ascii=False, sort_keys=True))
+            f.write("\n")
+    except Exception:
+        _log.warning("trace jsonl write failed: %s", trace_path, exc_info=True)

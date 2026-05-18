@@ -5,8 +5,21 @@ agent:
   iteration_budget_tokens: 200000
 
 model:
-  default_provider: openrouter
-  default_model: nvidia/nemotron-nano-9b-v2
+  # PF Runtime and Hermes loaders read `default` and `provider`.
+  # Do not use stale `default_model` / `default_provider` keys.
+  default: nvidia/nemotron-3-nano-30b-a3b:free
+  provider: openrouter
+  routing:
+    smoke_test: nvidia/nemotron-3-nano-30b-a3b:free
+    source_grounded_brief: anthropic:claude-sonnet-4-6
+    high_stakes_strategy_review: anthropic:claude-opus-4-7
+
+tools:
+  builtin:
+    - fleet.snapshot
+    - business.scorecard.snapshot
+    - atlas.propose_action
+    - atlas.record_follow_up
 
 memory:
   built_in:
@@ -18,9 +31,29 @@ memory:
 mcp_servers: {}
 skills:
   install: []
-channels: {}
+  global:
+    - cost-watch
+    - daily-digest
+
+channels:
+  slack:
+    enabled: true
+    mode: dm_only
+    bot_token_env: SLACK_BOT_TOKEN
+    app_token_env: SLACK_APP_TOKEN
+
 approval:
-  mode: explicit_for_outbound
+  mode: advisor_plus_proposer
+  outbound_channels: [slack]
+  pii_redaction: true
+  proposals:
+    enabled: true
+    execute: false
+
 guardrails:
   spend_cap_per_day_usd: 5
   alert_threshold_pct: 80
+
+logging:
+  trajectory_jsonl: true
+  langfuse_project: hermes-atlas-ceo

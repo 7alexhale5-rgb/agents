@@ -1,6 +1,6 @@
-"""Tier 1 memory — SOUL.md / USER.md / MEMORY.md reader with mtime cache.
+"""Tier 1 memory — SOUL.md / DOCTRINE.md / USER.md / MEMORY.md reader.
 
-Read-only at runtime. Cache TTL is 30s; invalidated when ANY of the three
+Read-only at runtime. Cache TTL is 30s; invalidated when ANY tracked
 file mtimes change (or when the set of existing files changes).
 """
 from __future__ import annotations
@@ -15,6 +15,7 @@ _CACHE_TTL_SECONDS = 30.0
 
 _SECTION_HEADER = {
     "soul": "=== SOUL.md ===",
+    "doctrine": "=== DOCTRINE.md ===",
     "user": "=== USER.md ===",
     "memory": "=== MEMORY.md ===",
 }
@@ -50,8 +51,12 @@ def _read_optional(path: Path) -> str:
         return ""
 
 
+def _doctrine_path(profile: Profile) -> Path:
+    return profile.soul_md_path.parent / "DOCTRINE.md"
+
+
 class SoulReader:
-    """Reads and caches Tier 1 context (SOUL.md + USER.md + MEMORY.md).
+    """Reads and caches Tier 1 context.
 
     One instance per runtime process; the cache is per-profile-slug so
     multiple profiles in the same process are handled correctly.
@@ -63,6 +68,7 @@ class SoulReader:
     def _current_mtimes(self, profile: Profile) -> dict[str, float]:
         return {
             str(profile.soul_md_path): _safe_mtime(profile.soul_md_path),
+            str(_doctrine_path(profile)): _safe_mtime(_doctrine_path(profile)),
             str(profile.user_md_path): _safe_mtime(profile.user_md_path),
             str(profile.memory_md_path): _safe_mtime(profile.memory_md_path),
         }
@@ -75,6 +81,9 @@ class SoulReader:
 
             === SOUL.md ===
             <soul content>
+
+            === DOCTRINE.md ===
+            <doctrine content>
 
             === USER.md ===
             <user content>
@@ -89,12 +98,15 @@ class SoulReader:
 
         # Cache miss or stale — re-read all three files.
         soul_text = profile.soul_md_path.read_text(encoding="utf-8").strip()
+        doctrine_text = _read_optional(_doctrine_path(profile)).strip()
         user_text = profile.user_md_path.read_text(encoding="utf-8").strip()
         memory_text = _read_optional(profile.memory_md_path).strip()
 
         parts: list[str] = []
         if soul_text:
             parts.append(f"{_SECTION_HEADER['soul']}\n{soul_text}")
+        if doctrine_text:
+            parts.append(f"{_SECTION_HEADER['doctrine']}\n{doctrine_text}")
         if user_text:
             parts.append(f"{_SECTION_HEADER['user']}\n{user_text}")
         if memory_text:

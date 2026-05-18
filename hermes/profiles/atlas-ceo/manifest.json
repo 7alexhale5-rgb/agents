@@ -1,15 +1,43 @@
 {
   "sku": "atlas-ceo",
-  "name": "TBD",
+  "name": "Atlas CEO",
   "version": "0.1.0",
-  "category": "TBD",
-  "department": "TBD",
-  "tagline": "TBD",
-  "tier": "TBD",
+  "category": "internal",
+  "department": "c-suite",
+  "tagline": "Alex-first CEO operating advisor for source-grounded business decisions.",
+  "tier": "incubating",
   "depends_on": [],
-  "channels": [],
+  "channels": ["slack"],
+  "model_routing": {
+    "default": "openrouter:nvidia/nemotron-3-nano-30b-a3b:free",
+    "source_grounded_brief": "anthropic:claude-sonnet-4-6",
+    "strategic_review": "anthropic:claude-opus-4-7"
+  },
+  "tools": [
+    "fleet.snapshot",
+    "business.scorecard.snapshot",
+    "atlas.propose_action",
+    "atlas.record_follow_up"
+  ],
+  "skills": [
+    "source-packet-triage",
+    "weekly-ceo-brief",
+    "business-scorecard-brief",
+    "decision-memo",
+    "weekly-ceo-operating-loop",
+    "approval-proposal-draft"
+  ],
   "memory_axes": ["working", "episodic", "procedural"],
-  "guardrails": ["outbound_human_approval", "pii_redaction"],
+  "guardrails": [
+    "alex_first_internal_only",
+    "dm_only_slack",
+    "outbound_human_approval",
+    "advisor_plus_proposer_only",
+    "source_grounded_metrics_only",
+    "proposal_rows_never_execute",
+    "follow_up_evidence_only",
+    "pii_redaction"
+  ],
   "sla": { "uptime": 99.0, "p95_latency_seconds": 30 },
   "publish": false,
   "internal_only": true

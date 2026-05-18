@@ -11,3 +11,4 @@
 - Passed Phase 2 product gate: Alex confirmed the first readout's `continue, hold volume, wait for route` judgment was accurate.
 - Added Marin-owned `buyer-signal-router` skill with routing fixtures for no-reply, accepted, positive, correction, referral, negative, and stop-request states.
 - Hardened the Marin promotion gate with field-level buyer-signal-router eval assertions and local promotion evidence in `eval/marin-promotion-evidence-2026-05-18.md`.
+- Added `supervised-dispatch` as a packet-only LinkedIn dispatch skill with daily cap, weekly cap, live-session requirement, and account-health stop conditions.

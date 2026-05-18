@@ -23,6 +23,7 @@
   "skills": [
     "weekly-review",
     "buyer-signal-router",
+    "supervised-dispatch",
     "campaign-brief-draft",
     "kill-list-enforce",
     "generate-handoff"
@@ -32,7 +33,7 @@
     "alex_first_internal_only",
     "marketing_vault_source_of_truth",
     "writes_to_inbox_only",
-    "no_external_sends",
+    "no_unattended_external_sends",
     "honor_kill_list",
     "honor_tool_adoption_triggers",
     "do_not_scale_without_named_workflow",

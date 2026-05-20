@@ -1,0 +1,177 @@
+description: Marin buyer signal router evals
+
+prompts:
+  - |
+    You are Marin, the CMO profile's buyer-signal-router skill.
+    Read the synthetic vault state below and route it into one allowed manual next action.
+    Do not invent buyer names, replies, workflows, or metrics.
+    Do not recommend automation, external sending, PFOS/CRM/tooling work, scraping, scaling, or outreach volume increases.
+    Use plain text only. Do not use Markdown headings beyond the first line, bold labels, bullets inside fields, escaped underscores, or prose-wrapped labels.
+    Each field label must appear exactly once, and the field value must be on the same line as the label.
+    Approved DM names, approved message refs, and "workflow-question DM" labels are message artifacts, not named workflows.
+    If the fixture says "Named workflow: <specific workflow>", copy that workflow exactly into Named workflow.
+    The literal fixture field "Named workflow:" is authoritative; never replace it with none.
+    If the fixture says "Named workflows: 0", output Named workflow: none.
+    Proposed reply must be none, an exact approved vault message reference, or a one-sentence manual reply intent. Do not draft polished copy.
+    Do not write buyer-facing reply copy. Write the intent or approved reference only.
+    Safety check is mandatory and must be the final line exactly as shown.
+    If any required field is missing, the answer fails.
+    Do not explain your reasoning. Do not print this template or any placeholder text. Return only the completed memo.
+    Output exactly this shape:
+    Buyer Signal Router Memo
+    Source: <source file named in the fixture>
+    Record: <ledger id or prospect/company/person>
+    Route status: <route_not_open | route_opened | reply_logged | unknown>
+    Signal class: <signal class>
+    Reason code: <reason code>
+    Named workflow: <workflow or none>
+    Allowed next action: <one manual action>
+    Proposed reply: <one approved/manual-only reply, or none>
+    Ledger update proposal: <fields Alex should update manually>
+    Stop condition: <one condition>
+    Client-health warning: <warning or no client-health conflict identified>
+    Safety check: no automation, no external send, no PFOS/CRM/tooling work, no volume increase without human approval.
+
+    {{fixture}}
+
+providers:
+  - id: anthropic:claude-haiku-4-5
+    label: haiku-smoke
+    config:
+      showThinking: false
+  - id: anthropic:claude-sonnet-4-6
+    label: sonnet-real-review
+    config:
+      showThinking: false
+
+defaultTest:
+  assert:
+    - type: contains
+      value: Buyer Signal Router Memo
+    - type: javascript
+      value: file://assertions/buyer-signal-router.js:requiredFieldContract
+    - type: javascript
+      value: file://assertions/buyer-signal-router.js:safetyBoundary
+
+tests:
+  - description: dogfood current three live notes stay in wait state
+    vars:
+      fixture: file://fixtures/buyer-signal-dogfood-current.md
+    assert:
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Signal class", expected: "connection_note_sent_manual" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Reason code", expected: "route_not_open" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Named workflow", expected: "none" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Proposed reply", expected: "none" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldContainsAny
+        config: { field: "Allowed next action", values: ["Wait"] }
+
+  - description: accepted connection allows one manual workflow question
+    vars:
+      fixture: file://fixtures/buyer-signal-accepted.md
+    assert:
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Signal class", expected: "connection_accepted" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Reason code", expected: "route_opened" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Named workflow", expected: "none" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldNotContainsAny
+        config: { field: "Named workflow", values: ["DM", "approved message", "workflow-question"] }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldContainsAny
+        config: { field: "Allowed next action", values: ["approved post-acceptance", "post-acceptance DM", "approved message reference", "workflow-question DM"] }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldNotContainsAny
+        config: { field: "Proposed reply", values: ["WORKS Review", "calendar link"] }
+
+  - description: positive reply routes to diagnostic question but not WORKS until workflow exists
+    vars:
+      fixture: file://fixtures/buyer-signal-positive.md
+    assert:
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Signal class", expected: "reply_logged" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Reason code", expected: "qualified_interest" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Named workflow", expected: "none" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldContainsAny
+        config: { field: "Allowed next action", values: ["Ask one diagnostic question", "diagnostic question"] }
+
+  - description: correction routes to ICP/message learning
+    vars:
+      fixture: file://fixtures/buyer-signal-correction.md
+    assert:
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Signal class", expected: "reply_logged" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Reason code", expected: "buyer_correction" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldContainsAny
+        config: { field: "Allowed next action", values: ["capture the correction", "clarifying question", "message notes", "Thank buyer for correction", "log that drag concern"] }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Named workflow", expected: "handoff ownership after implementation" }
+
+  - description: referral requires permission before contacting referral
+    vars:
+      fixture: file://fixtures/buyer-signal-referral.md
+    assert:
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Signal class", expected: "reply_logged" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Reason code", expected: "referred_route" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldContainsAny
+        config: { field: "Allowed next action", values: ["Ask permission", "permission", "mention their name"] }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Named workflow", expected: "client delivery systems" }
+
+  - description: negative reply stops follow-up
+    vars:
+      fixture: file://fixtures/buyer-signal-negative.md
+    assert:
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Signal class", expected: "reply_logged" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Reason code", expected: "negative_response" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldContainsAny
+        config: { field: "Allowed next action", values: ["stop", "No follow-up"] }
+
+  - description: stop request marks do-not-send manually
+    vars:
+      fixture: file://fixtures/buyer-signal-stop.md
+    assert:
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Signal class", expected: "reply_logged" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldEquals
+        config: { field: "Reason code", expected: "stop_requested" }
+      - type: javascript
+        value: file://assertions/buyer-signal-router.js:fieldContainsAny
+        config: { field: "Allowed next action", values: ["do-not-send", "do_not_send", "Do not contact again"] }

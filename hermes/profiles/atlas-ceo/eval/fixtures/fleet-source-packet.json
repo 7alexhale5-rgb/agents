@@ -1,0 +1,89 @@
+{
+  "packet_type": "fleet.snapshot",
+  "generated_at": "2026-05-14T22:00:00Z",
+  "authority": "read_only",
+  "source_privacy": "aggregates_only_no_secrets_no_raw_private_text",
+  "sources": [
+    {
+      "name": "profile_sync",
+      "freshness": "point_in_time_filesystem_scan",
+      "confidence": "high",
+      "missing": []
+    },
+    {
+      "name": "pf_runtime_buffers",
+      "freshness": "point_in_time_sqlite_aggregate_scan",
+      "confidence": "medium",
+      "missing": []
+    },
+    {
+      "name": "local_api_usage",
+      "freshness": "latest_daily_summaries",
+      "confidence": "high",
+      "missing": []
+    },
+    {
+      "name": "atlas_evals",
+      "freshness": "point_in_time_filesystem_scan",
+      "confidence": "medium",
+      "missing": []
+    }
+  ],
+  "profile_sync": {
+    "total_profiles_seen": 15,
+    "profiles_reported": 15,
+    "clean_profiles_reported": 13,
+    "drift_profiles_reported": 2,
+    "rows": [
+      {
+        "profile": "atlas-ceo",
+        "source_exists": true,
+        "runtime_exists": true,
+        "paused": false,
+        "drift_files": [],
+        "sync_status": "clean"
+      },
+      {
+        "profile": "personal",
+        "source_exists": true,
+        "runtime_exists": true,
+        "paused": false,
+        "drift_files": ["MEMORY.md"],
+        "sync_status": "drift"
+      }
+    ]
+  },
+  "pf_runtime": {
+    "profiles_with_buffers": 4,
+    "rows": [
+      {
+        "profile": "atlas-ceo",
+        "buffer_exists": true,
+        "message_count": 6,
+        "last_message_at": "2026-05-14T21:55:00Z"
+      }
+    ]
+  },
+  "costs": {
+    "recent_daily_summaries": [
+      {
+        "date": "2026-05-14",
+        "provider": "openrouter",
+        "model": "nvidia/nemotron-3-nano-30b-a3b:free",
+        "total_tokens": 24000,
+        "total_cost_usd": 0.0
+      }
+    ]
+  },
+  "evals": {
+    "files": [
+      {
+        "path": "atlas-hiring-bridge-rubric.md",
+        "updated_at": "2026-05-14T22:00:00Z"
+      }
+    ]
+  },
+  "missing_signals": [
+    "PFOS read-only fleet endpoint is not configured yet; using local runtime files only."
+  ]
+}

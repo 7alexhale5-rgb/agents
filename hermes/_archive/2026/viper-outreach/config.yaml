@@ -1,0 +1,31 @@
+profile: viper-outreach
+
+agent:
+  max_iterations: 32
+  iteration_budget_tokens: 200000
+
+model:
+  default_provider: openrouter
+  default_model: nvidia/nemotron-nano-9b-v2
+
+memory:
+  built_in:
+    enabled: true
+    fts5_enabled: true
+  honcho:
+    enabled: false
+
+mcp_servers:
+  apollo-io:
+    command: /bin/sh
+    args:
+      - "-c"
+      - "set -a && . /Users/alexhale/Projects/apollo-mcp/.env && set +a && exec npm exec @thevgergroup/apollo-io-mcp@2.2.1"
+skills:
+  install: []
+channels: {}
+approval:
+  mode: explicit_for_outbound
+guardrails:
+  spend_cap_per_day_usd: 5
+  alert_threshold_pct: 80

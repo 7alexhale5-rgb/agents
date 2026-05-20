@@ -1,26 +1,39 @@
 # CLAUDE.md — `~/Projects/agents/`
 
-> **Status:** active | **Type:** tooling | **Phase:** 0 cleared 2026-05-05 19:59 UTC — Phase 1 active (14-day shadow window)
+> **Status:** active | **Type:** tooling | **Phase:** $1M-pivot active (2026-05-18)
+> **Mission:** Internal agent fleet driving PrettyFly CTO Advisory revenue to $1M ARR in 24 months. No marketplace.
+> **Plan:** `~/.claude/plans/here-is-what-we-joyful-torvalds.md`
+> **Strategy source:** `~/Projects/marketing/` (marketing vault)
+> **Runtime:** Hermes Agent v0.12.0 (Nous Research, MIT). PF Runtime archived. See `~/Projects/memory-vault/decisions/2026-05-18-archive-pf-runtime.md`.
 
 You've opened the consolidated Hermes monorepo. This file is the Layer-1 router (per JEVanClief's folder-as-workspace pattern). Use it to decide which profile to descend into.
 
-## Layer-1 routing — descend into the right profile
+## Active roster — 7 profiles
 
-| Task                                               | Descend to                                 |
-| -------------------------------------------------- | ------------------------------------------ |
-| Personal voice / Telegram / daily digest           | `hermes/profiles/personal/CLAUDE.md`       |
-| Mike-lawdbot Telegram, PR pipeline (Antfarm)       | `hermes/profiles/lawdbot/CLAUDE.md`        |
-| Repo-wide refactor / multi-file coordination       | `hermes/profiles/codex/CLAUDE.md`          |
-| Edge / SMS / sensor (Termux on Android)            | `hermes/profiles/mobile/CLAUDE.md`         |
-| ConsultOps Marc routing, lead pipeline             | `hermes/profiles/consultops/CLAUDE.md`     |
-| Sportsbook predictions, edge monitor               | `hermes/profiles/sportsbook/CLAUDE.md`     |
-| Yehovah trial-to-GA ops monitoring                 | `hermes/profiles/yeh-ops/CLAUDE.md`        |
-| Cross-squad strategy, weekly OKR roll-up           | `hermes/profiles/atlas-ceo/CLAUDE.md`      |
-| Outbound (LinkedIn, email, prospect outreach)      | `hermes/profiles/viper-outreach/CLAUDE.md` |
-| Content calendar, social posts                     | `hermes/profiles/quill-content/CLAUDE.md`  |
-| Contract / compliance / SOC2 / audit               | `hermes/profiles/forge-audit/CLAUDE.md`    |
-| Cost watching, ledger, fleet cie/apex briefing     | `hermes/profiles/ops/CLAUDE.md`            |
-| AI research, framework audits, Sunday Weekly Brief | `hermes/profiles/vanclief/CLAUDE.md`       |
+| Task                                                                              | Descend to                                     |
+| --------------------------------------------------------------------------------- | ---------------------------------------------- |
+| Source-grounded CEO operating advisor; weekly brief; decision memos               | `hermes/profiles/atlas-ceo/CLAUDE.md`          |
+| Weekly campaign decision + ICP + content direction + revenue-loop review          | `hermes/profiles/cmo/CLAUDE.md` (Phase 2)      |
+| Content drafting from approved positioning (drafts to `_inbox/`, never publishes) | `hermes/profiles/quill/CLAUDE.md` (Phase 3)    |
+| Pre-launch pressure-test on campaigns, claims, positioning                        | `hermes/profiles/viper/CLAUDE.md` (Phase 3)    |
+| Koho retainer delivery (Marc routing, ConsultOps demos, Excerpa work)             | `hermes/profiles/koho-ops/CLAUDE.md` (Phase 5) |
+| Yehovah retainer delivery (trial-to-GA monitoring, CTO duties)                    | `hermes/profiles/yeh-ops/CLAUDE.md` (Phase 5)  |
+| Repo-wide refactor / multi-file coordination / PR drafts on revenue products      | `hermes/profiles/codex/CLAUDE.md` (Phase 5.5)  |
+
+Profiles in parentheses are scheduled for build per the plan; `atlas-ceo`, `codex`, and `cmo` exist on disk as of 2026-05-18.
+
+### Karpathy ladder per profile
+
+- **Rung 1**: read-only source-grounded briefs
+- **Rung 2**: propose-only writes (drafts to `_inbox/`, decisions to ledger, never executes)
+- **Rung 3**: scoped tool actions with human approval gate
+- **Rung 4**: routine actions (only after per-skill eval gates pass)
+
+Atlas is at rung 3 — use it as the reference shape. Every new profile starts at rung 1 and earns each rung via gate.
+
+### Archived (do not descend) — see `hermes/_archive/2026/`
+
+`atelier` (kept as OSS, not as profile), `consultops` (old), `forge-audit`, `lawdbot` (mike-lawdbot fully sunsetting), `mobile`, `ops`, `personal`, `personal-baseline`, `quill-content` (old), `sportsbook`, `vanclief`, `viper-outreach` (old), `yeh-ops` (old; rebuild in Phase 5).
 
 ## Conventions
 
@@ -29,6 +42,7 @@ You've opened the consolidated Hermes monorepo. This file is the Layer-1 router 
 - **agentskills.io / SKILL.md** for every procedural skill — progressive disclosure (metadata → body → referenced files)
 - **MCP for tools, A2A for agents** — never blur the line
 - **One ADR per architectural decision** in `_meta/decisions/`, dated, never edit historical ADRs
+- **1% closeout discipline** — after each completed task, name the next obvious 1% move. When Alex asks for planning around it, produce a decision-complete plan, then autonomously execute up to the next three small, safe 1% moves unless a real blocker appears.
 
 ## Source-of-truth ↔ runtime
 
@@ -60,7 +74,21 @@ These tools live at env scope and stay where they are. Per-project addenda layer
 
 ## Phase pointer
 
-Phase tracker lives in `docs/migration-runbook.md`. Current phase: **0 complete** as of 2026-05-04.
+**Current phase: $1M-pivot Phase 2 (CMO weekly decision pilot) — in progress 2026-05-18.**
+
+Per `~/.claude/plans/here-is-what-we-joyful-torvalds.md`:
+
+- Phase 1: archive dead weight (pf-runtime, marketplace, non-revenue profiles, experimental forks) ✅ landed 2026-05-18
+- Phase 1.5: PrettyFly sub-project revenue audit (audit-engine, decision-maker-identifier, LAIK, gravity-stack-koho-starter, etc.)
+- Phase 2: build CMO profile from Atlas template (1 week)
+- Phase 3: build Quill + Viper from Atlas template (1 week)
+- Phase 4: extend Atlas with marketing-vault read path (2-3 hours)
+- Phase 5: build koho-ops + yeh-ops retainer-delivery profiles (2 weeks)
+- Phase 5.5: rebuild codex profile from Atlas template (3-5 hours)
+- Phase 6: wake one dormant Hermes capability (trigger-gated)
+- Phase 7: quarterly compound review (every 90 days starting 2026-08-18)
+
+Legacy migration tracker at `docs/migration-runbook.md` is historical record only — superseded by the $1M-pivot plan above.
 
 ## Codex parity
 

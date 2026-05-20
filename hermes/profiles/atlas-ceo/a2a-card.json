@@ -2,15 +2,42 @@
   "schema": "a2a/v1+ext",
   "agent_id": "atlas-ceo",
   "version": "0.1.0",
-  "description": "TBD",
-  "tier": null,
-  "side_effects": [],
-  "eval_suite_uri": null,
+  "description": "Alex-first CEO operating advisor. Atlas turns verified PFOS and PF Runtime source packets into CEO briefs, decision memos, and approval-needed action proposals.",
+  "tier": "manual_weekly_ceo_brief_pilot",
+  "side_effects": ["read", "proposal_write_only"],
+  "eval_suite_uri": "eval/promptfoo.yaml",
   "cost_envelope": {
-    "budget_usd_per_day": 0,
+    "budget_usd_per_day": 5,
     "alert_threshold_pct": 80
   },
-  "channels": [],
-  "skills": [],
-  "stamped_at": "2026-05-05T16:06:50Z"
+  "channels": ["slack_dm", "pfos_evidence"],
+  "skills": [
+    "source-packet-triage",
+    "weekly-ceo-brief",
+    "business-scorecard-brief",
+    "decision-memo",
+    "weekly-ceo-operating-loop",
+    "approval-proposal-draft",
+    "generate-handoff"
+  ],
+  "tools": [
+    "fleet.snapshot",
+    "business.scorecard.snapshot",
+    "atlas.propose_action",
+    "atlas.record_follow_up"
+  ],
+  "authority": {
+    "mode": "advisor_plus_proposer",
+    "can_read": ["pfos_source_packet", "pf_runtime_local_fallback"],
+    "can_write": ["pfos_agent_actions_proposed_only", "pfos_follow_up_evidence_only"],
+    "cannot": [
+      "dispatch_agents",
+      "execute_actions",
+      "send_external_messages",
+      "spend_money",
+      "modify_profiles",
+      "publish_client_facing_output"
+    ]
+  },
+  "stamped_at": "2026-05-18T04:02:32Z"
 }

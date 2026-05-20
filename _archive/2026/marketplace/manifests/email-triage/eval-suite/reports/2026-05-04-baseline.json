@@ -1,0 +1,1942 @@
+{
+  "evalId": "eval-zbT-2026-05-04T21:48:41",
+  "results": {
+    "version": 3,
+    "timestamp": "2026-05-04T21:48:41.568Z",
+    "prompts": [
+      {
+        "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+        "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+        "id": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "provider": "openrouter:nvidia/nemotron-nano-9b-v2",
+        "metrics": {
+          "score": 0,
+          "testPassCount": 0,
+          "testFailCount": 0,
+          "testErrorCount": 30,
+          "assertPassCount": 0,
+          "assertFailCount": 0,
+          "totalLatencyMs": 1944,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 30,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "namedScoreWeights": {},
+          "cost": 0
+        }
+      }
+    ],
+    "results": [
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "16d5742d-3763-411d-8134-cc17e59fee78",
+        "latencyMs": 247,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: no-reply@verizon.com\nSubject: Your Verizon bill is ready\nBody: Your monthly bill of $89.45 is now available.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Your Verizon bill is ready",
+            "from": "no-reply@verizon.com",
+            "body": "Your monthly bill of $89.45 is now available."
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {
+          "subject": "Your Verizon bill is ready",
+          "from": "no-reply@verizon.com",
+          "body": "Your monthly bill of $89.45 is now available."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "d0bcd03c-6b14-4e92-8618-16d24d2d21f0",
+        "latencyMs": 255,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: marc@acmelaw.com\nSubject: Following up on the contract\nBody: Hi Alex — circling back on the LLC operating agreement we discussed Tuesday. Can you sign by Friday? Need it for the Monday close.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Following up on the contract",
+            "from": "marc@acmelaw.com",
+            "body": "Hi Alex — circling back on the LLC operating agreement we discussed Tuesday. Can you sign by Friday? Need it for the Monday close."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 4,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "vars": {
+          "subject": "Following up on the contract",
+          "from": "marc@acmelaw.com",
+          "body": "Hi Alex — circling back on the LLC operating agreement we discussed Tuesday. Can you sign by Friday? Need it for the Monday close."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "7229be5a-d4ad-4e7c-a778-ae0ad958c0b3",
+        "latencyMs": 259,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: marketing@randomstore.com\nSubject: Don't miss our Memorial Day SALE 🎉🎉🎉\nBody: Get 20% off everything this weekend!",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Don't miss our Memorial Day SALE 🎉🎉🎉",
+            "from": "marketing@randomstore.com",
+            "body": "Get 20% off everything this weekend!"
+          },
+          "expected_category": "delete",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 2,
+        "vars": {
+          "subject": "Don't miss our Memorial Day SALE 🎉🎉🎉",
+          "from": "marketing@randomstore.com",
+          "body": "Get 20% off everything this weekend!"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "0f7a6cb9-f699-40e3-8b53-0bd0e30a1cde",
+        "latencyMs": 263,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: hello@somenewsletter.com\nSubject: Weekly newsletter: 5 things in AI\nBody: This week in AI: Anthropic, OpenAI, ...",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Weekly newsletter: 5 things in AI",
+            "from": "hello@somenewsletter.com",
+            "body": "This week in AI: Anthropic, OpenAI, ..."
+          },
+          "expected_category": "unsubscribe",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 3,
+        "vars": {
+          "subject": "Weekly newsletter: 5 things in AI",
+          "from": "hello@somenewsletter.com",
+          "body": "This week in AI: Anthropic, OpenAI, ..."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "77fac5f1-97dd-4118-bfe7-34b8c54a3e4b",
+        "latencyMs": 33,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: receipts@stripe.com\nSubject: Your Stripe receipt\nBody: Receipt for $99.00 — thanks!",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Your Stripe receipt",
+            "from": "receipts@stripe.com",
+            "body": "Receipt for $99.00 — thanks!"
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 4,
+        "vars": {
+          "subject": "Your Stripe receipt",
+          "from": "receipts@stripe.com",
+          "body": "Receipt for $99.00 — thanks!"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "be14a619-4ca2-417d-b625-c7917419f030",
+        "latencyMs": 47,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: mom@gmail.com\nSubject: Mom: are you coming Sunday?\nBody: Just checking — Sunday dinner at 6?",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Mom: are you coming Sunday?",
+            "from": "mom@gmail.com",
+            "body": "Just checking — Sunday dinner at 6?"
+          },
+          "expected_category": "respond",
+          "expected_urgency": 5,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 5,
+        "vars": {
+          "subject": "Mom: are you coming Sunday?",
+          "from": "mom@gmail.com",
+          "body": "Just checking — Sunday dinner at 6?"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "a0757c55-0665-4f33-aae2-8f19aaa3856d",
+        "latencyMs": 39,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: cpa@firmcpa.com\nSubject: Tax return — needs your signature\nBody: Your 2025 1040 is ready. Please sign by 4/15.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Tax return — needs your signature",
+            "from": "cpa@firmcpa.com",
+            "body": "Your 2025 1040 is ready. Please sign by 4/15."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 5,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 6,
+        "vars": {
+          "subject": "Tax return — needs your signature",
+          "from": "cpa@firmcpa.com",
+          "body": "Your 2025 1040 is ready. Please sign by 4/15."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "67eb7866-ab7c-493a-a647-3706655b3cc7",
+        "latencyMs": 41,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@calendar.google.com\nSubject: Calendar invite — coffee with John\nBody: John has invited you to a meeting.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Calendar invite — coffee with John",
+            "from": "noreply@calendar.google.com",
+            "body": "John has invited you to a meeting."
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 2,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 7,
+        "vars": {
+          "subject": "Calendar invite — coffee with John",
+          "from": "noreply@calendar.google.com",
+          "body": "John has invited you to a meeting."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "28d9d755-f63b-41e3-bf79-97aa05315dc8",
+        "latencyMs": 47,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: invitations@linkedin.com\nSubject: [Invitation] LinkedIn — Sara wants to connect\nBody: Sara Chen wants to connect with you on LinkedIn.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "[Invitation] LinkedIn — Sara wants to connect",
+            "from": "invitations@linkedin.com",
+            "body": "Sara Chen wants to connect with you on LinkedIn."
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 2,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 8,
+        "vars": {
+          "subject": "[Invitation] LinkedIn — Sara wants to connect",
+          "from": "invitations@linkedin.com",
+          "body": "Sara Chen wants to connect with you on LinkedIn."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "92489018-6c12-47ee-84e4-54da130e9b30",
+        "latencyMs": 37,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: alerts@ach.example.com\nSubject: $3,200 deposit pending\nBody: A $3,200.00 ACH deposit is pending in your account.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "$3,200 deposit pending",
+            "from": "alerts@ach.example.com",
+            "body": "A $3,200.00 ACH deposit is pending in your account."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 4,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 9,
+        "vars": {
+          "subject": "$3,200 deposit pending",
+          "from": "alerts@ach.example.com",
+          "body": "A $3,200.00 ACH deposit is pending in your account."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "3a1a6b39-9124-4249-831f-332d3817666f",
+        "latencyMs": 38,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: lp@familyoffice.com\nSubject: RE: Investor update Q2\nBody: Got it. Will review and revert.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "RE: Investor update Q2",
+            "from": "lp@familyoffice.com",
+            "body": "Got it. Will review and revert."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 3,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 10,
+        "vars": {
+          "subject": "RE: Investor update Q2",
+          "from": "lp@familyoffice.com",
+          "body": "Got it. Will review and revert."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "7559043e-c231-4ce1-b1a5-324bb447a5c9",
+        "latencyMs": 34,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: shipping@amazon.com\nSubject: Order shipped 📦\nBody: Your order has shipped.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Order shipped 📦",
+            "from": "shipping@amazon.com",
+            "body": "Your order has shipped."
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 11,
+        "vars": {
+          "subject": "Order shipped 📦",
+          "from": "shipping@amazon.com",
+          "body": "Your order has shipped."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "15735c68-4050-488f-b5f4-9e44d260a761",
+        "latencyMs": 36,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: support@phishingbank.fake\nSubject: URGENT: re-verify your bank account NOW\nBody: Click here to verify.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "URGENT: re-verify your bank account NOW",
+            "from": "support@phishingbank.fake",
+            "body": "Click here to verify."
+          },
+          "expected_category": "delete",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 12,
+        "vars": {
+          "subject": "URGENT: re-verify your bank account NOW",
+          "from": "support@phishingbank.fake",
+          "body": "Click here to verify."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "93828da9-da51-4859-97ef-f16c7f98e0d9",
+        "latencyMs": 29,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: anthony@yehovah.builders\nSubject: Quick question on the Excerpa PR\nBody: Does the migration script handle the empty contact case?",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Quick question on the Excerpa PR",
+            "from": "anthony@yehovah.builders",
+            "body": "Does the migration script handle the empty contact case?"
+          },
+          "expected_category": "respond",
+          "expected_urgency": 4,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 13,
+        "vars": {
+          "subject": "Quick question on the Excerpa PR",
+          "from": "anthony@yehovah.builders",
+          "body": "Does the migration script handle the empty contact case?"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "e96e2262-4b2f-40b5-bcc0-1d85913020d5",
+        "latencyMs": 33,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@somelist.com\nSubject: Unsubscribe successful\nBody: You have been unsubscribed.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Unsubscribe successful",
+            "from": "noreply@somelist.com",
+            "body": "You have been unsubscribed."
+          },
+          "expected_category": "delete",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 14,
+        "vars": {
+          "subject": "Unsubscribe successful",
+          "from": "noreply@somelist.com",
+          "body": "You have been unsubscribed."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "94c93c81-a58d-4e65-8c5c-d94d9998473c",
+        "latencyMs": 46,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@reddit.com\nSubject: Daily digest: 12 new posts in r/agentic\nBody: 12 new posts in your subscribed subreddits.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Daily digest: 12 new posts in r/agentic",
+            "from": "noreply@reddit.com",
+            "body": "12 new posts in your subscribed subreddits."
+          },
+          "expected_category": "unsubscribe",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 15,
+        "vars": {
+          "subject": "Daily digest: 12 new posts in r/agentic",
+          "from": "noreply@reddit.com",
+          "body": "12 new posts in your subscribed subreddits."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "3c657dbe-6ec9-491d-8d73-7d0a1c3e711b",
+        "latencyMs": 29,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: billing@anthropic.com\nSubject: FYI: pricing update on Anthropic Sonnet\nBody: Effective May 15, Sonnet pricing changes.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "FYI: pricing update on Anthropic Sonnet",
+            "from": "billing@anthropic.com",
+            "body": "Effective May 15, Sonnet pricing changes."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 3,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 16,
+        "vars": {
+          "subject": "FYI: pricing update on Anthropic Sonnet",
+          "from": "billing@anthropic.com",
+          "body": "Effective May 15, Sonnet pricing changes."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "ea416d93-992d-403d-adae-f15ca7d4fcb2",
+        "latencyMs": 30,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: no-reply@spotify.com\nSubject: Your weekly Spotify Wrapped\nBody: Here's what you listened to this week!",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Your weekly Spotify Wrapped",
+            "from": "no-reply@spotify.com",
+            "body": "Here's what you listened to this week!"
+          },
+          "expected_category": "delete",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 17,
+        "vars": {
+          "subject": "Your weekly Spotify Wrapped",
+          "from": "no-reply@spotify.com",
+          "body": "Here's what you listened to this week!"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "ed43af72-df78-4ae3-bda4-834e00e04c5c",
+        "latencyMs": 30,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: delta@delta.com\nSubject: Booking confirmation — flight to ATL\nBody: Your flight on June 15 is confirmed.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Booking confirmation — flight to ATL",
+            "from": "delta@delta.com",
+            "body": "Your flight on June 15 is confirmed."
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 2,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 18,
+        "vars": {
+          "subject": "Booking confirmation — flight to ATL",
+          "from": "delta@delta.com",
+          "body": "Your flight on June 15 is confirmed."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "1210ea05-9ef0-47b1-9dba-907edc13e0c5",
+        "latencyMs": 39,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: marc@koho.consulting\nSubject: Marc — quick chat tomorrow?\nBody: Free at 2pm? Want to align on Friday's demo.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Marc — quick chat tomorrow?",
+            "from": "marc@koho.consulting",
+            "body": "Free at 2pm? Want to align on Friday's demo."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 4,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 19,
+        "vars": {
+          "subject": "Marc — quick chat tomorrow?",
+          "from": "marc@koho.consulting",
+          "body": "Free at 2pm? Want to align on Friday's demo."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "244390f7-e7ca-4e76-b875-ccf31400df4e",
+        "latencyMs": 34,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: renewals@registrar.com\nSubject: Domain renewal: prettyflyforai.com expires in 30 days\nBody: Renew now to avoid loss of service.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Domain renewal: prettyflyforai.com expires in 30 days",
+            "from": "renewals@registrar.com",
+            "body": "Renew now to avoid loss of service."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 4,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 20,
+        "vars": {
+          "subject": "Domain renewal: prettyflyforai.com expires in 30 days",
+          "from": "renewals@registrar.com",
+          "body": "Renew now to avoid loss of service."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "74387805-d890-4ee0-9864-bc0a1b272fe7",
+        "latencyMs": 32,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@github.com\nSubject: [GitHub] PR #67 was approved\nBody: Your PR was approved.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "[GitHub] PR #67 was approved",
+            "from": "noreply@github.com",
+            "body": "Your PR was approved."
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 2,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 21,
+        "vars": {
+          "subject": "[GitHub] PR #67 was approved",
+          "from": "noreply@github.com",
+          "body": "Your PR was approved."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "9051a578-b6f4-4c3b-8228-4ebf1df106f9",
+        "latencyMs": 32,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: feedback@slack.com\nSubject: Slack: 5 new messages in #consultops\nBody: 5 new messages.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Slack: 5 new messages in #consultops",
+            "from": "feedback@slack.com",
+            "body": "5 new messages."
+          },
+          "expected_category": "delete",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 22,
+        "vars": {
+          "subject": "Slack: 5 new messages in #consultops",
+          "from": "feedback@slack.com",
+          "body": "5 new messages."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "510ef078-e57b-4cab-afcb-aee8f9c2e38f",
+        "latencyMs": 40,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: alerts@consultops.koho.consulting\nSubject: ConsultOps Marc: lead routing failed for prospect 1234\nBody: Routing pipeline error for prospect ID 1234.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "ConsultOps Marc: lead routing failed for prospect 1234",
+            "from": "alerts@consultops.koho.consulting",
+            "body": "Routing pipeline error for prospect ID 1234."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 5,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 23,
+        "vars": {
+          "subject": "ConsultOps Marc: lead routing failed for prospect 1234",
+          "from": "alerts@consultops.koho.consulting",
+          "body": "Routing pipeline error for prospect ID 1234."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "0fb140b0-8fc2-40b1-83d0-0ffeed172278",
+        "latencyMs": 41,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@vercel.com\nSubject: Your domain transfer is complete\nBody: The domain transfer is complete.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Your domain transfer is complete",
+            "from": "noreply@vercel.com",
+            "body": "The domain transfer is complete."
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 24,
+        "vars": {
+          "subject": "Your domain transfer is complete",
+          "from": "noreply@vercel.com",
+          "body": "The domain transfer is complete."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "587a55f0-d56e-4ef9-b6b5-6282abe885f5",
+        "latencyMs": 25,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: events@somefirm.com\nSubject: Webinar replay: Building agentic systems in 2026\nBody: Watch the replay here.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Webinar replay: Building agentic systems in 2026",
+            "from": "events@somefirm.com",
+            "body": "Watch the replay here."
+          },
+          "expected_category": "delete",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 25,
+        "vars": {
+          "subject": "Webinar replay: Building agentic systems in 2026",
+          "from": "events@somefirm.com",
+          "body": "Watch the replay here."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "49acf8dd-ee14-4e4e-83cf-6d5506677c29",
+        "latencyMs": 29,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@honcho.dev\nSubject: Your Honcho preview deploy is ready\nBody: Preview deploy at honcho-preview-abc.fly.dev",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Your Honcho preview deploy is ready",
+            "from": "noreply@honcho.dev",
+            "body": "Preview deploy at honcho-preview-abc.fly.dev"
+          },
+          "expected_category": "deferred",
+          "expected_urgency": 2,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 26,
+        "vars": {
+          "subject": "Your Honcho preview deploy is ready",
+          "from": "noreply@honcho.dev",
+          "body": "Preview deploy at honcho-preview-abc.fly.dev"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "76ca4472-05b8-46c1-ac09-854425cf2927",
+        "latencyMs": 35,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: imran@alif.build\nSubject: Hi! Saw your tweet on Hermes\nBody: Loved your thread. Want to chat about how you set up the Antfarm pipeline?",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Hi! Saw your tweet on Hermes",
+            "from": "imran@alif.build",
+            "body": "Loved your thread. Want to chat about how you set up the Antfarm pipeline?"
+          },
+          "expected_category": "respond",
+          "expected_urgency": 3,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 27,
+        "vars": {
+          "subject": "Hi! Saw your tweet on Hermes",
+          "from": "imran@alif.build",
+          "body": "Loved your thread. Want to chat about how you set up the Antfarm pipeline?"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "b1a28850-ac10-4369-a048-594dbb3170fb",
+        "latencyMs": 30,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@stripe.com\nSubject: Action required: 2FA code\nBody: Your 2FA code is 482910. Expires in 5 min.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Action required: 2FA code",
+            "from": "noreply@stripe.com",
+            "body": "Your 2FA code is 482910. Expires in 5 min."
+          },
+          "expected_category": "respond",
+          "expected_urgency": 5,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 28,
+        "vars": {
+          "subject": "Action required: 2FA code",
+          "from": "noreply@stripe.com",
+          "body": "Your 2FA code is 482910. Expires in 5 min."
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      },
+      {
+        "cost": 0,
+        "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}",
+        "gradingResult": null,
+        "id": "3e824992-c9f7-4870-8ab1-23bccfa36346",
+        "latencyMs": 34,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: marketing@swagcompany.com\nSubject: Free swag for AI builders 🎁\nBody: Claim your free hoodie!",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openrouter:nvidia/nemotron-nano-9b-v2",
+          "label": ""
+        },
+        "response": {
+          "error": "API error: 402 Payment Required\n{\"error\":{\"message\":\"Insufficient credits. Add more using https://openrouter.ai/settings/credits\",\"code\":402}}"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Free swag for AI builders 🎁",
+            "from": "marketing@swagcompany.com",
+            "body": "Claim your free hoodie!"
+          },
+          "expected_category": "delete",
+          "expected_urgency": 1,
+          "assert": [
+            {
+              "type": "equals",
+              "transformValue": "output.category",
+              "value": "{{expected_category}}"
+            },
+            {
+              "type": "javascript",
+              "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 29,
+        "vars": {
+          "subject": "Free swag for AI builders 🎁",
+          "from": "marketing@swagcompany.com",
+          "body": "Claim your free hoodie!"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 2
+      }
+    ],
+    "stats": {
+      "successes": 0,
+      "failures": 0,
+      "errors": 30,
+      "tokenUsage": {
+        "prompt": 0,
+        "completion": 0,
+        "cached": 0,
+        "total": 0,
+        "numRequests": 30,
+        "completionDetails": {
+          "reasoning": 0,
+          "acceptedPrediction": 0,
+          "rejectedPrediction": 0,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0
+        },
+        "assertions": {
+          "total": 0,
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "numRequests": 0,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          }
+        }
+      },
+      "durationMs": 518,
+      "evaluationDurationMs": 518
+    }
+  },
+  "config": {
+    "description": "email-triage golden dataset regression — runs nightly, pass-rate floor 0.85",
+    "prompts": [
+      "file://prompts/categorize.txt"
+    ],
+    "providers": [
+      {
+        "id": "openrouter:nvidia/nemotron-nano-9b-v2"
+      },
+      {
+        "id": "mistral:mistral-medium-latest"
+      },
+      {
+        "id": "anthropic:claude-sonnet-4-6"
+      }
+    ],
+    "tests": [
+      "file://golden.jsonl"
+    ],
+    "defaultTest": {
+      "options": {
+        "transform": "file://transform.js"
+      },
+      "assert": [
+        {
+          "type": "equals",
+          "transformValue": "output.category",
+          "value": "{{expected_category}}"
+        },
+        {
+          "type": "javascript",
+          "value": "// urgency must match within 1 level on the 5-point scale\nMath.abs(output.urgency - context.expected_urgency) <= 1\n"
+        }
+      ]
+    },
+    "outputPath": [
+      "reports/2026-05-04-baseline.json"
+    ],
+    "extensions": []
+  },
+  "shareableUrl": null,
+  "metadata": {
+    "promptfooVersion": "0.121.5",
+    "nodeVersion": "v24.13.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "exportedAt": "2026-05-04T21:48:42.193Z",
+    "evaluationCreatedAt": "2026-05-04T21:48:41.568Z"
+  }
+}

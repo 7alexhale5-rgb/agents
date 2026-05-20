@@ -1,0 +1,91 @@
+description: CMO weekly decision routing evals
+
+prompts:
+  - |
+    You are the CMO profile. Read the synthetic vault state below and produce one Weekly Revenue Loop decision.
+    Allowed decisions: continue, narrow ICP, rewrite message, change channel, pause.
+    Do not invent buyer names, reply counts, workflows, or metrics.
+    Output exactly this shape:
+    Decision: <one allowed decision, lowercase unless "narrow ICP">
+    Source: <source file named in the fixture>
+    Rationale: <one sentence using only fixture evidence>
+    Boundary: <one sentence naming do not scale or hold when appropriate>
+
+    {{fixture}}
+
+providers:
+  - id: anthropic:claude-haiku-4-5
+    label: haiku-smoke
+    config:
+      showThinking: false
+  - id: anthropic:claude-sonnet-4-6
+    label: sonnet-real-review
+    config:
+      showThinking: false
+
+defaultTest:
+  assert:
+    - type: not-contains
+      value: invented
+    - type: not-contains
+      value: sent automatically
+    - type: contains-any
+      value:
+        - "Source:"
+        - "source:"
+
+tests:
+  - description: continue when routes open and one workflow is named
+    vars:
+      fixture: file://fixtures/continue.md
+    assert:
+      - type: contains-any
+        value:
+          - "Decision: continue"
+          - "Decision: Continue"
+          - "Decision: CONTINUE"
+      - type: contains-any
+        value:
+          - do not scale
+          - Do not scale
+
+  - description: narrow ICP when one segment outperforms others
+    vars:
+      fixture: file://fixtures/narrow.md
+    assert:
+      - type: contains-any
+        value:
+          - "Decision: narrow ICP"
+          - "Decision: Narrow ICP"
+          - "Decision: NARROW ICP"
+      - type: contains
+        value: operator-led 75-person consultancies
+
+  - description: rewrite message when replies reject the AI capability angle
+    vars:
+      fixture: file://fixtures/rewrite.md
+    assert:
+      - type: contains-any
+        value:
+          - "Decision: rewrite message"
+          - "Decision: Rewrite message"
+          - "Decision: REWRITE MESSAGE"
+      - type: contains-any
+        value:
+          - operational drag
+          - operational pain
+
+  - description: pause when no route opens and no workflow exists
+    vars:
+      fixture: file://fixtures/pause.md
+    assert:
+      - type: contains-any
+        value:
+          - "Decision: pause"
+          - "Decision: Pause"
+          - "Decision: PAUSE"
+      - type: contains-any
+        value:
+          - no workflow
+          - no workflows
+          - workflows

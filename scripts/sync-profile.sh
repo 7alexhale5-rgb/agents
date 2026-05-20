@@ -28,8 +28,8 @@ fi
 
 # Files we sync (versioned → runtime AND runtime → versioned)
 TRACKED=(
-  "CLAUDE.md" "SOUL.md" "USER.md" "MEMORY.md" "AGENTS.md"
-  "manifest.json" "pricing.yaml" "config.yaml"
+  "CLAUDE.md" "SOUL.md" "DOCTRINE.md" "USER.md" "BUSINESS.md" "MEMORY.md"
+  "manifest.json" "a2a-card.json" "pricing.yaml" "config.yaml"
   ".env.example" "PAUSED.template" "changelog.md"
 )
 
@@ -42,6 +42,32 @@ TRACKED_DIRS=(
 EXCLUDED=(
   ".env" "memory/state.db" "memory/trajectories" "scratch" "workspace"
 )
+
+ensure_agents_symlink() {
+  local dir="$1"
+
+  if [ ! -f "$dir/CLAUDE.md" ]; then
+    return
+  fi
+
+  if [ -e "$dir/AGENTS.md" ] || [ -L "$dir/AGENTS.md" ]; then
+    rm -f "$dir/AGENTS.md"
+  fi
+  ln -s CLAUDE.md "$dir/AGENTS.md"
+}
+
+describe_agents_symlink() {
+  local label="$1"
+  local dir="$2"
+
+  if [ -L "$dir/AGENTS.md" ] && [ "$(readlink "$dir/AGENTS.md")" = "CLAUDE.md" ]; then
+    echo "  derived: AGENTS.md -> CLAUDE.md ($label)"
+  elif [ -e "$dir/AGENTS.md" ] || [ -L "$dir/AGENTS.md" ]; then
+    echo "  modified: AGENTS.md should be symlink -> CLAUDE.md ($label)"
+  else
+    echo "  missing: AGENTS.md symlink -> CLAUDE.md ($label)"
+  fi
+}
 
 case "$DIR" in
   pull)
@@ -62,6 +88,8 @@ case "$DIR" in
         echo "  $d/"
       fi
     done
+    ensure_agents_symlink "$SRC"
+    echo "  AGENTS.md -> CLAUDE.md"
     echo "done. review with: git -C $HOME/Projects/agents diff hermes/profiles/$NAME"
     ;;
   push)
@@ -82,6 +110,8 @@ case "$DIR" in
         echo "  $d/"
       fi
     done
+    ensure_agents_symlink "$RT"
+    echo "  AGENTS.md -> CLAUDE.md"
     echo "done."
     ;;
   status)
@@ -101,6 +131,8 @@ case "$DIR" in
         echo "  runtime-only: $f"
       fi
     done
+    describe_agents_symlink "versioned" "$SRC"
+    describe_agents_symlink "runtime" "$RT"
     ;;
   *)
     echo "usage: sync-profile.sh <pull|push|status> <profile-name>" >&2

@@ -1,0 +1,3268 @@
+{
+  "evalId": "eval-voI-2026-05-04T21:50:43",
+  "results": {
+    "version": 3,
+    "timestamp": "2026-05-04T21:50:43.786Z",
+    "prompts": [
+      {
+        "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+        "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+        "id": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "provider": "mistral:mistral-medium-latest",
+        "metrics": {
+          "score": 25.5,
+          "testPassCount": 23,
+          "testFailCount": 7,
+          "testErrorCount": 0,
+          "assertPassCount": 51,
+          "assertFailCount": 9,
+          "totalLatencyMs": 13379,
+          "tokenUsage": {
+            "prompt": 8694,
+            "completion": 525,
+            "cached": 0,
+            "total": 9219,
+            "numRequests": 30,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "namedScoreWeights": {},
+          "cost": 0.027726300000000002
+        }
+      }
+    ],
+    "results": [
+      {
+        "cost": 0.0009315,
+        "error": "Custom function returned false\n// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;",
+        "gradingResult": {
+          "pass": false,
+          "score": 0,
+          "reason": "Custom function returned false\n// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Custom function returned false\n// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "da8738c3-05ba-4b08-9dcb-571b2987efd2",
+        "latencyMs": 403,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: no-reply@verizon.com\nSubject: Your Verizon bill is ready\nBody: Your monthly bill of $89.45 is now available.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "respond",
+            "urgency": 3,
+            "raw": "```json\n{\"category\": \"respond\", \"urgency\": 3}\n```"
+          },
+          "tokenUsage": {
+            "total": 309,
+            "prompt": 291,
+            "completion": 18,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009315
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Your Verizon bill is ready",
+            "from": "no-reply@verizon.com",
+            "body": "Your monthly bill of $89.45 is now available.",
+            "expected_category": "deferred",
+            "expected_urgency": 1
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {
+          "subject": "Your Verizon bill is ready",
+          "from": "no-reply@verizon.com",
+          "body": "Your monthly bill of $89.45 is now available.",
+          "expected_category": "deferred",
+          "expected_urgency": 1
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0.0009639,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "ce8efcfa-aaff-436b-998f-f998698ee093",
+        "latencyMs": 446,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: marc@acmelaw.com\nSubject: Following up on the contract\nBody: Hi Alex — circling back on the LLC operating agreement we discussed Tuesday. Can you sign by Friday? Need it for the Monday close.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "respond",
+            "urgency": 4,
+            "raw": "```json\n{\"category\": \"respond\", \"urgency\": 4}\n```"
+          },
+          "tokenUsage": {
+            "total": 321,
+            "prompt": 303,
+            "completion": 18,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009639
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Following up on the contract",
+            "from": "marc@acmelaw.com",
+            "body": "Hi Alex — circling back on the LLC operating agreement we discussed Tuesday. Can you sign by Friday? Need it for the Monday close.",
+            "expected_category": "respond",
+            "expected_urgency": 4
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "vars": {
+          "subject": "Following up on the contract",
+          "from": "marc@acmelaw.com",
+          "body": "Hi Alex — circling back on the LLC operating agreement we discussed Tuesday. Can you sign by Friday? Need it for the Monday close.",
+          "expected_category": "respond",
+          "expected_urgency": 4
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009180000000000001,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "e3e949ca-605d-4b7b-8516-b50ec0f69b25",
+        "latencyMs": 501,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: marketing@randomstore.com\nSubject: Don't miss our Memorial Day SALE 🎉🎉🎉\nBody: Get 20% off everything this weekend!",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "delete",
+            "urgency": 1,
+            "raw": "{\"category\": \"delete\", \"urgency\": 1}"
+          },
+          "tokenUsage": {
+            "total": 312,
+            "prompt": 298,
+            "completion": 14,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009180000000000001
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Don't miss our Memorial Day SALE 🎉🎉🎉",
+            "from": "marketing@randomstore.com",
+            "body": "Get 20% off everything this weekend!",
+            "expected_category": "delete",
+            "expected_urgency": 1
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 2,
+        "vars": {
+          "subject": "Don't miss our Memorial Day SALE 🎉🎉🎉",
+          "from": "marketing@randomstore.com",
+          "body": "Get 20% off everything this weekend!",
+          "expected_category": "delete",
+          "expected_urgency": 1
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009098999999999999,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "135724b9-b709-4ea8-8670-3fd1c2acfc77",
+        "latencyMs": 387,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: hello@somenewsletter.com\nSubject: Weekly newsletter: 5 things in AI\nBody: This week in AI: Anthropic, OpenAI, ...",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "unsubscribe",
+            "urgency": 1,
+            "raw": "{\"category\": \"unsubscribe\", \"urgency\": 1}"
+          },
+          "tokenUsage": {
+            "total": 307,
+            "prompt": 292,
+            "completion": 15,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009098999999999999
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Weekly newsletter: 5 things in AI",
+            "from": "hello@somenewsletter.com",
+            "body": "This week in AI: Anthropic, OpenAI, ...",
+            "expected_category": "unsubscribe",
+            "expected_urgency": 1
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 3,
+        "vars": {
+          "subject": "Weekly newsletter: 5 things in AI",
+          "from": "hello@somenewsletter.com",
+          "body": "This week in AI: Anthropic, OpenAI, ...",
+          "expected_category": "unsubscribe",
+          "expected_urgency": 1
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009261,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "ab29fd0a-d12e-404c-b864-49d5ef2e8c48",
+        "latencyMs": 403,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: receipts@stripe.com\nSubject: Your Stripe receipt\nBody: Receipt for $99.00 — thanks!",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "deferred",
+            "urgency": 1,
+            "raw": "```json\n{\"category\": \"deferred\", \"urgency\": 1}\n```"
+          },
+          "tokenUsage": {
+            "total": 305,
+            "prompt": 286,
+            "completion": 19,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009261
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Your Stripe receipt",
+            "from": "receipts@stripe.com",
+            "body": "Receipt for $99.00 — thanks!",
+            "expected_category": "deferred",
+            "expected_urgency": 1
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 4,
+        "vars": {
+          "subject": "Your Stripe receipt",
+          "from": "receipts@stripe.com",
+          "body": "Receipt for $99.00 — thanks!",
+          "expected_category": "deferred",
+          "expected_urgency": 1
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009071999999999999,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "324c3a40-2291-4fc0-bfc1-20673ed0a90e",
+        "latencyMs": 365,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: mom@gmail.com\nSubject: Mom: are you coming Sunday?\nBody: Just checking — Sunday dinner at 6?",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "respond",
+            "urgency": 4,
+            "raw": "```json\n{\"category\": \"respond\", \"urgency\": 4}\n```"
+          },
+          "tokenUsage": {
+            "total": 300,
+            "prompt": 282,
+            "completion": 18,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009071999999999999
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Mom: are you coming Sunday?",
+            "from": "mom@gmail.com",
+            "body": "Just checking — Sunday dinner at 6?",
+            "expected_category": "respond",
+            "expected_urgency": 5
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 5,
+        "vars": {
+          "subject": "Mom: are you coming Sunday?",
+          "from": "mom@gmail.com",
+          "body": "Just checking — Sunday dinner at 6?",
+          "expected_category": "respond",
+          "expected_urgency": 5
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009584999999999999,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "16bf8a97-3962-400d-afbf-703a4c9f8522",
+        "latencyMs": 391,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: cpa@firmcpa.com\nSubject: Tax return — needs your signature\nBody: Your 2025 1040 is ready. Please sign by 4/15.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "respond",
+            "urgency": 4,
+            "raw": "```json\n{\"category\": \"respond\", \"urgency\": 4}\n```"
+          },
+          "tokenUsage": {
+            "total": 319,
+            "prompt": 301,
+            "completion": 18,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009584999999999999
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Tax return — needs your signature",
+            "from": "cpa@firmcpa.com",
+            "body": "Your 2025 1040 is ready. Please sign by 4/15.",
+            "expected_category": "respond",
+            "expected_urgency": 5
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 6,
+        "vars": {
+          "subject": "Tax return — needs your signature",
+          "from": "cpa@firmcpa.com",
+          "body": "Your 2025 1040 is ready. Please sign by 4/15.",
+          "expected_category": "respond",
+          "expected_urgency": 5
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0008883,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "21405879-9e2c-4fb8-b87d-8f406c69344b",
+        "latencyMs": 355,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@calendar.google.com\nSubject: Calendar invite — coffee with John\nBody: John has invited you to a meeting.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "deferred",
+            "urgency": 2,
+            "raw": "{\"category\": \"deferred\", \"urgency\": 2}"
+          },
+          "tokenUsage": {
+            "total": 299,
+            "prompt": 284,
+            "completion": 15,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0008883
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Calendar invite — coffee with John",
+            "from": "noreply@calendar.google.com",
+            "body": "John has invited you to a meeting.",
+            "expected_category": "deferred",
+            "expected_urgency": 2
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 7,
+        "vars": {
+          "subject": "Calendar invite — coffee with John",
+          "from": "noreply@calendar.google.com",
+          "body": "John has invited you to a meeting.",
+          "expected_category": "deferred",
+          "expected_urgency": 2
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009098999999999999,
+        "error": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+        "gradingResult": {
+          "pass": false,
+          "score": 0.5,
+          "reason": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "356aac34-7b9a-4c97-930f-28047ae77279",
+        "latencyMs": 351,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: invitations@linkedin.com\nSubject: [Invitation] LinkedIn — Sara wants to connect\nBody: Sara Chen wants to connect with you on LinkedIn.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "unsubscribe",
+            "urgency": 1,
+            "raw": "{\"category\": \"unsubscribe\", \"urgency\": 1}"
+          },
+          "tokenUsage": {
+            "total": 307,
+            "prompt": 292,
+            "completion": 15,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009098999999999999
+        },
+        "score": 0.5,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "[Invitation] LinkedIn — Sara wants to connect",
+            "from": "invitations@linkedin.com",
+            "body": "Sara Chen wants to connect with you on LinkedIn.",
+            "expected_category": "deferred",
+            "expected_urgency": 2
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 8,
+        "vars": {
+          "subject": "[Invitation] LinkedIn — Sara wants to connect",
+          "from": "invitations@linkedin.com",
+          "body": "Sara Chen wants to connect with you on LinkedIn.",
+          "expected_category": "deferred",
+          "expected_urgency": 2
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0.0009450000000000001,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "f140e4d9-d576-4905-8308-96a20c1efd9f",
+        "latencyMs": 487,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: alerts@ach.example.com\nSubject: $3,200 deposit pending\nBody: A $3,200.00 ACH deposit is pending in your account.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "respond",
+            "urgency": 5,
+            "raw": "```json\n{\"category\": \"respond\", \"urgency\": 5}\n```"
+          },
+          "tokenUsage": {
+            "total": 314,
+            "prompt": 296,
+            "completion": 18,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009450000000000001
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "$3,200 deposit pending",
+            "from": "alerts@ach.example.com",
+            "body": "A $3,200.00 ACH deposit is pending in your account.",
+            "expected_category": "respond",
+            "expected_urgency": 4
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 9,
+        "vars": {
+          "subject": "$3,200 deposit pending",
+          "from": "alerts@ach.example.com",
+          "body": "A $3,200.00 ACH deposit is pending in your account.",
+          "expected_category": "respond",
+          "expected_urgency": 4
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009126,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "5ce4aec2-e189-46ef-a29e-da9ee754aa3a",
+        "latencyMs": 406,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: lp@familyoffice.com\nSubject: RE: Investor update Q2\nBody: Got it. Will review and revert.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "respond",
+            "urgency": 3,
+            "raw": "```json\n{\"category\": \"respond\", \"urgency\": 3}\n```"
+          },
+          "tokenUsage": {
+            "total": 302,
+            "prompt": 284,
+            "completion": 18,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009126
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "RE: Investor update Q2",
+            "from": "lp@familyoffice.com",
+            "body": "Got it. Will review and revert.",
+            "expected_category": "respond",
+            "expected_urgency": 3
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 10,
+        "vars": {
+          "subject": "RE: Investor update Q2",
+          "from": "lp@familyoffice.com",
+          "body": "Got it. Will review and revert.",
+          "expected_category": "respond",
+          "expected_urgency": 3
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009072,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "6497945d-302e-460e-88a4-2a78773a3fbc",
+        "latencyMs": 379,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: shipping@amazon.com\nSubject: Order shipped 📦\nBody: Your order has shipped.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "deferred",
+            "urgency": 1,
+            "raw": "```json\n{\"category\": \"deferred\", \"urgency\": 1}\n```"
+          },
+          "tokenUsage": {
+            "total": 298,
+            "prompt": 279,
+            "completion": 19,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009072
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Order shipped 📦",
+            "from": "shipping@amazon.com",
+            "body": "Your order has shipped.",
+            "expected_category": "deferred",
+            "expected_urgency": 1
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 11,
+        "vars": {
+          "subject": "Order shipped 📦",
+          "from": "shipping@amazon.com",
+          "body": "Your order has shipped.",
+          "expected_category": "deferred",
+          "expected_urgency": 1
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009207,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "97ff40ee-e30c-43e6-844e-142f365a6ff0",
+        "latencyMs": 341,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: support@phishingbank.fake\nSubject: URGENT: re-verify your bank account NOW\nBody: Click here to verify.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "delete",
+            "urgency": 1,
+            "raw": "```json\n{\"category\": \"delete\", \"urgency\": 1}\n```"
+          },
+          "tokenUsage": {
+            "total": 305,
+            "prompt": 287,
+            "completion": 18,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009207
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "URGENT: re-verify your bank account NOW",
+            "from": "support@phishingbank.fake",
+            "body": "Click here to verify.",
+            "expected_category": "delete",
+            "expected_urgency": 1
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 12,
+        "vars": {
+          "subject": "URGENT: re-verify your bank account NOW",
+          "from": "support@phishingbank.fake",
+          "body": "Click here to verify.",
+          "expected_category": "delete",
+          "expected_urgency": 1
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009288,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "986491f5-71c1-4b35-80c7-f7ce80ab8fe9",
+        "latencyMs": 523,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: anthony@yehovah.builders\nSubject: Quick question on the Excerpa PR\nBody: Does the migration script handle the empty contact case?",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "respond",
+            "urgency": 3,
+            "raw": "```json\n{\"category\": \"respond\", \"urgency\": 3}\n```"
+          },
+          "tokenUsage": {
+            "total": 308,
+            "prompt": 290,
+            "completion": 18,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009288
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Quick question on the Excerpa PR",
+            "from": "anthony@yehovah.builders",
+            "body": "Does the migration script handle the empty contact case?",
+            "expected_category": "respond",
+            "expected_urgency": 4
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 13,
+        "vars": {
+          "subject": "Quick question on the Excerpa PR",
+          "from": "anthony@yehovah.builders",
+          "body": "Does the migration script handle the empty contact case?",
+          "expected_category": "respond",
+          "expected_urgency": 4
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009044999999999999,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "4e97bffe-5373-4e42-9297-7c932ae638d7",
+        "latencyMs": 337,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@somelist.com\nSubject: Unsubscribe successful\nBody: You have been unsubscribed.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "delete",
+            "urgency": 1,
+            "raw": "```json\n{\"category\": \"delete\", \"urgency\": 1}\n```"
+          },
+          "tokenUsage": {
+            "total": 299,
+            "prompt": 281,
+            "completion": 18,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009044999999999999
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Unsubscribe successful",
+            "from": "noreply@somelist.com",
+            "body": "You have been unsubscribed.",
+            "expected_category": "delete",
+            "expected_urgency": 1
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 14,
+        "vars": {
+          "subject": "Unsubscribe successful",
+          "from": "noreply@somelist.com",
+          "body": "You have been unsubscribed.",
+          "expected_category": "delete",
+          "expected_urgency": 1
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009234,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "9f96202b-bbdd-48b8-b126-a472c03f8252",
+        "latencyMs": 477,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@reddit.com\nSubject: Daily digest: 12 new posts in r/agentic\nBody: 12 new posts in your subscribed subreddits.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "unsubscribe",
+            "urgency": 1,
+            "raw": "{\"category\": \"unsubscribe\", \"urgency\": 1}"
+          },
+          "tokenUsage": {
+            "total": 312,
+            "prompt": 297,
+            "completion": 15,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009234
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Daily digest: 12 new posts in r/agentic",
+            "from": "noreply@reddit.com",
+            "body": "12 new posts in your subscribed subreddits.",
+            "expected_category": "unsubscribe",
+            "expected_urgency": 1
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 15,
+        "vars": {
+          "subject": "Daily digest: 12 new posts in r/agentic",
+          "from": "noreply@reddit.com",
+          "body": "12 new posts in your subscribed subreddits.",
+          "expected_category": "unsubscribe",
+          "expected_urgency": 1
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009369,
+        "error": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+        "gradingResult": {
+          "pass": false,
+          "score": 0.5,
+          "reason": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "53da7cae-26f1-4f88-9780-ca1930776650",
+        "latencyMs": 363,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: billing@anthropic.com\nSubject: FYI: pricing update on Anthropic Sonnet\nBody: Effective May 15, Sonnet pricing changes.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "deferred",
+            "urgency": 2,
+            "raw": "```json\n{\"category\": \"deferred\", \"urgency\": 2}\n```"
+          },
+          "tokenUsage": {
+            "total": 309,
+            "prompt": 290,
+            "completion": 19,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009369
+        },
+        "score": 0.5,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "FYI: pricing update on Anthropic Sonnet",
+            "from": "billing@anthropic.com",
+            "body": "Effective May 15, Sonnet pricing changes.",
+            "expected_category": "respond",
+            "expected_urgency": 3
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 16,
+        "vars": {
+          "subject": "FYI: pricing update on Anthropic Sonnet",
+          "from": "billing@anthropic.com",
+          "body": "Effective May 15, Sonnet pricing changes.",
+          "expected_category": "respond",
+          "expected_urgency": 3
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0.000891,
+        "error": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+        "gradingResult": {
+          "pass": false,
+          "score": 0.5,
+          "reason": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "8c39cf1c-ba11-40f8-8677-31f7e061ccb4",
+        "latencyMs": 376,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: no-reply@spotify.com\nSubject: Your weekly Spotify Wrapped\nBody: Here's what you listened to this week!",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "unsubscribe",
+            "urgency": 1,
+            "raw": "{\"category\": \"unsubscribe\", \"urgency\": 1}"
+          },
+          "tokenUsage": {
+            "total": 300,
+            "prompt": 285,
+            "completion": 15,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.000891
+        },
+        "score": 0.5,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Your weekly Spotify Wrapped",
+            "from": "no-reply@spotify.com",
+            "body": "Here's what you listened to this week!",
+            "expected_category": "delete",
+            "expected_urgency": 1
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 17,
+        "vars": {
+          "subject": "Your weekly Spotify Wrapped",
+          "from": "no-reply@spotify.com",
+          "body": "Here's what you listened to this week!",
+          "expected_category": "delete",
+          "expected_urgency": 1
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0.0009207,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "517411b3-dfa2-4d78-8bf8-22629178839f",
+        "latencyMs": 1044,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: delta@delta.com\nSubject: Booking confirmation — flight to ATL\nBody: Your flight on June 15 is confirmed.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "deferred",
+            "urgency": 2,
+            "raw": "```json\n{\"category\": \"deferred\", \"urgency\": 2}\n```"
+          },
+          "tokenUsage": {
+            "total": 303,
+            "prompt": 284,
+            "completion": 19,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009207
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Booking confirmation — flight to ATL",
+            "from": "delta@delta.com",
+            "body": "Your flight on June 15 is confirmed.",
+            "expected_category": "deferred",
+            "expected_urgency": 2
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 18,
+        "vars": {
+          "subject": "Booking confirmation — flight to ATL",
+          "from": "delta@delta.com",
+          "body": "Your flight on June 15 is confirmed.",
+          "expected_category": "deferred",
+          "expected_urgency": 2
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009315,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "5570d3d8-bb3e-4c57-b356-351d935abb93",
+        "latencyMs": 370,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: marc@koho.consulting\nSubject: Marc — quick chat tomorrow?\nBody: Free at 2pm? Want to align on Friday's demo.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "respond",
+            "urgency": 4,
+            "raw": "```json\n{\"category\": \"respond\", \"urgency\": 4}\n```"
+          },
+          "tokenUsage": {
+            "total": 309,
+            "prompt": 291,
+            "completion": 18,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009315
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Marc — quick chat tomorrow?",
+            "from": "marc@koho.consulting",
+            "body": "Free at 2pm? Want to align on Friday's demo.",
+            "expected_category": "respond",
+            "expected_urgency": 4
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 19,
+        "vars": {
+          "subject": "Marc — quick chat tomorrow?",
+          "from": "marc@koho.consulting",
+          "body": "Free at 2pm? Want to align on Friday's demo.",
+          "expected_category": "respond",
+          "expected_urgency": 4
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009342,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "4baa1bcc-724a-419e-ba9f-69c25bc885cb",
+        "latencyMs": 447,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: renewals@registrar.com\nSubject: Domain renewal: prettyflyforai.com expires in 30 days\nBody: Renew now to avoid loss of service.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "respond",
+            "urgency": 3,
+            "raw": "```json\n{\"category\": \"respond\", \"urgency\": 3}\n```"
+          },
+          "tokenUsage": {
+            "total": 310,
+            "prompt": 292,
+            "completion": 18,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009342
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Domain renewal: prettyflyforai.com expires in 30 days",
+            "from": "renewals@registrar.com",
+            "body": "Renew now to avoid loss of service.",
+            "expected_category": "respond",
+            "expected_urgency": 4
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 20,
+        "vars": {
+          "subject": "Domain renewal: prettyflyforai.com expires in 30 days",
+          "from": "renewals@registrar.com",
+          "body": "Renew now to avoid loss of service.",
+          "expected_category": "respond",
+          "expected_urgency": 4
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0008883,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "0c80d56c-bc7c-4f25-8a6d-4047f55a76c7",
+        "latencyMs": 324,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@github.com\nSubject: [GitHub] PR #67 was approved\nBody: Your PR was approved.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "deferred",
+            "urgency": 2,
+            "raw": "{\"category\": \"deferred\", \"urgency\": 2}"
+          },
+          "tokenUsage": {
+            "total": 299,
+            "prompt": 284,
+            "completion": 15,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0008883
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "[GitHub] PR #67 was approved",
+            "from": "noreply@github.com",
+            "body": "Your PR was approved.",
+            "expected_category": "deferred",
+            "expected_urgency": 2
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 21,
+        "vars": {
+          "subject": "[GitHub] PR #67 was approved",
+          "from": "noreply@github.com",
+          "body": "Your PR was approved.",
+          "expected_category": "deferred",
+          "expected_urgency": 2
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009261,
+        "error": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+        "gradingResult": {
+          "pass": false,
+          "score": 0.5,
+          "reason": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "3c01b707-3c74-4986-9d3a-acf25e8580f7",
+        "latencyMs": 433,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: feedback@slack.com\nSubject: Slack: 5 new messages in #consultops\nBody: 5 new messages.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "unsubscribe",
+            "urgency": 1,
+            "raw": "```json\n{\"category\": \"unsubscribe\", \"urgency\": 1}\n```"
+          },
+          "tokenUsage": {
+            "total": 305,
+            "prompt": 286,
+            "completion": 19,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009261
+        },
+        "score": 0.5,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Slack: 5 new messages in #consultops",
+            "from": "feedback@slack.com",
+            "body": "5 new messages.",
+            "expected_category": "delete",
+            "expected_urgency": 1
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 22,
+        "vars": {
+          "subject": "Slack: 5 new messages in #consultops",
+          "from": "feedback@slack.com",
+          "body": "5 new messages.",
+          "expected_category": "delete",
+          "expected_urgency": 1
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0.0009611999999999999,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "42403f2c-6a6b-40da-9c23-4797026d0499",
+        "latencyMs": 338,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: alerts@consultops.koho.consulting\nSubject: ConsultOps Marc: lead routing failed for prospect 1234\nBody: Routing pipeline error for prospect ID 1234.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "respond",
+            "urgency": 4,
+            "raw": "```json\n{\"category\": \"respond\", \"urgency\": 4}\n```"
+          },
+          "tokenUsage": {
+            "total": 320,
+            "prompt": 302,
+            "completion": 18,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009611999999999999
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "ConsultOps Marc: lead routing failed for prospect 1234",
+            "from": "alerts@consultops.koho.consulting",
+            "body": "Routing pipeline error for prospect ID 1234.",
+            "expected_category": "respond",
+            "expected_urgency": 5
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 23,
+        "vars": {
+          "subject": "ConsultOps Marc: lead routing failed for prospect 1234",
+          "from": "alerts@consultops.koho.consulting",
+          "body": "Routing pipeline error for prospect ID 1234.",
+          "expected_category": "respond",
+          "expected_urgency": 5
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009044999999999999,
+        "error": "Custom function returned false\n// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;",
+        "gradingResult": {
+          "pass": false,
+          "score": 0,
+          "reason": "Custom function returned false\n// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Custom function returned false\n// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "0ea88ed4-a65a-4b79-83dc-bd090bdf0426",
+        "latencyMs": 333,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@vercel.com\nSubject: Your domain transfer is complete\nBody: The domain transfer is complete.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "respond",
+            "urgency": 3,
+            "raw": "```json\n{\"category\": \"respond\", \"urgency\": 3}\n```"
+          },
+          "tokenUsage": {
+            "total": 299,
+            "prompt": 281,
+            "completion": 18,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009044999999999999
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Your domain transfer is complete",
+            "from": "noreply@vercel.com",
+            "body": "The domain transfer is complete.",
+            "expected_category": "deferred",
+            "expected_urgency": 1
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 24,
+        "vars": {
+          "subject": "Your domain transfer is complete",
+          "from": "noreply@vercel.com",
+          "body": "The domain transfer is complete.",
+          "expected_category": "deferred",
+          "expected_urgency": 1
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0.0009342,
+        "error": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+        "gradingResult": {
+          "pass": false,
+          "score": 0.5,
+          "reason": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Custom function returned false\n// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "932739ff-1a41-4058-ba6a-f197223dd86c",
+        "latencyMs": 409,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: events@somefirm.com\nSubject: Webinar replay: Building agentic systems in 2026\nBody: Watch the replay here.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "unsubscribe",
+            "urgency": 1,
+            "raw": "```json\n{\"category\": \"unsubscribe\", \"urgency\": 1}\n```"
+          },
+          "tokenUsage": {
+            "total": 308,
+            "prompt": 289,
+            "completion": 19,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009342
+        },
+        "score": 0.5,
+        "success": false,
+        "testCase": {
+          "vars": {
+            "subject": "Webinar replay: Building agentic systems in 2026",
+            "from": "events@somefirm.com",
+            "body": "Watch the replay here.",
+            "expected_category": "delete",
+            "expected_urgency": 1
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 25,
+        "vars": {
+          "subject": "Webinar replay: Building agentic systems in 2026",
+          "from": "events@somefirm.com",
+          "body": "Watch the replay here.",
+          "expected_category": "delete",
+          "expected_urgency": 1
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0.0009315,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "9c5fde51-ec15-4035-99e3-8159e31a2c66",
+        "latencyMs": 1087,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@honcho.dev\nSubject: Your Honcho preview deploy is ready\nBody: Preview deploy at honcho-preview-abc.fly.dev",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "deferred",
+            "urgency": 2,
+            "raw": "```json\n{\"category\": \"deferred\", \"urgency\": 2}\n```"
+          },
+          "tokenUsage": {
+            "total": 307,
+            "prompt": 288,
+            "completion": 19,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009315
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Your Honcho preview deploy is ready",
+            "from": "noreply@honcho.dev",
+            "body": "Preview deploy at honcho-preview-abc.fly.dev",
+            "expected_category": "deferred",
+            "expected_urgency": 2
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 26,
+        "vars": {
+          "subject": "Your Honcho preview deploy is ready",
+          "from": "noreply@honcho.dev",
+          "body": "Preview deploy at honcho-preview-abc.fly.dev",
+          "expected_category": "deferred",
+          "expected_urgency": 2
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009450000000000001,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "4925ec38-ad83-486c-a848-9ce7ba9b5b4b",
+        "latencyMs": 443,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: imran@alif.build\nSubject: Hi! Saw your tweet on Hermes\nBody: Loved your thread. Want to chat about how you set up the Antfarm pipeline?",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "respond",
+            "urgency": 3,
+            "raw": "```json\n{\"category\": \"respond\", \"urgency\": 3}\n```"
+          },
+          "tokenUsage": {
+            "total": 314,
+            "prompt": 296,
+            "completion": 18,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009450000000000001
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Hi! Saw your tweet on Hermes",
+            "from": "imran@alif.build",
+            "body": "Loved your thread. Want to chat about how you set up the Antfarm pipeline?",
+            "expected_category": "respond",
+            "expected_urgency": 3
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 27,
+        "vars": {
+          "subject": "Hi! Saw your tweet on Hermes",
+          "from": "imran@alif.build",
+          "body": "Loved your thread. Want to chat about how you set up the Antfarm pipeline?",
+          "expected_category": "respond",
+          "expected_urgency": 3
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009504000000000001,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "627836a0-c5fe-472a-860b-167cf51162ae",
+        "latencyMs": 345,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: noreply@stripe.com\nSubject: Action required: 2FA code\nBody: Your 2FA code is 482910. Expires in 5 min.",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "respond",
+            "urgency": 5,
+            "raw": "```json\n{\"category\": \"respond\", \"urgency\": 5}\n```"
+          },
+          "tokenUsage": {
+            "total": 316,
+            "prompt": 298,
+            "completion": 18,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009504000000000001
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Action required: 2FA code",
+            "from": "noreply@stripe.com",
+            "body": "Your 2FA code is 482910. Expires in 5 min.",
+            "expected_category": "respond",
+            "expected_urgency": 5
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 28,
+        "vars": {
+          "subject": "Action required: 2FA code",
+          "from": "noreply@stripe.com",
+          "body": "Your 2FA code is 482910. Expires in 5 min.",
+          "expected_category": "respond",
+          "expected_urgency": 5
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0.0009153,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+              }
+            }
+          ]
+        },
+        "id": "1deaa05f-6fa7-4bb7-a65f-ca391cfa4b80",
+        "latencyMs": 515,
+        "namedScores": {},
+        "prompt": {
+          "raw": "You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: marketing@swagcompany.com\nSubject: Free swag for AI builders 🎁\nBody: Claim your free hoodie!",
+          "label": "prompts/categorize.txt: You are an email triage assistant. Read the email below and classify it into exactly one of four categories, with an urgency score from 1 to 5.\n\nCATEGORIES:\n- respond: the user (Alex) needs to read or reply. Includes important people, contracts, money flows, 2FA codes, family.\n- deferred: action expected but not urgent. Receipts, calendar invites already scheduled, GitHub notifications, automatic monthly statements.\n- unsubscribe: subscribed newsletters and digests the user signed up for but no longer reads. LinkedIn/Reddit/Slack notifications belong here.\n- delete: pure marketing blast, phishing, swag promotions, no relationship to the user.\n\nURGENCY (1-5):\n- 1 = ignore, no time pressure\n- 2 = within a week\n- 3 = within 48 hours\n- 4 = today\n- 5 = right now (2FA code, money alert, contract closing)\n\nOUTPUT FORMAT — return ONE LINE of JSON, nothing else, no prose:\n{\"category\": \"<one of: respond|deferred|unsubscribe|delete>\", \"urgency\": <1-5>}\n\nEMAIL:\nFrom: {{from}}\nSubject: {{subject}}\nBody: {{body}}",
+          "config": {
+            "transform": "file://transform.js"
+          }
+        },
+        "promptId": "7d9fb7f9a16bd5f9839ed1aa4dc99bbcae1ace6dfe12dc8d093022cdfaf1d7a8",
+        "promptIdx": 0,
+        "provider": {
+          "id": "mistral:mistral-medium-latest",
+          "label": ""
+        },
+        "response": {
+          "output": {
+            "category": "delete",
+            "urgency": 1,
+            "raw": "```json\n{\"category\": \"delete\", \"urgency\": 1}\n```"
+          },
+          "tokenUsage": {
+            "total": 303,
+            "prompt": 285,
+            "completion": 18,
+            "numRequests": 1
+          },
+          "cached": false,
+          "cost": 0.0009153
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "subject": "Free swag for AI builders 🎁",
+            "from": "marketing@swagcompany.com",
+            "body": "Claim your free hoodie!",
+            "expected_category": "delete",
+            "expected_urgency": 1
+          },
+          "assert": [
+            {
+              "type": "javascript",
+              "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+            },
+            {
+              "type": "javascript",
+              "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+            }
+          ],
+          "options": {
+            "transform": "file://transform.js"
+          },
+          "metadata": {}
+        },
+        "testIdx": 29,
+        "vars": {
+          "subject": "Free swag for AI builders 🎁",
+          "from": "marketing@swagcompany.com",
+          "body": "Claim your free hoodie!",
+          "expected_category": "delete",
+          "expected_urgency": 1
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      }
+    ],
+    "stats": {
+      "successes": 23,
+      "failures": 7,
+      "errors": 0,
+      "tokenUsage": {
+        "prompt": 8694,
+        "completion": 525,
+        "cached": 0,
+        "total": 9219,
+        "numRequests": 30,
+        "completionDetails": {
+          "reasoning": 0,
+          "acceptedPrediction": 0,
+          "rejectedPrediction": 0,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0
+        },
+        "assertions": {
+          "total": 0,
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "numRequests": 0,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          }
+        }
+      },
+      "durationMs": 3735,
+      "evaluationDurationMs": 3735
+    }
+  },
+  "config": {
+    "description": "email-triage golden dataset regression — runs nightly, pass-rate floor 0.85",
+    "prompts": [
+      "file://prompts/categorize.txt"
+    ],
+    "providers": [
+      {
+        "id": "openrouter:nvidia/nemotron-nano-9b-v2"
+      },
+      {
+        "id": "mistral:mistral-medium-latest"
+      },
+      {
+        "id": "anthropic:claude-sonnet-4-6"
+      }
+    ],
+    "tests": [
+      "file://golden.jsonl"
+    ],
+    "defaultTest": {
+      "options": {
+        "transform": "file://transform.js"
+      },
+      "assert": [
+        {
+          "type": "javascript",
+          "value": "// Category must match exactly (one of: respond / deferred / unsubscribe / delete)\nreturn output.category === context.vars.expected_category;\n"
+        },
+        {
+          "type": "javascript",
+          "value": "// Urgency must match within ±1 on the 5-point scale\nreturn Math.abs(output.urgency - context.vars.expected_urgency) <= 1;\n"
+        }
+      ]
+    },
+    "outputPath": [
+      "reports/2026-05-04-baseline-mistral-v2.json"
+    ],
+    "extensions": []
+  },
+  "shareableUrl": null,
+  "metadata": {
+    "promptfooVersion": "0.121.5",
+    "nodeVersion": "v24.13.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "exportedAt": "2026-05-04T21:50:47.667Z",
+    "evaluationCreatedAt": "2026-05-04T21:50:43.786Z"
+  }
+}

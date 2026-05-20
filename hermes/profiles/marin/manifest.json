@@ -6,7 +6,9 @@
   "department": "marketing",
   "tagline": "Alex-first marketing operating agent — turns marketing vault into one weekly decision per the PrettyFly CTO Advisory revenue motion.",
   "tier": "manual_weekly_marketing_decision_pilot",
-  "depends_on": ["marketing-vault"],
+  "depends_on": [
+    "marketing-vault"
+  ],
   "channels": [],
   "model_routing": {
     "default": "openrouter:nvidia/nemotron-3-nano-30b-a3b:free",
@@ -28,9 +30,25 @@
     "campaign-brief-draft",
     "aeo-opportunity-scout",
     "kill-list-enforce",
-    "generate-handoff"
+    "generate-handoff",
+    "marketing-agentic-search-optimizer",
+    "marketing-ai-citation-strategist",
+    "marketing-linkedin-content-creator",
+    "marketing-seo-specialist",
+    "sales-account-strategist",
+    "sales-coach",
+    "sales-deal-strategist",
+    "sales-discovery-coach",
+    "sales-engineer",
+    "sales-outbound-strategist",
+    "sales-pipeline-analyst",
+    "sales-proposal-strategist"
   ],
-  "memory_axes": ["working", "episodic", "procedural"],
+  "memory_axes": [
+    "working",
+    "episodic",
+    "procedural"
+  ],
   "guardrails": [
     "alex_first_internal_only",
     "marketing_vault_source_of_truth",
@@ -41,7 +59,10 @@
     "do_not_scale_without_named_workflow",
     "no_role_collapse_into_atlas_quill_stet_or_retainer_profiles"
   ],
-  "sla": { "uptime": 99.0, "p95_latency_seconds": 30 },
+  "sla": {
+    "uptime": 99.0,
+    "p95_latency_seconds": 30
+  },
   "publish": false,
   "internal_only": true
 }

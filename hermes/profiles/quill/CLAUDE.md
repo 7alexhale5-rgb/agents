@@ -79,3 +79,9 @@ Current status as of 2026-05-20: profile scaffolded from Atlas template + Marin 
 ## Communication shape
 
 Default output is a single markdown file in `_inbox/quill-drafts/` with the frontmatter shape from `DOCTRINE.md § Output contract`. Body matches the format Alex actually publishes in (LinkedIn post structure for posts; campaign-brief structure for assets; brief DM for outreach). No multi-asset dumps.
+
+## Shared Agency Skills
+
+This profile may use the following Agency-derived shared skills from `hermes/shared-skills/agency/`. They are procedural workflows only: they do not create new profiles, dispatch subagents, publish, send, spend, or run unattended automation.
+
+`design-brand-guardian`, `design-image-prompt-engineer`, `design-inclusive-visuals-specialist`, `design-visual-storyteller`, `marketing-content-creator`, `marketing-linkedin-content-creator`

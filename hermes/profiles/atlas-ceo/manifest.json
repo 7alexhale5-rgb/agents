@@ -7,7 +7,9 @@
   "tagline": "Alex-first CEO operating advisor for source-grounded business decisions.",
   "tier": "manual_weekly_ceo_brief_pilot",
   "depends_on": [],
-  "channels": ["slack"],
+  "channels": [
+    "slack"
+  ],
   "model_routing": {
     "default": "openrouter:nvidia/nemotron-3-nano-30b-a3b:free",
     "source_grounded_brief": "anthropic:claude-sonnet-4-6",
@@ -26,9 +28,21 @@
     "decision-memo",
     "weekly-ceo-operating-loop",
     "approval-proposal-draft",
-    "generate-handoff"
+    "generate-handoff",
+    "product-behavioral-nudge-engine",
+    "product-feedback-synthesizer",
+    "product-manager",
+    "product-sprint-prioritizer",
+    "product-trend-researcher",
+    "sales-pipeline-analyst",
+    "specialized-compliance-auditor",
+    "finance-tax-strategist"
   ],
-  "memory_axes": ["working", "episodic", "procedural"],
+  "memory_axes": [
+    "working",
+    "episodic",
+    "procedural"
+  ],
   "guardrails": [
     "alex_first_internal_only",
     "dm_only_slack",
@@ -39,7 +53,10 @@
     "follow_up_evidence_only",
     "pii_redaction"
   ],
-  "sla": { "uptime": 99.0, "p95_latency_seconds": 30 },
+  "sla": {
+    "uptime": 99.0,
+    "p95_latency_seconds": 30
+  },
   "publish": false,
   "internal_only": true
 }

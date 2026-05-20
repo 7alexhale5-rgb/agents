@@ -1,4 +1,4 @@
-profile: codex
+profile: codex-disabled-placeholder
 
 agent:
   max_iterations: 32
@@ -22,5 +22,5 @@ channels: {}
 approval:
   mode: explicit_for_outbound
 guardrails:
-  spend_cap_per_day_usd: 5
+  spend_cap_per_day_usd: 0
   alert_threshold_pct: 80

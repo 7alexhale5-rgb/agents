@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Role Skill Ownership Cleanup Plan</title>
+  <style>
+    :root {
+      --paper: #faf7f2;
+      --surface: #fffdf8;
+      --ink: #24211f;
+      --muted: #706a64;
+      --line: #e5ded4;
+      --accent: #d15f2d;
+      --accent-soft: #f8eadf;
+      --teal: #2a7b84;
+      --code-bg: #171717;
+      --code-ink: #f7f3ec;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top left, #fffaf1, var(--paper) 42%, #f4efe7);
+      color: var(--ink);
+      font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .shell { max-width: 1120px; margin: 0 auto; padding: 34px 24px 80px; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 28px; }
+    nav { position: sticky; top: 18px; align-self: start; padding: 16px; border: 1px solid var(--line); background: rgba(255,253,248,.78); backdrop-filter: blur(10px); }
+    nav p { margin: 0 0 12px; color: var(--muted); font: 11px/1.3 ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; letter-spacing: .12em; }
+    nav a { display: block; padding: 8px 0; color: var(--ink); text-decoration: none; border-top: 1px solid var(--line); }
+    main { min-width: 0; padding: 10px 0 0; }
+    article { background: rgba(255,253,248,.68); border: 1px solid var(--line); box-shadow: 0 18px 60px rgba(36,33,31,.06); }
+    .content { padding: clamp(24px, 5vw, 56px); }
+    h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; line-height: 1.08; letter-spacing: -.015em; }
+    h1 { margin: 0 0 28px; font-size: clamp(36px, 7vw, 76px); border-bottom: 1px solid var(--line); padding-bottom: 24px; }
+    h2 { margin: 42px 0 14px; font-size: clamp(26px, 3vw, 38px); }
+    h3 { margin: 30px 0 10px; font-size: 24px; }
+    h4 { margin: 24px 0 8px; color: var(--muted); font: 700 12px/1.3 ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; letter-spacing: .14em; }
+    p { margin: 12px 0; max-width: 72ch; }
+    a { color: var(--teal); text-decoration: none; border-bottom: 1px solid rgba(42,123,132,.35); }
+    table { width: 100%; border-collapse: collapse; margin: 22px 0; background: var(--surface); border: 1px solid var(--line); }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--muted); background: #f6f0e8; font: 700 11px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; letter-spacing: .1em; }
+    ul, ol { padding-left: 22px; }
+    li { margin: 7px 0; }
+    li.check { list-style: none; margin-left: -22px; display: flex; gap: 10px; align-items: flex-start; }
+    blockquote { margin: 22px 0; padding: 14px 18px; border-left: 3px solid var(--accent); background: var(--accent-soft); }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--accent-soft); padding: 2px 5px; }
+    pre { overflow-x: auto; padding: 18px; background: var(--code-bg); color: var(--code-ink); }
+    pre code { background: transparent; padding: 0; color: inherit; }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 34px 0; }
+    @media (max-width: 820px) {
+      .shell { display: block; padding: 18px; }
+      nav { position: static; margin-bottom: 16px; }
+      .content { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <nav>
+      <p>Operator Artifact</p>
+      <a href="#agent-role-skill-ownership-cleanup-plan">Agent Role Skill Ownership Cleanup Plan</a>
+<a href="#context">Context</a>
+<a href="#architecture-decision">Architecture Decision</a>
+<a href="#role-map">Role Map</a>
+<a href="#skill-attachment-plan">Skill Attachment Plan</a>
+<a href="#atlas-ceo-active">`atlas-ceo` active</a>
+<a href="#marin-active-reduced-to-current-revenue-loop">`marin` active, reduced to current revenue loop</a>
+<a href="#quill-active-reduced-to-content-draft-production">`quill` active, reduced to content/draft production</a>
+<a href="#stet-active">`stet` active</a>
+<a href="#cto-technical-operator-parked-candidates">CTO / `technical-operator` parked candidates</a>
+<a href="#vanclief-coo-parked-candidates">VanClief COO parked candidates</a>
+<a href="#files-to-modify">Files To Modify</a>
+    </nav>
+    <main>
+      <article>
+        <div class="content">
+          <h1 id="agent-role-skill-ownership-cleanup-plan">Agent Role Skill Ownership Cleanup Plan</h1>
+<p>Date: 2026-05-20 Mode: planning-stack --deep, tech/architecture Goal: Attach Agency-derived skills to the right Hermes roles without reintroducing the <code>codex</code> profile mistake or bloating the fleet.</p>
+<h2 id="context">Context</h2>
+<p>The company goal is PrettyFly CTO Advisory to <code>$1M ARR</code> in 24 months. The Hermes fleet should only carry roles and skills that unlock revenue creation, delivery, retention, reliability, or executive leverage.</p>
+<p>Recent ADR locks the key rule: <code>Codex</code> is the OpenAI tool/runtime lane, not a Hermes profile. The future technical governance role is <code>technical-operator</code> / <code>CTO</code>, but it has not earned profile status yet.</p>
+<p>The current dirty Agency consolidation attaches 64 converted shared skills across Atlas, Codex, Marin, Quill, and Stet. That needs one cleanup pass before commit.</p>
+<h2 id="architecture-decision">Architecture Decision</h2>
+<p>Use three skill states instead of forcing every converted skill into an active profile:</p>
+<table>
+<thead><tr>
+<th>State</th>
+<th>Meaning</th>
+<th>Commit posture</th>
+</tr></thead><tbody>
+<tr>
+<td>Active profile opt-in</td>
+<td>Skill is directly useful to a current Hermes profile and fits its authority.</td>
+<td>Add to that profile docs/manifests.</td>
+</tr>
+<tr>
+<td>Parked candidate</td>
+<td>Skill is valid, converted, and may be useful later, but no current profile should own it yet.</td>
+<td>Keep in shared catalog; do not enable in profile manifest.</td>
+</tr>
+<tr>
+<td>Deferred/reference</td>
+<td>Skill is not relevant to the <code>$1M ARR</code> path or needs a live client/project trigger.</td>
+<td>Keep cataloged only.</td>
+</tr>
+</tbody></table>
+<p>This preserves speed without pretending the org is larger than it is.</p>
+<h2 id="role-map">Role Map</h2>
+<table>
+<thead><tr>
+<th>Role</th>
+<th>Hermes status</th>
+<th>Active skill posture</th>
+</tr></thead><tbody>
+<tr>
+<td>Alex CEO</td>
+<td>Human owner</td>
+<td>No Hermes skills. Uses Codex/Claude/Cursor as tools.</td>
+</tr>
+<tr>
+<td><code>atlas-ceo</code></td>
+<td>Active Hermes profile</td>
+<td>Executive signal, decision support, product/revenue prioritization, high-stakes advisory only.</td>
+</tr>
+<tr>
+<td><code>marin</code></td>
+<td>Active Hermes profile</td>
+<td>Marketing/revenue-loop strategy, buyer signal routing, AEO/GEO, LinkedIn/sales motion.</td>
+</tr>
+<tr>
+<td><code>quill</code></td>
+<td>Active Hermes profile</td>
+<td>Drafting and creative production from approved positioning only.</td>
+</tr>
+<tr>
+<td><code>stet</code></td>
+<td>Active Hermes profile</td>
+<td>Pre-launch critique, claim QA, evidence/test review.</td>
+</tr>
+<tr>
+<td>VanClief COO</td>
+<td>Future process/profile</td>
+<td>No active Agency skills yet. Candidate home for project-management/support ops skills after a cadence trigger.</td>
+</tr>
+<tr>
+<td>CTO / <code>technical-operator</code></td>
+<td>Future profile, human technical operator now</td>
+<td>Engineering/testing skills stay parked until the profile earns identity.</td>
+</tr>
+<tr>
+<td><code>koho-ops</code>, <code>yeh-ops</code></td>
+<td>Future retainer delivery profiles</td>
+<td>No Agency opt-ins until paid delivery load exists.</td>
+</tr>
+<tr>
+<td><code>codex</code></td>
+<td>Not a fleet identity</td>
+<td>Remove active profile enablement. Codex remains tool/runtime lane only.</td>
+</tr>
+</tbody></table>
+<h2 id="skill-attachment-plan">Skill Attachment Plan</h2>
+<h3 id="atlas-ceo-active"><code>atlas-ceo</code> active</h3>
+<p>Keep as procedural decision-support skills:</p>
+<ul>
+<li><code>product-behavioral-nudge-engine</code></li>
+<li><code>product-feedback-synthesizer</code></li>
+<li><code>product-manager</code></li>
+<li><code>product-sprint-prioritizer</code></li>
+<li><code>product-trend-researcher</code></li>
+<li><code>sales-pipeline-analyst</code></li>
+<li><code>specialized-compliance-auditor</code></li>
+<li><code>finance-tax-strategist</code></li>
+</ul>
+<p>Boundary: Atlas may use these to advise and propose. It must not become PM, CFO, compliance officer, or daily ops dispatcher.</p>
+<h3 id="marin-active-reduced-to-current-revenue-loop"><code>marin</code> active, reduced to current revenue loop</h3>
+<p>Keep:</p>
+<ul>
+<li><code>marketing-agentic-search-optimizer</code></li>
+<li><code>marketing-ai-citation-strategist</code></li>
+<li><code>marketing-linkedin-content-creator</code></li>
+<li><code>marketing-seo-specialist</code></li>
+<li><code>sales-account-strategist</code></li>
+<li><code>sales-coach</code></li>
+<li><code>sales-deal-strategist</code></li>
+<li><code>sales-discovery-coach</code></li>
+<li><code>sales-engineer</code></li>
+<li><code>sales-outbound-strategist</code></li>
+<li><code>sales-pipeline-analyst</code></li>
+<li><code>sales-proposal-strategist</code></li>
+</ul>
+<p>Park until channel/tool trigger:</p>
+<ul>
+<li><code>marketing-reddit-community-builder</code></li>
+<li><code>marketing-social-media-strategist</code></li>
+<li><code>marketing-twitter-engager</code></li>
+<li>all <code>paid-media-*</code></li>
+</ul>
+<p>Boundary: Marin decides the revenue loop and proposes. It does not publish, spend, send, or run paid media.</p>
+<h3 id="quill-active-reduced-to-content-draft-production"><code>quill</code> active, reduced to content/draft production</h3>
+<p>Keep:</p>
+<ul>
+<li><code>design-brand-guardian</code></li>
+<li><code>design-image-prompt-engineer</code></li>
+<li><code>design-inclusive-visuals-specialist</code></li>
+<li><code>design-visual-storyteller</code></li>
+<li><code>marketing-content-creator</code></li>
+<li><code>marketing-linkedin-content-creator</code></li>
+</ul>
+<p>Park until specific artifact trigger:</p>
+<ul>
+<li><code>design-ui-designer</code></li>
+<li><code>design-ux-architect</code></li>
+<li><code>design-ux-researcher</code></li>
+<li><code>design-whimsy-injector</code></li>
+<li><code>marketing-podcast-strategist</code></li>
+</ul>
+<p>Boundary: Quill drafts. It does not become a design department, publisher, or product designer.</p>
+<h3 id="stet-active"><code>stet</code> active</h3>
+<p>Keep:</p>
+<ul>
+<li><code>design-brand-guardian</code></li>
+<li><code>specialized-compliance-auditor</code></li>
+<li><code>testing-accessibility-auditor</code></li>
+<li><code>testing-evidence-collector</code></li>
+<li><code>testing-performance-benchmarker</code></li>
+<li><code>testing-reality-checker</code></li>
+<li><code>testing-test-results-analyzer</code></li>
+<li><code>testing-tool-evaluator</code></li>
+</ul>
+<p>Boundary: Stet critiques and verifies artifacts. It does not rewrite, publish, deploy, or own engineering.</p>
+<h3 id="cto-technical-operator-parked-candidates">CTO / <code>technical-operator</code> parked candidates</h3>
+<p>Park all converted engineering/testing skills currently mapped to <code>codex</code>:</p>
+<ul>
+<li><code>engineering-*</code></li>
+<li><code>specialized-automation-governance-architect</code></li>
+<li><code>specialized-lsp-index-engineer</code></li>
+<li><code>specialized-mcp-builder</code></li>
+<li><code>specialized-model-qa</code></li>
+<li><code>testing-api-tester</code></li>
+<li><code>testing-workflow-optimizer</code></li>
+</ul>
+<p>Shared testing skills that Stet can use stay active for Stet, but the engineering ownership side is parked.</p>
+<p>Boundary: no <code>technical-operator</code> profile until earned by recurring technical governance load.</p>
+<h3 id="vanclief-coo-parked-candidates">VanClief COO parked candidates</h3>
+<p>Do not convert or enable yet. Future candidates, if a COO cadence trigger fires:</p>
+<ul>
+<li>project-management catalog items</li>
+<li>support/infrastructure/support-reporting catalog items</li>
+<li>operations/cadence checklists created from real repeated work</li>
+</ul>
+<p>Boundary: VanClief COO should track cadence and pressure-test execution, not become a generic staff profile.</p>
+<h2 id="files-to-modify">Files To Modify</h2>
+<table>
+<thead><tr>
+<th>File</th>
+<th>Change</th>
+</tr></thead><tbody>
+<tr>
+<td><code>scripts/build-agency-shared-skills.py</code></td>
+<td>Replace <code>codex</code> enablement with parked <code>technical-operator</code> candidates; reduce active Marin/Quill skill lists; make labels say parked where not profile-enabled.</td>
+</tr>
+<tr>
+<td><code>hermes/shared-skills/agency/catalog.json</code></td>
+<td>Regenerate from script.</td>
+</tr>
+<tr>
+<td><code>hermes/shared-skills/agency/CATALOG.md</code></td>
+<td>Regenerate from script.</td>
+</tr>
+<tr>
+<td><code>hermes/shared-skills/agency/ARSENAL-MAP.md</code></td>
+<td>Regenerate from script with no active Codex owner.</td>
+</tr>
+<tr>
+<td><code>hermes/shared-skills/agency/TRIGGER-MATRIX.md</code></td>
+<td>Regenerate if script touches it.</td>
+</tr>
+<tr>
+<td><code>hermes/profiles/marin/CLAUDE.md</code> and <code>manifest.json</code></td>
+<td>Remove parked channel/paid-media opt-ins.</td>
+</tr>
+<tr>
+<td><code>hermes/profiles/quill/CLAUDE.md</code> and <code>manifest.json</code></td>
+<td>Remove parked UI/UX/podcast/whimsy opt-ins.</td>
+</tr>
+<tr>
+<td><code>hermes/profiles/codex/CLAUDE.md</code>, <code>manifest.json</code>, <code>DOCTRINE.md</code></td>
+<td>Remove Agency opt-ins and unbless the generated doctrine. Keep <code>codex</code> as placeholder/runtime-lane artifact only if still needed by legacy lint.</td>
+</tr>
+<tr>
+<td><code>hermes/profiles/codex/skills/.gitkeep</code></td>
+<td>Restore tracked placeholder or replace with a tracked README only if lint requires it.</td>
+</tr>
+<tr>
+<td><code>hermes/shared-skills/README.md</code></td>
+<td>Update summary language if it currently names Codex as owner.</td>
+</tr>
+</tbody></table>
+<h2 id="implementation-steps">Implementation Steps</h2>
+<ol>
+<li>Patch the Agency build script ownership constants.</li>
+<li>Regenerate Agency shared skill docs/catalog from the script.</li>
+<li>Patch active profile docs/manifests to match the reduced active opt-ins.</li>
+<li>Remove the dirty Codex profile skill opt-ins and untracked Codex doctrine file.</li>
+<li>Restore the <code>codex/skills</code> tracked placeholder so profile lint is stable.</li>
+<li>Run validation.</li>
+</ol>
+<h2 id="test-plan">Test Plan</h2>
+<ul>
+<li><code>python3 scripts/validate-agency-skills.py</code></li>
+<li><code>scripts/lint-profile.sh atlas-ceo codex marin quill stet</code></li>
+<li><code>scripts/validate-profile.sh atlas-ceo</code></li>
+<li><code>scripts/validate-profile.sh marin</code></li>
+<li><code>scripts/validate-profile.sh quill</code></li>
+<li><code>scripts/validate-profile.sh stet</code></li>
+<li>JSON parse every touched <code>manifest.json</code></li>
+<li><code>git diff --check</code></li>
+<li><code>rg -n &amp;quot;Owner.*Codex|Profile Enablement.*codex|profile: codex|agent_id: codex&amp;quot; hermes/shared-skills/agency hermes/profiles/codex _meta/decisions</code></li>
+</ul>
+<h2 id="risks">Risks</h2>
+<table>
+<thead><tr>
+<th>Risk</th>
+<th>Severity</th>
+<th>Mitigation</th>
+</tr></thead><tbody>
+<tr>
+<td>Over-pruning useful marketing/design skills</td>
+<td>Medium</td>
+<td>Park, do not delete. Re-enable when a route/channel trigger fires.</td>
+</tr>
+<tr>
+<td>Breaking generated docs consistency</td>
+<td>Medium</td>
+<td>Patch generator first, then regenerate.</td>
+</tr>
+<tr>
+<td>Accidentally deleting user-owned dirty work</td>
+<td>Medium</td>
+<td>Only touch agency/codex collision files named in this plan.</td>
+</tr>
+<tr>
+<td>Lint expects <code>codex/skills</code> path</td>
+<td>Low</td>
+<td>Restore tracked placeholder.</td>
+</tr>
+</tbody></table>
+<h2 id="reversibility-ledger">Reversibility Ledger</h2>
+<table>
+<thead><tr>
+<th>Step</th>
+<th>Class</th>
+<th>Cost if wrong</th>
+<th>Recommendation</th>
+</tr></thead><tbody>
+<tr>
+<td>Remove Codex profile enablement</td>
+<td>Type 2</td>
+<td>Low; can re-add later under a new ADR</td>
+<td>Fast-track</td>
+</tr>
+<tr>
+<td>Park paid-media/social/UI/UX skills</td>
+<td>Type 2</td>
+<td>Low; skills remain on disk</td>
+<td>Fast-track</td>
+</tr>
+<tr>
+<td>Patch generator ownership model</td>
+<td>Type 2</td>
+<td>Low; generated docs can be rerun</td>
+<td>Fast-track</td>
+</tr>
+<tr>
+<td>Delete untracked Codex doctrine</td>
+<td>Type 2</td>
+<td>Low; invalid under ADR</td>
+<td>Safe after diff review</td>
+</tr>
+</tbody></table>
+<h2 id="acceptance-criteria">Acceptance Criteria</h2>
+<ul>
+<li>No active shared-skill docs or generated catalogs name Codex as a profile owner.</li>
+<li>Active profile manifests only include skills aligned with current authority and <code>$1M ARR</code> path.</li>
+<li>Engineering/testing skills are parked as future <code>technical-operator</code> candidates, not attached to a live profile.</li>
+<li>Existing active profiles pass lint/validation.</li>
+<li>Dirty worktree is reduced to intentional Agency consolidation files plus any unrelated user-owned files.</li>
+</ul>
+<h2 id="planning-stack-report">Planning Stack Report</h2>
+<ul>
+<li>Mode: TECH</li>
+<li>Depth: --deep</li>
+<li>Confidence: High for ownership policy, medium-high for exact active/park split</li>
+<li>Sources: repo ADRs, profile manifests/docs, Agency catalog/docs, build/validation scripts</li>
+<li>Memory: strict wiki failed; repo ADRs used as source of truth</li>
+<li>Research: skipped; no external unknowns</li>
+<li>Prior decisions applied: 2026-05-18 agent shape contract, 2026-05-18 subproject trigger, 2026-05-20 Codex/tool ADR</li>
+</ul>
+<h2 id="1-engineer-move">1% Engineer Move</h2>
+<p>Next best target: implement the ownership cleanup in the generator and profile manifests, starting with removing active Codex enablement.</p>
+<p>Why it beats alternatives: it prevents the current dirty consolidation from committing a wrong fleet identity.</p>
+<p>Expected confidence: high. Most changes are generated docs and manifest/docs alignment.</p>
+<p>Should wait: creating <code>technical-operator</code>, adding VanClief COO, enabling paid media, creating Koho/Yeh retainer skills, and any autonomous technical execution authority.</p>
+        </div>
+      </article>
+    </main>
+  </div>
+</body>
+</html>

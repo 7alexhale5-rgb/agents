@@ -1,7 +1,9 @@
-# MEMORY — codex
+# MEMORY - codex placeholder
 
-This is the agent's narrative working memory. Append-curated, not append-only.
+This placeholder has no active Hermes memory. Codex is the OpenAI
+tool/operator-controlled runtime lane, not a durable Hermes profile.
 
 ## Recent anchors
 
-(Populated as the agent runs.)
+- 2026-05-20: ADR reserved Codex for tool use and parked engineering governance
+  under future `technical-operator` only if that profile earns identity.

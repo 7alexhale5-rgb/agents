@@ -2,7 +2,7 @@
   "schema": "a2a/v1+ext",
   "agent_id": "codex",
   "version": "0.1.0",
-  "description": "TBD",
+  "description": "Disabled placeholder retained for compatibility. Codex is the OpenAI tool/runtime lane, not an active Hermes agent.",
   "tier": null,
   "side_effects": [],
   "eval_suite_uri": null,

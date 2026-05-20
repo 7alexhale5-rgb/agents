@@ -112,3 +112,9 @@ production source packet, and the first live adoption proof changed the
 operating priority to clearing the pending PFOS approval queue before adding
 new Atlas or fleet surface area. Scheduled cadence still requires one
 queue-triage follow-through after that adoption decision.
+
+## Shared Agency Skills
+
+This profile may use the following Agency-derived shared skills from `hermes/shared-skills/agency/`. They are procedural workflows only: they do not create new profiles, dispatch subagents, publish, send, spend, or run unattended automation.
+
+`product-behavioral-nudge-engine`, `product-feedback-synthesizer`, `product-manager`, `product-sprint-prioritizer`, `product-trend-researcher`, `sales-pipeline-analyst`, `specialized-compliance-auditor`, `finance-tax-strategist`

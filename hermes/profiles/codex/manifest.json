@@ -1,16 +1,29 @@
 {
   "sku": "codex",
-  "name": "TBD",
+  "name": "Codex Placeholder",
   "version": "0.1.0",
-  "category": "TBD",
-  "department": "TBD",
-  "tagline": "TBD",
-  "tier": "TBD",
+  "category": "disabled-placeholder",
+  "department": "runtime-lane",
+  "tagline": "Reserved placeholder only; Codex is the OpenAI tool/runtime lane, not a Hermes profile.",
+  "tier": "none",
   "depends_on": [],
   "channels": [],
-  "memory_axes": ["working", "episodic", "procedural"],
-  "guardrails": ["outbound_human_approval", "pii_redaction"],
-  "sla": { "uptime": 99.0, "p95_latency_seconds": 30 },
+  "memory_axes": [
+    "working",
+    "episodic",
+    "procedural"
+  ],
+  "guardrails": [
+    "disabled_placeholder",
+    "no_shared_skill_ownership",
+    "no_channels",
+    "no_runtime_authority"
+  ],
+  "sla": {
+    "uptime": 99.0,
+    "p95_latency_seconds": 30
+  },
   "publish": false,
-  "internal_only": true
+  "internal_only": true,
+  "skills": []
 }

@@ -5,10 +5,18 @@
 
 # Runtime / generated — versioned tree never includes these
 **/scratch/
+!hermes/profiles/quill/scratch/
+!hermes/profiles/quill/scratch/.gitkeep
+!hermes/profiles/stet/scratch/
+!hermes/profiles/stet/scratch/.gitkeep
 **/memory/state.db
 **/memory/trajectories/
 **/memory/*.sqlite*
 **/workspace/
+!hermes/profiles/quill/workspace/
+!hermes/profiles/quill/workspace/.gitkeep
+!hermes/profiles/stet/workspace/
+!hermes/profiles/stet/workspace/.gitkeep
 
 # Hermes runtime drop-ins (in case anyone runs hermes from inside a profile dir)
 **/.hermes/

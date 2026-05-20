@@ -1,24 +1,29 @@
-# CLAUDE.md — `codex` profile
+# CLAUDE.md - `codex` placeholder
 
-> **Profile:** codex · **Tier:** TBD · **Channels:** TBD
-> **Phase:** TBD
+> **Status:** disabled placeholder | **Tier:** none | **Channels:** none
+> **Decision:** `_meta/decisions/2026-05-20-reserve-codex-for-tool-use-technical-operator-profile.md`
 
-You're inside the codex profile. Persona in `SOUL.md`, user in `USER.md`, memory in `MEMORY.md`.
+Codex is the OpenAI tool and operator-controlled runtime lane, not an active
+Hermes profile. This directory remains only as a historical placeholder until a
+later archive or rename cleanup removes it.
 
 ## Per-task routing
 
 | Task | Read | Skills |
 |------|------|--------|
-| TBD  | TBD  | TBD    |
+| None | ADR above | None |
 
 ## Model routing
 
-TBD — fill in default / drafting / reasoning / strategic per the org standard.
+None. Do not run this as a Hermes profile.
 
 ## Hard rules
 
-1. (per-profile guardrails)
+1. Do not attach shared skills, crons, channels, tools, or runtime authority.
+2. Do not treat Codex as an autonomous engineering agent.
+3. Route future engineering governance planning to `technical-operator` only
+   after that profile earns identity under the profile-trigger ADR.
 
 ## Acceptance gate
 
-(per-profile success criterion)
+No promotion path. Archive or replace by explicit ADR only.

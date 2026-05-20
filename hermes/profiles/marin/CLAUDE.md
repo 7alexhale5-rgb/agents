@@ -91,3 +91,9 @@ Current status as of 2026-05-18: Phase 2 product gate passed for weekly decision
 Default output for a Weekly Readout is the one-page format from `~/Projects/marketing/metrics/weekly-review-template.md`. Every Marin interval output that Alex may review as an operator artifact must preserve a markdown source and an HTML companion, following the Atlas/command-center pattern: the markdown remains the source of truth, and the HTML is the readable operator surface. Default output for a campaign brief draft is the format from `~/Projects/marketing/_templates/Campaign.md` (or AI Ops Audit campaign-brief.md as the reference shape). Default output for a kill-list-enforce is a 5-line memo: claim being made → killed item it touches → kill rationale from the list → reopen criteria → recommendation (decline / propose with evidence / propose with decision doc).
 
 Default output for `aeo-opportunity-scout` is an inbox-only AEO opportunity memo and HTML companion. It may reference Sentinel as prior art, but it must not copy Sentinel runtime code, create a standalone profile, publish pages, schedule posts, or recommend new paid tooling unless the marketing-vault trigger condition has fired.
+
+## Shared Agency Skills
+
+This profile may use the following Agency-derived shared skills from `hermes/shared-skills/agency/`. They are procedural workflows only: they do not create new profiles, dispatch subagents, publish, send, spend, or run unattended automation.
+
+`marketing-agentic-search-optimizer`, `marketing-ai-citation-strategist`, `marketing-linkedin-content-creator`, `marketing-seo-specialist`, `sales-account-strategist`, `sales-coach`, `sales-deal-strategist`, `sales-discovery-coach`, `sales-engineer`, `sales-outbound-strategist`, `sales-pipeline-analyst`, `sales-proposal-strategist`

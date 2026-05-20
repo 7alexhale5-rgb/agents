@@ -6,7 +6,9 @@
   "department": "marketing",
   "tagline": "Alex-first content drafter — turns approved marketing-vault positioning into one publishable draft Alex can review, edit, or hold.",
   "tier": "manual_content_drafter_pilot",
-  "depends_on": ["marketing-vault"],
+  "depends_on": [
+    "marketing-vault"
+  ],
   "channels": [],
   "model_routing": {
     "default": "openrouter:nvidia/nemotron-3-nano-30b-a3b:free",
@@ -25,9 +27,19 @@
     "draft-outreach-message",
     "draft-campaign-asset",
     "revise-from-critique",
-    "generate-handoff"
+    "generate-handoff",
+    "design-brand-guardian",
+    "design-image-prompt-engineer",
+    "design-inclusive-visuals-specialist",
+    "design-visual-storyteller",
+    "marketing-content-creator",
+    "marketing-linkedin-content-creator"
   ],
-  "memory_axes": ["working", "episodic", "procedural"],
+  "memory_axes": [
+    "working",
+    "episodic",
+    "procedural"
+  ],
   "guardrails": [
     "alex_first_internal_only",
     "marketing_vault_source_of_truth",
@@ -41,7 +53,10 @@
     "no_cold_outreach_without_campaign_authorization",
     "no_role_collapse_into_atlas_cmo_stet_or_retainer_profiles"
   ],
-  "sla": { "uptime": 99.0, "p95_latency_seconds": 30 },
+  "sla": {
+    "uptime": 99.0,
+    "p95_latency_seconds": 30
+  },
   "publish": false,
   "internal_only": true
 }

@@ -132,6 +132,8 @@ PY
       if [[ -d "$entry" ]]; then
         warn "$name" "nested skill directory not allowed: ${entry#$dir/}"
         warnings=$((warnings + 1))
+      elif [[ "$(basename "$entry")" == ".gitkeep" ]]; then
+        continue
       elif [[ "$entry" != *.md ]]; then
         warn "$name" "skills must be Markdown files: ${entry#$dir/}"
         warnings=$((warnings + 1))
@@ -154,7 +156,7 @@ if [[ "${1:-}" == "--all" || -z "${1:-}" ]]; then
     targets+=("$(basename "$dir")")
   done < <(find "$PROFILES_DIR" -mindepth 1 -maxdepth 1 -type d -print | sort)
 else
-  targets=("$1")
+  targets=("$@")
 fi
 
 total=0

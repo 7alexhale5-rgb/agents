@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Labyrinth Plugin-Scoped Redaction</title>
+  <style>
+    :root { color-scheme: light dark; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { margin: 0; padding: 40px; background: #101313; color: #edf3ef; }
+    main { max-width: 880px; margin: 0 auto; }
+    h1 { margin: 0 0 8px; font-size: 32px; letter-spacing: 0; }
+    h2 { margin: 28px 0 10px; font-size: 16px; color: #8fe0ca; letter-spacing: 0; text-transform: uppercase; }
+    p, li { line-height: 1.6; color: #d8e2df; }
+    section { border: 1px solid rgba(143, 224, 202, 0.24); padding: 18px; margin-top: 16px; background: rgba(255,255,255,0.03); }
+    code { color: #ffcc8a; overflow-wrap: anywhere; }
+    .meta { color: #9bb0aa; }
+    @media (max-width: 760px) { body { padding: 20px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Labyrinth Plugin-Scoped Redaction</h1>
+    <p class="meta">Markdown source: <code>.planning/labyrinth-redaction-scope.md</code></p>
+    <section>
+      <h2>Summary</h2>
+      <p>Hermes global redaction stays off. Labyrinth forces redaction inside its dashboard plugin process so journey previews and reports do not expose token-shaped strings.</p>
+    </section>
+    <section>
+      <h2>Runtime Breadcrumb</h2>
+      <p>Runtime code lives at <code>~/.hermes/plugins/hermes-labyrinth/dashboard/plugin_api.py</code>. The versioned decision lives at <code>_meta/decisions/2026-05-20-labyrinth-redaction-scope.md</code>.</p>
+    </section>
+    <section>
+      <h2>Decision Shape</h2>
+      <ul>
+        <li>No global <code>security.redact_secrets: true</code>.</li>
+        <li>No Hermes core or profile config changes.</li>
+        <li>Set <code>HERMES_REDACT_SECRETS=true</code> inside Labyrinth before <code>agent.redact</code> can import.</li>
+        <li>Keep the <code>prettyfly-fleet</code> plugin-scoped redaction precedent intact.</li>
+      </ul>
+    </section>
+    <section>
+      <h2>Verification</h2>
+      <p>Static parse, clean subprocess dummy-token smoke, Labyrinth dashboard health, and PrettyFly Fleet meta check.</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -43,3 +43,10 @@ and emits a redacted `marin.gmail_draft.proposed` event.
   no send surface, config exposure, and `forbid_external_sends`.
 - Live acceptance is deferred until Alex wants to create the harmless pilot
   draft in Gmail.
+
+## Live Acceptance Status
+
+Attempted 2026-05-20 against the existing PrettyFly `gmail-1` token. Gmail
+rejected `users.drafts.create` with insufficient authentication scopes. The
+available cached tokens are read-only (`gmail.readonly`); the pilot needs a
+fresh Google OAuth consent for `gmail.compose` on the target PrettyFly account.

@@ -53,6 +53,10 @@
       <h2>Acceptance</h2>
       <p>Unit tests cover MIME/base64url construction, Gmail draft-create invocation, absence of a send surface, Marin config exposure, and <code>forbid_external_sends</code>. Live Gmail draft creation is deferred until Alex wants the harmless pilot draft.</p>
     </section>
+    <section>
+      <h2>Live Acceptance Status</h2>
+      <p>Attempted 2026-05-20 against the existing PrettyFly <code>gmail-1</code> token. Gmail rejected <code>users.drafts.create</code> with insufficient authentication scopes. The available cached tokens are read-only, so the pilot needs a fresh Google OAuth consent for <code>gmail.compose</code> on the target PrettyFly account.</p>
+    </section>
   </main>
 </body>
 </html>

@@ -1,6 +1,6 @@
 # Migration runbook — $1M ARR agent fleet (post-pivot)
 
-> **Status pointer:** $1M-pivot Phase 2 (CMO weekly decision pilot) — in progress 2026-05-18. PF Runtime archived; Hermes Agent v0.12.0 is the canonical runtime.
+> **Status pointer:** $1M-pivot Phase 3 (Quill + Viper scaffolded) — landed 2026-05-20. PF Runtime archived; Hermes Agent v0.12.0 is the canonical runtime.
 
 ## Context
 
@@ -10,17 +10,17 @@ The earlier multi-phase Hermes-consolidation runbook is preserved at [`_archive/
 
 ## Phase index
 
-| Phase | Goal                                                                                         | Status                                  |
-| ----- | -------------------------------------------------------------------------------------------- | --------------------------------------- |
-| 1     | Archive dead weight (pf-runtime, marketplace, 13 non-revenue profiles)                       | ✅ Landed 2026-05-18 (commit `7e1340c`) |
-| 1.5   | PrettyFly sub-project revenue audit                                                          | 🟡 In progress                          |
-| 2     | Build CMO profile from Atlas template                                                        | 🟡 In progress                          |
-| 3     | Build Quill + Viper profiles from Atlas template                                             | ⬜ Not started                          |
-| 4     | Extend Atlas with marketing-vault read path                                                  | ⬜ Not started                          |
-| 5     | Build koho-ops + yeh-ops retainer-delivery profiles                                          | ⬜ Not started                          |
-| 5.5   | Rebuild codex profile from Atlas template                                                    | ⬜ Not started                          |
-| 6     | Wake one dormant Hermes capability (trigger-gated per the sub-project → profile trigger ADR) | ⬜ Not started                          |
-| 7     | Quarterly compound review                                                                    | Next: 2026-08-18                        |
+| Phase | Goal                                                                                         | Status                                             |
+| ----- | -------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| 1     | Archive dead weight (pf-runtime, marketplace, 13 non-revenue profiles)                       | ✅ Landed 2026-05-18 (commit `7e1340c`)            |
+| 1.5   | PrettyFly sub-project revenue audit                                                          | 🟡 In progress                                     |
+| 2     | Build CMO profile from Atlas template                                                        | ✅ Landed (commit `776d981` + iterations)          |
+| 3     | Build Quill + Viper profiles from Atlas template                                             | 🟡 Scaffolded 2026-05-20; awaiting first event row |
+| 4     | Extend Atlas with marketing-vault read path                                                  | ⬜ Not started                                     |
+| 5     | Build koho-ops + yeh-ops retainer-delivery profiles                                          | ⬜ Not started                                     |
+| 5.5   | Rebuild codex profile from Atlas template                                                    | ⬜ Not started                                     |
+| 6     | Wake one dormant Hermes capability (trigger-gated per the sub-project → profile trigger ADR) | ⬜ Not started                                     |
+| 7     | Quarterly compound review                                                                    | Next: 2026-08-18                                   |
 
 ## Hermes pin
 
@@ -37,15 +37,15 @@ Hermes Agent v0.12.0 (2026.4.30) is the canonical runtime. Do not run `hermes up
 
 ## Live profile roster (target: 7)
 
-| Profile     | Status                                          | Phase |
-| ----------- | ----------------------------------------------- | ----- |
-| `atlas-ceo` | Live (template, rung 3)                         | —     |
-| `cmo`       | Live (scaffolded 2026-05-18)                    | 2     |
-| `quill`     | Not built                                       | 3     |
-| `viper`     | Not built                                       | 3     |
-| `koho-ops`  | Not built                                       | 5     |
-| `yeh-ops`   | Not built (rebuild clean; old version archived) | 5     |
-| `codex`     | Live (rebuild from Atlas template pending)      | 5.5   |
+| Profile     | Status                                                                          | Phase |
+| ----------- | ------------------------------------------------------------------------------- | ----- |
+| `atlas-ceo` | Live (template, rung 3)                                                         | —     |
+| `cmo`       | Live (scaffolded 2026-05-18; emitter pattern wired via patch #5)                | 2     |
+| `quill`     | Live (scaffolded 2026-05-20, lint PASS, awaiting first draft + paired event)    | 3     |
+| `viper`     | Live (scaffolded 2026-05-20, lint PASS, awaiting first critique + paired event) | 3     |
+| `koho-ops`  | Not built                                                                       | 5     |
+| `yeh-ops`   | Not built (rebuild clean; old version archived)                                 | 5     |
+| `codex`     | Live (rebuild from Atlas template pending)                                      | 5.5   |
 
 ## Archived (2026-05-18)
 
@@ -71,12 +71,33 @@ CMO is the marketing operating agent. Reads the marketing vault, runs the weekly
 
 **Current state**: `hermes/profiles/cmo/` exists with SOUL, DOCTRINE, USER, MEMORY, CLAUDE, manifest, a2a-card, config, plus the `buyer-signal-router` and `supervised-dispatch` skills (per 2026-05-18 commit `9270bfc` + `a9e811d`).
 
-## Phase 3 — build Quill + Viper (not started)
+## Phase 3 — build Quill + Viper (scaffolded 2026-05-20)
 
-- **Quill**: drafts content from approved positioning in the marketing vault. Drafts to `_inbox/`, never publishes.
-- **Viper**: pressure-tests campaigns, claims, positioning, and campaign logic before launch.
+- **Quill**: drafts content from approved marketing-vault positioning. Writes to `~/Projects/marketing/_inbox/quill-drafts/`. Never publishes. Five flat-MD skills: `draft-linkedin-field-note`, `draft-outreach-message`, `draft-campaign-asset`, `revise-from-critique`, plus shared `generate-handoff`. Four `draft_*.propose` tools in `config.yaml` so per-skill attribution is correct in PFOS events.
+- **Viper**: pressure-tests drafts, campaign briefs, positioning, and campaigns before launch. Writes to `~/Projects/marketing/_inbox/viper-critiques/`. Never modifies any artifact. Five flat-MD skills: `critique-draft`, `critique-campaign-brief`, `critique-positioning`, `pressure-test-campaign`, plus shared `generate-handoff`. Verdict required on every critique: `SHIP` / `REVISE` / `KILL`. Four `<critique-name>.propose` tools so per-skill attribution stays clean.
 
-Both built from the Atlas template per the 11-file contract.
+Both built from the Atlas template per the 11-file contract. Both inherit the patch #5 emitter pattern (`hermes/lib/agent_events.py` + `scripts/emit-agent-event.py`) — every drafting/critique skill ends with the explicit CLI emission.
+
+**Phase 3 Karpathy gate** (falsifiable in one SQL query):
+
+```sql
+SELECT type, cwd_project, skill_slug, surface
+FROM public.agent_events
+WHERE type IN ('quill.draft.proposed', 'viper.critique.proposed')
+  AND cwd_project = 'marketing'
+  AND skill_slug IS NOT NULL
+  AND surface = 'cli'
+  AND created_at > NOW() - INTERVAL '1 hour';
+-- expect: 2 rows (one per profile)
+```
+
+**Deliberately out of scope this phase** (deferred per 1% CTO assessment):
+
+- Patch #2 (identity-file collapse from 4 → 1 IDENTITY.md across Atlas/CMO/codex) — deferred until 5+ profiles expose actual duplication pain
+- Patch #11 (`scripts/new-profile.sh`) — deferred until 3rd+ manual profile copy exposes the actual repetition pattern
+- Fix Atlas's missing event block (Atlas predates the emitter) — separate Atlas patch
+- Sync archived profiles out of `~/.hermes/profiles/` (drift cleanup) — separate cleanup pass
+- Atlas eval path repair (points at archived `pf-runtime/scripts/eval_profile_prompt.py`) — Quill + Viper use `anthropic:messages` provider directly to avoid the broken pattern
 
 ## Phase 4 — extend Atlas with marketing-vault read path (not started)
 
@@ -110,4 +131,4 @@ Next: **2026-08-18**. Audit fleet health against revenue targets, demote unused 
 
 ## Phase pointer
 
-Edit this line as phases complete: **Current phase: $1M-pivot Phase 2 (CMO weekly decision pilot) — in progress 2026-05-18.**
+Edit this line as phases complete: **Current phase: $1M-pivot Phase 3 (Quill + Viper scaffolded) — landed 2026-05-20; awaiting first event-emission gate.**

@@ -1,0 +1,148 @@
+description: Viper pre-launch critic evals — verifies critiques cite sources, name fix-paths, enforce kill triggers, and produce verdicts.
+
+# Atlas eval points at exec:python ../../../../pf-runtime/scripts/eval_profile_prompt.py
+# which is archived. Viper uses the anthropic provider directly so the suite
+# actually runs. Requires ANTHROPIC_API_KEY in env.
+
+prompts:
+  - file://fixtures/viper-system-prompt.md
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: viper-sonnet
+    config:
+      max_tokens: 2000
+
+tests:
+  - description: every flagged finding cites a vault source
+    vars:
+      task: |
+        Critique this draft LinkedIn post:
+
+        > "AI is reshaping how teams work in 2026. Most companies don't realize
+        > the hidden costs of tool sprawl until they audit. PrettyFly helps
+        > teams unlock their AI potential through systematic audits. DM me to
+        > learn more."
+
+        Apply all 7 sweeps. Output the critique with frontmatter + body per
+        DOCTRINE § Output contract.
+    assert:
+      - type: contains-any
+        value:
+          - voice-and-anti-slop
+          - copy-review-checklist
+          - prettyfly-company-truth
+          - buyer-belief-ladder
+          - market-thesis
+          - marketing-engine-kill-list
+
+  - description: every finding has a fix path or hard-block
+    vars:
+      task: |
+        Critique this draft LinkedIn post:
+
+        > "AI is reshaping how teams work in 2026. Most companies don't realize
+        > the hidden costs of tool sprawl until they audit. PrettyFly helps
+        > teams unlock their AI potential through systematic audits. DM me to
+        > learn more."
+
+        Output the critique.
+    assert:
+      - type: contains-any
+        value:
+          - "Fix path"
+          - "fix path"
+          - "Fix:"
+          - "fix:"
+          - "hard-block"
+          - "hard block"
+
+  - description: kill-list violation detected (generic AI education content)
+    vars:
+      task: |
+        Critique this draft LinkedIn post:
+
+        > "5 Ways AI Will Transform Your Business in 2026. Number 1: chatbots
+        > handle support. Number 2: AI writes your emails. Number 3: automation
+        > everywhere. Number 4: machine learning analyzes everything. Number 5:
+        > the future is now."
+
+        Output the critique.
+    assert:
+      - type: contains
+        value: KILL
+      - type: contains-any
+        value:
+          - generic AI education
+          - kill list
+          - marketing-engine-kill-list
+
+  - description: banned vocab violation detected
+    vars:
+      task: |
+        Critique this draft:
+
+        > "PrettyFly is the game-changing AI-powered platform that helps
+        > implementation-heavy service firms unlock 10x growth through
+        > revolutionary workflow automation. Build your moat today."
+
+        Output the critique.
+    assert:
+      - type: contains-any
+        value:
+          - banned vocab
+          - voice-and-anti-slop
+          - "10x"
+          - "AI-powered"
+          - "game-changing"
+          - "revolutionary"
+          - "moat"
+
+  - description: do-not-scale rule enforced when scaling without named workflow
+    vars:
+      task: |
+        Critique this campaign-brief excerpt:
+
+        > "Scale outreach to 500 connection requests per week starting next
+        > Monday across all selected ICP segments. Add a paid LinkedIn ad
+        > spend of $2,000/week to amplify the top-performing Field Notes.
+        > Add an automation that sends a follow-up DM 3 days after each
+        > acceptance."
+
+        Note: the message-outcome-ledger shows 0 qualified replies, 0
+        booked diagnostics, 0 named workflows so far.
+
+        Apply the do-not-scale rule from weekly-revenue-loop-v0.md.
+    assert:
+      - type: contains
+        value: KILL
+      - type: contains-any
+        value:
+          - do not scale
+          - do-not-scale
+          - named workflow
+          - weekly-revenue-loop
+          - no buyer-named
+
+  - description: verdict is exactly one of SHIP / REVISE / KILL
+    vars:
+      task: |
+        Critique this draft:
+
+        > "Saw your team just hired three implementation consultants — looks
+        > like the delivery org is scaling fast. When new ICs onboard, how
+        > do they currently learn your delivery playbooks? Curious because
+        > most service firms I see lose 2-3 weeks per IC ramp on context
+        > transfer alone, and a few small process changes have closed that
+        > gap measurably elsewhere."
+
+        Output the critique.
+    assert:
+      - type: contains-any
+        value:
+          - "Verdict: SHIP"
+          - "Verdict: REVISE"
+          - "Verdict: KILL"
+          - "verdict: SHIP"
+          - "verdict: REVISE"
+          - "verdict: KILL"

@@ -10,17 +10,17 @@ You've opened the consolidated Hermes monorepo. This file is the Layer-1 router 
 
 ## Active roster — 7 profiles
 
-| Task                                                                              | Descend to                                     |
-| --------------------------------------------------------------------------------- | ---------------------------------------------- |
-| Source-grounded CEO operating advisor; weekly brief; decision memos               | `hermes/profiles/atlas-ceo/CLAUDE.md`          |
-| Weekly campaign decision + ICP + content direction + revenue-loop review          | `hermes/profiles/cmo/CLAUDE.md` (Phase 2)      |
-| Content drafting from approved positioning (drafts to `_inbox/`, never publishes) | `hermes/profiles/quill/CLAUDE.md` (Phase 3)    |
-| Pre-launch pressure-test on campaigns, claims, positioning                        | `hermes/profiles/viper/CLAUDE.md` (Phase 3)    |
-| Koho retainer delivery (Marc routing, ConsultOps demos, Excerpa work)             | `hermes/profiles/koho-ops/CLAUDE.md` (Phase 5) |
-| Yehovah retainer delivery (trial-to-GA monitoring, CTO duties)                    | `hermes/profiles/yeh-ops/CLAUDE.md` (Phase 5)  |
-| Repo-wide refactor / multi-file coordination / PR drafts on revenue products      | `hermes/profiles/codex/CLAUDE.md` (Phase 5.5)  |
+| Task                                                                                                | Descend to                                     |
+| --------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| Source-grounded CEO operating advisor; weekly brief; decision memos                                 | `hermes/profiles/atlas-ceo/CLAUDE.md`          |
+| Weekly campaign decision + ICP + content direction + revenue-loop review                            | `hermes/profiles/cmo/CLAUDE.md` (Phase 2)      |
+| Content drafting from approved positioning (drafts to `_inbox/quill-drafts/`, never publishes)      | `hermes/profiles/quill/CLAUDE.md`              |
+| Pre-launch pressure-test on campaigns, claims, positioning (critiques to `_inbox/viper-critiques/`) | `hermes/profiles/viper/CLAUDE.md`              |
+| Koho retainer delivery (Marc routing, ConsultOps demos, Excerpa work)                               | `hermes/profiles/koho-ops/CLAUDE.md` (Phase 5) |
+| Yehovah retainer delivery (trial-to-GA monitoring, CTO duties)                                      | `hermes/profiles/yeh-ops/CLAUDE.md` (Phase 5)  |
+| Repo-wide refactor / multi-file coordination / PR drafts on revenue products                        | `hermes/profiles/codex/CLAUDE.md` (Phase 5.5)  |
 
-Profiles in parentheses are scheduled for build per the plan; `atlas-ceo`, `codex`, and `cmo` exist on disk as of 2026-05-18.
+Profiles in parentheses are scheduled for build per the plan; `atlas-ceo`, `codex`, `cmo`, `quill`, and `viper` exist on disk as of 2026-05-20 (Phase 3 of $1M plan landed).
 
 ### Karpathy ladder per profile
 

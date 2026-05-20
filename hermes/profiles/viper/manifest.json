@@ -1,0 +1,50 @@
+{
+  "sku": "viper",
+  "name": "Viper",
+  "version": "0.1.0",
+  "category": "internal",
+  "department": "marketing",
+  "tagline": "Alex-first pre-launch critic — pressure-tests drafts, campaigns, claims, and positioning before they reach buyers. Cites a vault source for every flagged finding.",
+  "tier": "manual_pre_launch_critic_pilot",
+  "depends_on": ["marketing-vault"],
+  "channels": [],
+  "model_routing": {
+    "default": "openrouter:nvidia/nemotron-3-nano-30b-a3b:free",
+    "critique_production": "anthropic:claude-sonnet-4-6",
+    "high_stakes_critique": "anthropic:claude-opus-4-7"
+  },
+  "tools": [
+    "marketing_vault.read",
+    "draft_inbox.read",
+    "critique_draft.propose",
+    "critique_campaign.propose",
+    "critique_positioning.propose",
+    "pressure_test.propose"
+  ],
+  "skills": [
+    "critique-draft",
+    "critique-campaign-brief",
+    "critique-positioning",
+    "pressure-test-campaign",
+    "generate-handoff"
+  ],
+  "memory_axes": ["working", "episodic", "procedural"],
+  "guardrails": [
+    "alex_first_internal_only",
+    "marketing_vault_source_of_truth",
+    "writes_to_inbox_only",
+    "forbid_artifact_modification",
+    "forbid_rewrite_generation",
+    "require_source_for_every_finding",
+    "require_verdict",
+    "no_unattended_external_sends",
+    "honor_kill_list",
+    "honor_tool_adoption_triggers",
+    "do_not_scale_without_named_workflow",
+    "attack_claims_not_people",
+    "no_role_collapse_into_quill_cmo_atlas_or_retainer_profiles"
+  ],
+  "sla": { "uptime": 99.0, "p95_latency_seconds": 30 },
+  "publish": false,
+  "internal_only": true
+}

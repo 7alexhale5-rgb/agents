@@ -1,0 +1,9 @@
+PAUSED placeholder per ADR 2026-05-18-agent-shape-11-file-contract.md.
+
+To pause Viper runtime: `touch ~/.hermes/profiles/viper/PAUSED` (or
+`touch ~/Projects/agents/hermes/profiles/viper/PAUSED` if running from repo).
+
+To resume: `rm` that PAUSED file.
+
+This `.template` file is the placeholder so lint passes; the real
+`PAUSED` file (without `.template`) is the kill-switch sentinel.

@@ -1,0 +1,47 @@
+{
+  "sku": "quill",
+  "name": "Quill",
+  "version": "0.1.0",
+  "category": "internal",
+  "department": "marketing",
+  "tagline": "Alex-first content drafter — turns approved marketing-vault positioning into one publishable draft Alex can review, edit, or hold.",
+  "tier": "manual_content_drafter_pilot",
+  "depends_on": ["marketing-vault"],
+  "channels": [],
+  "model_routing": {
+    "default": "openrouter:nvidia/nemotron-3-nano-30b-a3b:free",
+    "draft_production": "anthropic:claude-sonnet-4-6",
+    "edge_case_judgment": "anthropic:claude-opus-4-7"
+  },
+  "tools": [
+    "marketing_vault.read",
+    "draft_field_note.propose",
+    "draft_outreach.propose",
+    "draft_campaign_asset.propose",
+    "draft_revision.propose"
+  ],
+  "skills": [
+    "draft-linkedin-field-note",
+    "draft-outreach-message",
+    "draft-campaign-asset",
+    "revise-from-critique",
+    "generate-handoff"
+  ],
+  "memory_axes": ["working", "episodic", "procedural"],
+  "guardrails": [
+    "alex_first_internal_only",
+    "marketing_vault_source_of_truth",
+    "writes_to_inbox_only",
+    "no_unattended_external_sends",
+    "honor_kill_list",
+    "honor_tool_adoption_triggers",
+    "enforce_content_rule_links",
+    "enforce_one_cta_per_draft",
+    "banned_vocab_enforced",
+    "no_cold_outreach_without_campaign_authorization",
+    "no_role_collapse_into_atlas_cmo_viper_or_retainer_profiles"
+  ],
+  "sla": { "uptime": 99.0, "p95_latency_seconds": 30 },
+  "publish": false,
+  "internal_only": true
+}

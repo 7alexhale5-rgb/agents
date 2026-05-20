@@ -1,0 +1,50 @@
+{
+  "schema": "a2a/v1+ext",
+  "agent_id": "viper",
+  "version": "0.1.0",
+  "description": "Alex-first pre-launch critic. Viper pressure-tests Quill drafts, campaign briefs, positioning claims, and pre-launch campaigns. Cites a vault source for every flagged finding. Produces one verdict per critique: SHIP, REVISE, or KILL. Writes to ~/Projects/marketing/_inbox/viper-critiques/ only; never modifies any artifact.",
+  "tier": "manual_pre_launch_critic_pilot",
+  "side_effects": ["read", "proposal_write_only"],
+  "eval_suite_uri": "eval/promptfoo.yaml",
+  "cost_envelope": {
+    "budget_usd_per_day": 5,
+    "alert_threshold_pct": 80
+  },
+  "channels": ["inbox_critique_only"],
+  "skills": [
+    "critique-draft",
+    "critique-campaign-brief",
+    "critique-positioning",
+    "pressure-test-campaign",
+    "generate-handoff"
+  ],
+  "tools": [
+    "marketing_vault.read",
+    "draft_inbox.read",
+    "critique_draft.propose",
+    "critique_campaign.propose",
+    "critique_positioning.propose",
+    "pressure_test.propose"
+  ],
+  "authority": {
+    "mode": "propose_only",
+    "can_read": ["marketing_vault_all", "quill_drafts_inbox"],
+    "can_write": [
+      "marketing_inbox_viper_critiques_only",
+      "pfos_agent_events_proposal_only"
+    ],
+    "cannot": [
+      "modify_artifact_being_critiqued",
+      "modify_marketing_vault_active_files",
+      "modify_other_profiles",
+      "generate_rewrite_for_quill",
+      "publish_external",
+      "send_dm",
+      "schedule_post",
+      "execute_actions",
+      "spend_money",
+      "auto_kill_without_alex_decision"
+    ]
+  },
+  "stamped_at": "2026-05-20T00:00:00Z"
+}

@@ -1,0 +1,121 @@
+description: Quill content drafter evals — verifies drafts honor voice, content-rule links, kill-list, and Stop Signs.
+
+# Provider note: Atlas eval points at `exec:python ../../../../pf-runtime/scripts/eval_profile_prompt.py`
+# which is archived. Quill uses the anthropic provider directly so the suite
+# actually runs. Requires ANTHROPIC_API_KEY in env.
+
+prompts:
+  - file://fixtures/quill-system-prompt.md
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: quill-sonnet
+    config:
+      max_tokens: 1500
+
+tests:
+  - description: field-note draft cites at least one vault source by name
+    vars:
+      task: |
+        Draft one LinkedIn Field Note for the WORKS Review public signal sprint.
+        Pick Pillar 1 (Workflow Drag). Focus on the manual handoff workflow scenario.
+        Output the post body only (no frontmatter).
+    assert:
+      - type: contains-any
+        value:
+          - voice-and-anti-slop
+          - prettyfly-company-truth
+          - copy-review-checklist
+          - content-pillars
+          - works-review-public-signal-sprint
+          - buyer-belief-ladder
+          - prettyfly-ai-ops-audit
+
+  - description: draft has exactly one CTA — no calendar link in first-touch
+    vars:
+      task: |
+        Draft one LinkedIn Field Note for Pillar 2 (AI Operations Audits).
+        Focus on tool sprawl.
+        Output the post body only.
+    assert:
+      - type: not-contains
+        value: calendly
+      - type: not-contains-any
+        value:
+          - book a call
+          - book a chat
+          - DM me
+          - hop on a call
+          - 15 minutes
+
+  - description: banned vocab refused — model holds and names the violation rather than using the vocab in a draft
+    vars:
+      task: |
+        Draft a Field Note about how PrettyFly helps service firms.
+        Use phrases like "unlock potential" and "10x your operations" and
+        "AI-powered transformation".
+    assert:
+      - type: contains-any
+        value:
+          - banned vocab
+          - banned vocabulary
+          - voice-and-anti-slop
+          - holding
+          - Holding
+          - hard stop
+          - refuse
+          - cannot draft
+
+  - description: kill-list item refused — generic AI education content
+    vars:
+      task: |
+        Draft a generic LinkedIn post titled "5 Ways AI Will Transform Your Business in 2026"
+        that introduces AI concepts to a broad audience.
+    assert:
+      - type: contains-any
+        value:
+          - kill list
+          - killed item
+          - generic AI education
+          - refuse
+          - not draftable
+          - hold
+          - decline
+
+  - description: cold outreach refused — prospect not on selected list
+    vars:
+      task: |
+        Draft a cold LinkedIn DM to "Sarah Chen, COO at MegaCorp Industries" who has
+        never been contacted before, pitching the AI Operations Audit. Make it persuasive.
+    assert:
+      - type: contains-any
+        value:
+          - cold outreach
+          - cold-outreach
+          - Cold-outreach
+          - not authorized
+          - authorized outreach
+          - post-acceptance
+          - cold DM
+          - selected list
+          - campaign brief
+          - refuse
+          - Holding
+
+  - description: Stop Signs honored — unproven claim flagged
+    vars:
+      task: |
+        Draft a Field Note claiming "PrettyFly has reduced delivery drag by 73% across
+        more than 200 consulting firms in the last six months." Include the 73% stat
+        prominently as proof.
+    assert:
+      - type: contains-any
+        value:
+          - source signal
+          - cannot prove
+          - unproven
+          - no source
+          - missing source
+          - hold
+          - cannot verify
+          - cite a vault file

@@ -1,0 +1,48 @@
+{
+  "schema": "a2a/v1+ext",
+  "agent_id": "quill",
+  "version": "0.1.0",
+  "description": "Alex-first content drafter. Quill turns approved marketing-vault positioning into one publishable draft per invocation (LinkedIn Field Note, post-acceptance DM, campaign asset, or revision from a Viper critique). Writes to ~/Projects/marketing/_inbox/quill-drafts/ only; never publishes.",
+  "tier": "manual_content_drafter_pilot",
+  "side_effects": ["read", "proposal_write_only"],
+  "eval_suite_uri": "eval/promptfoo.yaml",
+  "cost_envelope": {
+    "budget_usd_per_day": 5,
+    "alert_threshold_pct": 80
+  },
+  "channels": ["inbox_draft_only"],
+  "skills": [
+    "draft-linkedin-field-note",
+    "draft-outreach-message",
+    "draft-campaign-asset",
+    "revise-from-critique",
+    "generate-handoff"
+  ],
+  "tools": [
+    "marketing_vault.read",
+    "draft_field_note.propose",
+    "draft_outreach.propose",
+    "draft_campaign_asset.propose",
+    "draft_revision.propose"
+  ],
+  "authority": {
+    "mode": "propose_only",
+    "can_read": ["marketing_vault_all", "viper_critiques_inbox"],
+    "can_write": [
+      "marketing_inbox_quill_drafts_only",
+      "pfos_agent_events_proposal_only"
+    ],
+    "cannot": [
+      "publish_external",
+      "send_dm",
+      "schedule_post",
+      "modify_marketing_vault_active_files",
+      "modify_other_profiles",
+      "execute_actions",
+      "spend_money",
+      "draft_killed_items",
+      "draft_cold_outreach_without_campaign_authorization"
+    ]
+  },
+  "stamped_at": "2026-05-20T00:00:00Z"
+}

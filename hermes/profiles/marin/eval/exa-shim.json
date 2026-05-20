@@ -1,0 +1,115 @@
+{
+  "schema_version": "marin.exa_shim.v1",
+  "_doc": "Dry-run fixtures for marin.exa_search. Each case feeds emit_event(dry_run=True) and validates the built payload against the declared event block. Verifies contract shape without billing Exa or PFOS. Mirrors hermes/profiles/marin/eval/apollo-shim.json.",
+  "cases": [
+    {
+      "name": "neural_search_buyer_signals_x_reddit",
+      "tool": "marin.exa_search",
+      "overrides": {
+        "data": {
+          "results_count": 10,
+          "query_hash": "abc123def4567890",
+          "vertical": "ai-ops-audit",
+          "exa_endpoint": "search",
+          "exa_mode": "auto",
+          "domains_filter": "f1e2d3c4b5a6f7e8"
+        }
+      },
+      "expected": {
+        "type": "marin.exa_query.proposed",
+        "status": "pending",
+        "surface": "cli",
+        "cwd_project": "marketing",
+        "skill_slug": "buyer-signal-router",
+        "agent_slug": "marin",
+        "data_keys_required": [
+          "schema_version",
+          "runtime",
+          "proposal_status",
+          "private_payload_redacted",
+          "search_provider",
+          "results_count",
+          "query_hash",
+          "exa_endpoint"
+        ],
+        "data_values": {
+          "search_provider": "exa",
+          "runtime": "hermes",
+          "proposal_status": "proposed",
+          "exa_endpoint": "search",
+          "exa_mode": "auto"
+        }
+      }
+    },
+    {
+      "name": "neural_search_competitor_pricing",
+      "tool": "marin.exa_search",
+      "overrides": {
+        "data": {
+          "results_count": 8,
+          "query_hash": "1234567890abcdef",
+          "vertical": "fractional-cto-services-pricing",
+          "exa_endpoint": "search",
+          "exa_mode": "deep",
+          "domains_filter": null
+        }
+      },
+      "expected": {
+        "type": "marin.exa_query.proposed",
+        "skill_slug": "buyer-signal-router",
+        "data_values": {
+          "search_provider": "exa",
+          "exa_endpoint": "search",
+          "exa_mode": "deep",
+          "results_count": 8,
+          "vertical": "fractional-cto-services-pricing"
+        }
+      }
+    },
+    {
+      "name": "keyword_search_narrow_phrase",
+      "tool": "marin.exa_search",
+      "overrides": {
+        "data": {
+          "results_count": 5,
+          "query_hash": "fedcba0987654321",
+          "vertical": null,
+          "exa_endpoint": "search",
+          "exa_mode": "keyword",
+          "domains_filter": null
+        }
+      },
+      "expected": {
+        "type": "marin.exa_query.proposed",
+        "data_values": {
+          "search_provider": "exa",
+          "exa_mode": "keyword",
+          "results_count": 5
+        }
+      }
+    },
+    {
+      "name": "auto_search_no_filters",
+      "tool": "marin.exa_search",
+      "overrides": {
+        "data": {
+          "results_count": 12,
+          "query_hash": "deadbeefcafebabe",
+          "vertical": "weekly-signals",
+          "exa_endpoint": "search",
+          "exa_mode": "auto",
+          "domains_filter": null
+        }
+      },
+      "expected": {
+        "type": "marin.exa_query.proposed",
+        "data_values": {
+          "search_provider": "exa",
+          "exa_mode": "auto",
+          "results_count": 12,
+          "vertical": "weekly-signals"
+        }
+      }
+    }
+  ]
+}

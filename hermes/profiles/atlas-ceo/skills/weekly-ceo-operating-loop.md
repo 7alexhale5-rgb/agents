@@ -2,12 +2,35 @@
 
 Use when Atlas prepares a recurring weekly owner/operator cadence for Alex.
 
+## Ralph loop entry
+
+Before working any step, **set a `/goal`** so the operating loop iterates under
+the judge instead of completing in a single turn. The judge re-evaluates after
+each turn; if the brief is incomplete or fabricated metrics slip in, the loop
+continues. Turn budget is the backstop.
+
+```text
+/goal Produce one source-grounded weekly CEO brief for Alex, naming ≤3
+priorities with cited source signals, classifying any proposal-worthy
+decision (one-way/two-way door risk + named approval gate), and emitting
+one atlas.follow_up.recorded event with data.goal_iteration populated.
+Treat the goal as done only when (a) the brief is delivered, (b) every
+priority traces to a source signal in fleet.snapshot or
+business.scorecard.snapshot, and (c) the follow-up event lands. Treat the
+goal as blocked (and stop) if no source packet is available, the premium
+Anthropic route is degraded, or fabricated metrics are detected on
+self-audit.
+```
+
+Default turn budget (20) is sufficient. Override with `/goal --max-turns N`
+only when explicitly extending under a stop-sign condition.
+
 ## Loop
 
-1. Get a fresh source packet.
+1. Get a fresh source packet (`fleet.snapshot` or `business.scorecard.snapshot`).
 2. Triage freshness, confidence, missing signals, and contradictions.
-3. Produce the CEO brief.
-4. Name one proposal-worthy decision, if any.
+3. Produce the CEO brief — ≤3 priorities, each cited to a source signal.
+4. Name one proposal-worthy decision, if any (one-way/two-way door + approval gate).
 5. If Alex asks, create a proposed-only PFOS action row.
 
 ## Promotion rule
@@ -23,13 +46,27 @@ Atlas can move from manual brief to scheduled watcher only after:
 
 After recording a follow-up brief (Step 4 or 5), emit a safe
 `atlas.follow_up.recorded` event per
-`_meta/decisions/2026-05-18-hermes-pfos-event-contract.md` via:
+`_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`. Include
+`data.goal_iteration` (1-indexed turn counter under the active `/goal`) so the
+Ralph loop is auditable in `public.agent_events`:
 
 ```bash
 python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
   --profile atlas-ceo \
   --tool atlas.record_follow_up \
-  --extra-json '{"follow_up_ref":"<id>","decision_outcome":"<approved|rejected|deferred>","source_packet_ref":"<id-or-summary>"}'
+  --extra-json '{"follow_up_ref":"<id>","decision_outcome":"<approved|rejected|deferred>","source_packet_ref":"<id-or-summary>","goal_iteration":<N>}'
 ```
 
+`<N>` is the current iteration of the active `/goal` — `1` on the first pass,
+incremented when the judge sends the agent back for another turn. The judge
+verdict is fail-open per Hermes goals.py; trust the turn budget as backstop.
+
 No raw packet text, no decision body in the event — only classification + refs.
+
+## Closing the goal
+
+After the brief is delivered AND the event lands, the agent should explicitly
+state "goal complete: weekly brief delivered, event <uuid> emitted" so the
+auxiliary judge concludes `done`. If a stop-sign fires (no source packet,
+degraded premium route, fabricated metrics on self-audit), state the block
+clearly so the judge concludes `done` with reason and the loop halts cleanly.

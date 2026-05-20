@@ -15,7 +15,7 @@ The earlier multi-phase Hermes-consolidation runbook is preserved at [`_archive/
 | 1     | Archive dead weight (pf-runtime, marketplace, 13 non-revenue profiles)                       | ✅ Landed 2026-05-18 (commit `7e1340c`)            |
 | 1.5   | PrettyFly sub-project revenue audit                                                          | 🟡 In progress                                     |
 | 2     | Build CMO profile from Atlas template                                                        | ✅ Landed (commit `776d981` + iterations)          |
-| 3     | Build Quill + Stet profiles from Atlas template                                             | 🟡 Scaffolded 2026-05-20; awaiting first event row |
+| 3     | Build Quill + Stet profiles from Atlas template                                              | 🟡 Scaffolded 2026-05-20; awaiting first event row |
 | 4     | Extend Atlas with marketing-vault read path                                                  | ⬜ Not started                                     |
 | 5     | Build koho-ops + yeh-ops retainer-delivery profiles                                          | ⬜ Not started                                     |
 | 5.5   | Rebuild codex profile from Atlas template                                                    | ⬜ Not started                                     |
@@ -42,7 +42,7 @@ Hermes Agent v0.12.0 (2026.4.30) is the canonical runtime. Do not run `hermes up
 | `atlas-ceo` | Live (template, rung 3)                                                         | —     |
 | `cmo`       | Live (scaffolded 2026-05-18; emitter pattern wired via patch #5)                | 2     |
 | `quill`     | Live (scaffolded 2026-05-20, lint PASS, awaiting first draft + paired event)    | 3     |
-| `stet`     | Live (scaffolded 2026-05-20, lint PASS, awaiting first critique + paired event) | 3     |
+| `stet`      | Live (scaffolded 2026-05-20, lint PASS, awaiting first critique + paired event) | 3     |
 | `koho-ops`  | Not built                                                                       | 5     |
 | `yeh-ops`   | Not built (rebuild clean; old version archived)                                 | 5     |
 | `codex`     | Live (rebuild from Atlas template pending)                                      | 5.5   |
@@ -131,4 +131,31 @@ Next: **2026-08-18**. Audit fleet health against revenue targets, demote unused 
 
 ## Phase pointer
 
-Edit this line as phases complete: **Current phase: $1M-pivot Phase 3 (Quill + Stet scaffolded) — landed 2026-05-20; awaiting first event-emission gate.**
+Edit this line as phases complete: **Current phase: $1M-pivot Phase 4 (Fleet autonomy infrastructure live) — landed 2026-05-20; 12 cron jobs scheduled, counter-based gates wired, observation period is data-paced.**
+
+## Phase 4 — Fleet autonomy infrastructure (landed 2026-05-20)
+
+Built single-session per `~/.claude/plans/imperative-wiggling-hennessy.md`. Hermes's existing primitives (cron, send_message, skills_hub, Curator) carry the load — no new orchestrator invented.
+
+**What's running unattended**:
+
+- 12 cron jobs registered via Hermes's built-in `cron/jobs.py` (idempotent via `scripts/wire-fleet-cron.sh`). Schedules: Atlas weekly Sun 7am, CMO weekly Mon 8am, Quill drafts Tue+Thu 9am, Stet polls inbox every 30 min, autonomy-gate watcher every 30 min, daily contract heartbeat noon, per-profile self-audits Sundays 6am (staggered 5 min), inbox aging daily 3am.
+- Atlas emitter now ADR-compliant: `atlas.action.proposed` + `atlas.follow_up.recorded` event blocks wired into `hermes/profiles/atlas-ceo/config.yaml`. Smoke event verified: UUID `c833d594-68ee-4753-9f7e-c61bd29395b3`.
+- Per-profile self-audit skill at `hermes/profiles/{atlas-ceo,cmo,quill,stet}/skills/self-audit.md`.
+- Counter-based autonomy gates at `scripts/check-autonomy-gates.sh`. Emits `<profile>.autonomy.graduated` events when SQL counter queries clear.
+- On-demand fleet invocation at `scripts/fleet-invoke.sh <profile> <skill>`.
+- Inbox aging at `scripts/inbox-archive.sh` (daily 3am).
+
+**Slack approval layer (BUILT but DEFERRED wiring)**: `hermes/lib/slack_notify.py` + `scripts/poll-slack-approvals.py` exist standalone. NOT yet wired into skill prose because `SLACK_BOT_TOKEN` was not set in build shell. Next-session: verify scopes, wire into CMO/Stet/Atlas skill Step N+1, register poll as 5-min cron.
+
+**Karpathy Phase 4 gate** (falsifiable in one SQL query, fires data-paced):
+
+```sql
+SELECT type, created_at FROM public.agent_events WHERE type IN (
+  'cmo.autonomy.graduated',
+  'stet.autonomy.graduated',
+  'quill.autonomy.graduated',
+  'atlas.autonomy.graduated'
+) ORDER BY created_at;
+-- Phase 4 green when 4 rows present
+```

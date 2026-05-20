@@ -20,6 +20,8 @@ tools:
     - message_ledger.read
     - scoreboard.read
     - weekly_decision.propose
+    - marin.apollo_enrich_list
+    - marin.apollo_discover_prospects
   contracts:
     marketing_vault.read:
       authority: read_only
@@ -43,6 +45,34 @@ tools:
         private_payload_redacted: true
         data_runtime: hermes
         data_proposal_status: proposed
+    marin.apollo_enrich_list:
+      authority: proposed_write_only
+      write_scope: ~/Projects/marketing/_inbox/marin-readouts/
+      event:
+        type: marin.apollo_query.proposed
+        status: pending
+        surface: cli
+        cwd_project: marketing
+        skill_slug: buyer-signal-router
+        silo_slug: skills
+        private_payload_redacted: true
+        data_runtime: hermes
+        data_proposal_status: proposed
+        data_search_provider: apollo
+    marin.apollo_discover_prospects:
+      authority: proposed_write_only
+      write_scope: ~/Projects/marketing/_inbox/marin-readouts/
+      event:
+        type: marin.apollo_query.proposed
+        status: pending
+        surface: cli
+        cwd_project: marketing
+        skill_slug: buyer-signal-router
+        silo_slug: skills
+        private_payload_redacted: true
+        data_runtime: hermes
+        data_proposal_status: proposed
+        data_search_provider: apollo
 
 memory:
   built_in:

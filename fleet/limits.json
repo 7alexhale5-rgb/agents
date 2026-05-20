@@ -1,9 +1,9 @@
 {
   "_doc": "Per-profile daily emit_event caps. Enforced upstream in hermes/lib/agent_events.py. A profile missing from `limits` is uncapped. dry_run emits never count.",
-  "_doctrine": "Caps protect the HITL approval queue from drowning. Tune toward each profile's intended cadence (atlas: weekly brief = 1/day; stet: pre-launch critiques = 2/day; quill: drafting bursts allowed; marin: one weekly decision/day; codex: refactor-burst-friendly = uncapped).",
+  "_doctrine": "Caps protect the HITL approval queue from drowning. Tune toward each profile's intended cadence (atlas: weekly brief = 1/day; stet: pre-launch critiques = 2/day; quill: drafting bursts allowed; marin: 1 weekly decision + up to 2 apollo queries = 3/day; codex: refactor-burst-friendly = uncapped).",
   "limits": {
     "atlas-ceo": 3,
-    "marin": 1,
+    "marin": 3,
     "stet": 2,
     "quill": 5
   }

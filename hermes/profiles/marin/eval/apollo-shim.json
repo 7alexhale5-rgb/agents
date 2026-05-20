@@ -1,0 +1,106 @@
+{
+  "schema_version": "marin.apollo_shim.v1",
+  "_doc": "Dry-run fixtures for Marin's two Apollo contract-bound tools. Each case is fed to hermes.lib.agent_events.emit_event(dry_run=True) and the returned payload is validated against the declared event block. Verifies contract shape without billing PFOS or hitting Apollo. Run via: python3 hermes/profiles/marin/eval/run_apollo_shim.py (or inline-loop in verify-event-contract.py once --tool flag lands).",
+  "cases": [
+    {
+      "name": "enrich_people_sf_ai_startups",
+      "tool": "marin.apollo_enrich_list",
+      "overrides": {
+        "data": {
+          "results_count": 8,
+          "query_hash": "a1b2c3d4e5f6a1b2",
+          "vertical": "ai-startups-sf-50-200",
+          "apollo_endpoint": "people/bulk_match"
+        }
+      },
+      "expected": {
+        "type": "marin.apollo_query.proposed",
+        "status": "pending",
+        "surface": "cli",
+        "cwd_project": "marketing",
+        "skill_slug": "buyer-signal-router",
+        "agent_slug": "marin",
+        "data_keys_required": [
+          "schema_version",
+          "runtime",
+          "proposal_status",
+          "private_payload_redacted",
+          "search_provider",
+          "results_count",
+          "query_hash",
+          "apollo_endpoint"
+        ],
+        "data_values": {
+          "search_provider": "apollo",
+          "runtime": "hermes",
+          "proposal_status": "proposed",
+          "private_payload_redacted": true
+        }
+      }
+    },
+    {
+      "name": "enrich_organizations_by_domain",
+      "tool": "marin.apollo_enrich_list",
+      "overrides": {
+        "data": {
+          "results_count": 6,
+          "query_hash": "1234567890abcdef",
+          "vertical": null,
+          "apollo_endpoint": "organizations/bulk_enrich"
+        }
+      },
+      "expected": {
+        "type": "marin.apollo_query.proposed",
+        "skill_slug": "buyer-signal-router",
+        "data_values": {
+          "search_provider": "apollo",
+          "apollo_endpoint": "organizations/bulk_enrich",
+          "results_count": 6
+        }
+      }
+    },
+    {
+      "name": "discover_prospects_people_filter",
+      "tool": "marin.apollo_discover_prospects",
+      "overrides": {
+        "data": {
+          "results_count": 25,
+          "query_hash": "fedcba0987654321",
+          "vertical": "fractional-cto-services",
+          "apollo_endpoint": "mixed_people/search"
+        }
+      },
+      "expected": {
+        "type": "marin.apollo_query.proposed",
+        "skill_slug": "buyer-signal-router",
+        "data_values": {
+          "search_provider": "apollo",
+          "apollo_endpoint": "mixed_people/search",
+          "results_count": 25,
+          "vertical": "fractional-cto-services"
+        }
+      }
+    },
+    {
+      "name": "discover_prospects_company_filter",
+      "tool": "marin.apollo_discover_prospects",
+      "overrides": {
+        "data": {
+          "results_count": 12,
+          "query_hash": "deadbeefcafebabe",
+          "vertical": "series-b-fintech",
+          "apollo_endpoint": "mixed_companies/search"
+        }
+      },
+      "expected": {
+        "type": "marin.apollo_query.proposed",
+        "skill_slug": "buyer-signal-router",
+        "data_values": {
+          "search_provider": "apollo",
+          "apollo_endpoint": "mixed_companies/search",
+          "results_count": 12
+        }
+      }
+    }
+  ]
+}

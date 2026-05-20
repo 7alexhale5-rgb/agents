@@ -51,11 +51,18 @@
     </div>
     <section>
       <h2>Acceptance</h2>
-      <p>Unit tests cover MIME/base64url construction, Gmail draft-create invocation, absence of a send surface, Marin config exposure, and <code>forbid_external_sends</code>. Live Gmail draft creation is deferred until Alex wants the harmless pilot draft.</p>
+      <p>Unit tests cover MIME/base64url construction, Gmail draft-create invocation, absence of a send surface, Marin config exposure, and <code>forbid_external_sends</code>. Live Gmail draft creation now creates one harmless Gmail draft and one redacted PFOS event.</p>
     </section>
     <section>
       <h2>Live Acceptance Status</h2>
-      <p>Attempted 2026-05-20 against the existing PrettyFly <code>gmail-1</code> token. Gmail rejected <code>users.drafts.create</code> with insufficient authentication scopes. The available cached tokens are read-only, so the pilot needs a fresh Google OAuth consent for <code>gmail.compose</code> on the target PrettyFly account.</p>
+      <p>Accepted 2026-05-20. Existing PrettyFly <code>gmail-1</code> tokens remain read-only for triage. New draft credential slot <code>gmail-1-drafts</code> is consented only for <code>https://www.googleapis.com/auth/gmail.compose</code>.</p>
+      <ul>
+        <li>Gmail draft verified present via API with label <code>DRAFT</code>.</li>
+        <li>Draft id: <code>r-1101870868110999513</code>.</li>
+        <li>Message/thread id: <code>19e47078cb85e92f</code>.</li>
+        <li>PFOS event inserted: <code>75ed7fd6-768d-4dee-85ae-14c0ee9ec770</code>.</li>
+        <li>PFOS payload carries ids and hashes only; no raw body, subject, recipient, or account identifier.</li>
+      </ul>
     </section>
   </main>
 </body>

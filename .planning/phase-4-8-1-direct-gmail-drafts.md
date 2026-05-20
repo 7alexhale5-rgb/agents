@@ -1,7 +1,7 @@
 ---
 date: 2026-05-20
 phase: 4.8.1
-status: implementation-plan
+status: live-accepted
 title: Direct Gmail draft path for Marin
 ---
 
@@ -41,12 +41,20 @@ and emits a redacted `marin.gmail_draft.proposed` event.
   `authority: proposed_write_only`.
 - Unit tests cover MIME/base64url construction, Gmail draft-create invocation,
   no send surface, config exposure, and `forbid_external_sends`.
-- Live acceptance is deferred until Alex wants to create the harmless pilot
-  draft in Gmail.
+- Live acceptance creates one harmless draft in Gmail and one redacted PFOS
+  event.
 
 ## Live Acceptance Status
 
-Attempted 2026-05-20 against the existing PrettyFly `gmail-1` token. Gmail
-rejected `users.drafts.create` with insufficient authentication scopes. The
-available cached tokens are read-only (`gmail.readonly`); the pilot needs a
-fresh Google OAuth consent for `gmail.compose` on the target PrettyFly account.
+Accepted 2026-05-20.
+
+- Existing PrettyFly `gmail-1` tokens remain read-only (`gmail.readonly`) for
+  triage.
+- New PrettyFly draft credential slot: `gmail-1-drafts`, consented only for
+  `https://www.googleapis.com/auth/gmail.compose`.
+- Gmail draft verified present via API with label `DRAFT`.
+- Draft id: `r-1101870868110999513`.
+- Message/thread id: `19e47078cb85e92f`.
+- PFOS event inserted: `75ed7fd6-768d-4dee-85ae-14c0ee9ec770`.
+- PFOS event payload carries draft/message/thread ids plus recipient/account
+  hashes only; no raw body, subject, recipient, or account identifier.

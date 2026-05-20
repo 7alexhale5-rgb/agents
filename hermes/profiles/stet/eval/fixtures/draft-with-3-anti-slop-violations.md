@@ -34,8 +34,8 @@ game-changing AI content.
 
 ---
 
-This fixture is a deliberately-bad draft used by `viper/eval/promptfoo.yaml` to
-test that Viper catches:
+This fixture is a deliberately-bad draft used by `stet/eval/promptfoo.yaml` to
+test that Stet catches:
 
 - Banned vocab (game-changing, AI-powered, unlock, 10x, revolutionary, crushing it)
 - Invented evidence (200 consulting firms, 73% reduction — not in vault)

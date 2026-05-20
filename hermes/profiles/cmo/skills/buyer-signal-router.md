@@ -11,7 +11,7 @@ output: proposed next-action memo; inline by default, or markdown to ~/Projects/
 
 Turn a route opening, reply, correction, referral, rejection, or no-reply state into one allowed next action. This is Marin's intake nerve: it protects the loop from scaling before buyer workflow signal exists.
 
-This skill does not create a new profile, CRM, PFOS screen, outreach automation, cold email path, Unipile workflow, bulk Apollo run, Quill draft, or Viper critique. It classifies the signal and proposes the next manual move.
+This skill does not create a new profile, CRM, PFOS screen, outreach automation, cold email path, Unipile workflow, bulk Apollo run, Quill draft, or Stet critique. It classifies the signal and proposes the next manual move.
 
 ## Inputs (must read before routing)
 

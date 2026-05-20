@@ -1,8 +1,8 @@
 ---
 name: critique-draft
-description: Critique one Quill draft. Apply the 7 copy-review sweeps adversarially, cite vault sources for every finding, end with verdict SHIP/REVISE/KILL. Viper's first live skill.
+description: Critique one Quill draft. Apply the 7 copy-review sweeps adversarially, cite vault sources for every finding, end with verdict SHIP/REVISE/KILL. Stet's first live skill.
 input: target draft path under `~/Projects/marketing/_inbox/quill-drafts/<file>.md`
-output: markdown to ~/Projects/marketing/_inbox/viper-critiques/{YYYY-MM-DD}-critique-{slug}.md + paired viper.critique.proposed PFOS event
+output: markdown to ~/Projects/marketing/_inbox/stet-critiques/{YYYY-MM-DD}-critique-{slug}.md + paired stet.critique.proposed PFOS event
 ---
 
 # Skill: critique-draft
@@ -62,15 +62,15 @@ Read one Quill draft, apply the 7 copy-review sweeps adversarially, cite vault s
    - `REVISE`: 1+ critical OR 3+ warn, addressable via revision, no kill triggers hit.
    - `KILL`: any kill trigger hit (from step 2).
 
-8. **Write critique** to `~/Projects/marketing/_inbox/viper-critiques/{YYYY-MM-DD}-critique-{draft-slug}.md` using the frontmatter + body shape from `DOCTRINE.md § Output contract`. `target_artifact_type: quill-draft`. Every finding has: F# title, severity, sweep (or kill-trigger), evidence (quoted phrase or line), source (vault file path), fix path (or "hard-block — surface").
+8. **Write critique** to `~/Projects/marketing/_inbox/stet-critiques/{YYYY-MM-DD}-critique-{draft-slug}.md` using the frontmatter + body shape from `DOCTRINE.md § Output contract`. `target_artifact_type: quill-draft`. Every finding has: F# title, severity, sweep (or kill-trigger), evidence (quoted phrase or line), source (vault file path), fix path (or "hard-block — surface").
 
 9. **Emit PFOS event**:
 
 ```bash
 python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
-  --profile viper \
+  --profile stet \
   --tool critique_draft.propose \
-  --readout-path "_inbox/viper-critiques/<YYYY-MM-DD>-critique-<draft-slug>.md" \
+  --readout-path "_inbox/stet-critiques/<YYYY-MM-DD>-critique-<draft-slug>.md" \
   --extra-json '{"verdict":"<SHIP|REVISE|KILL>","critical":<N>,"warn":<N>,"info":<N>,"kill_triggers_hit":[<list>],"target_artifact_path":"_inbox/quill-drafts/<draft-file>"}'
 ```
 

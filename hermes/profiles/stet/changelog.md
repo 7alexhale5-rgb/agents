@@ -1,10 +1,10 @@
-# changelog — viper
+# changelog — stet
 
 ## 2026-05-20 — Scaffold from Atlas template (Phase 3 of $1M plan)
 
 Initial profile. Built per the 11-file contract ADR + Hermes ↔ PFOS event
 contract ADR + sub-project trigger ADR (Phase 3 of `~/.claude/plans/here-is-what-we-joyful-torvalds.md`
-supersedes the 30-day trigger because Viper sits inside the same revenue
+supersedes the 30-day trigger because Stet sits inside the same revenue
 motion as CMO + Quill).
 
 - Identity: SOUL / DOCTRINE / USER / MEMORY written against marketing vault

@@ -2,14 +2,14 @@
 name: pressure-test-campaign
 description: Pre-launch pressure test of a whole campaign. Inversion + door classification + adversarial sweeps across the entire campaign dir. Strongest pre-launch gate before any campaign goes live.
 input: campaign slug (e.g. "prettyfly-ai-ops-audit-v0") + launch scope ("public-content" | "outreach" | "paid" | "full-launch")
-output: markdown to ~/Projects/marketing/_inbox/viper-critiques/{YYYY-MM-DD}-pressure-test-{slug}.md + paired viper.critique.proposed PFOS event
+output: markdown to ~/Projects/marketing/_inbox/stet-critiques/{YYYY-MM-DD}-pressure-test-{slug}.md + paired stet.critique.proposed PFOS event
 ---
 
 # Skill: pressure-test-campaign
 
 ## Purpose
 
-Pre-launch pressure test of a whole campaign — distinct from `critique-campaign-brief` (single-brief critique) and `critique-draft` (single-artifact critique). This skill runs when Alex is about to take a campaign live and wants Viper to surface every plausible failure mode before launch budget or public surface area gets committed.
+Pre-launch pressure test of a whole campaign — distinct from `critique-campaign-brief` (single-brief critique) and `critique-draft` (single-artifact critique). This skill runs when Alex is about to take a campaign live and wants Stet to surface every plausible failure mode before launch budget or public surface area gets committed.
 
 ## Hard scope rules
 
@@ -62,15 +62,15 @@ Pre-launch pressure test of a whole campaign — distinct from `critique-campaig
 
 8. **Decide verdict.** Kill trigger → `KILL`. 1+ critical OR (one-way door without approval gate or kill-switch condition) → `REVISE`. Otherwise `SHIP`.
 
-9. **Write pressure-test** to `~/Projects/marketing/_inbox/viper-critiques/{YYYY-MM-DD}-pressure-test-{slug}.md`. `target_artifact_type: pre-launch-pressure-test`. Body MUST include: `## Verdict`, `## Findings` (numbered, severity-graded), `## Inversion`, `## Door classification` (with approval gate if one-way), `## Kill-switch condition` (if one-way and verdict SHIP), `## Sweeps run` (per artifact).
+9. **Write pressure-test** to `~/Projects/marketing/_inbox/stet-critiques/{YYYY-MM-DD}-pressure-test-{slug}.md`. `target_artifact_type: pre-launch-pressure-test`. Body MUST include: `## Verdict`, `## Findings` (numbered, severity-graded), `## Inversion`, `## Door classification` (with approval gate if one-way), `## Kill-switch condition` (if one-way and verdict SHIP), `## Sweeps run` (per artifact).
 
 10. **Emit PFOS event**:
 
 ```bash
 python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
-  --profile viper \
+  --profile stet \
   --tool pressure_test.propose \
-  --readout-path "_inbox/viper-critiques/<YYYY-MM-DD>-pressure-test-<slug>.md" \
+  --readout-path "_inbox/stet-critiques/<YYYY-MM-DD>-pressure-test-<slug>.md" \
   --extra-json '{"verdict":"<SHIP|REVISE|KILL>","critical":<N>,"warn":<N>,"info":<N>,"kill_triggers_hit":[<list>],"launch_scope":"<scope>","door":"<two-way|one-way>","kill_switch":"<condition or null>"}'
 ```
 
@@ -80,7 +80,7 @@ python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
 - SHIP verdict on a one-way door without a kill-switch condition
 - Inversion sections that don't map causes to specific findings
 - "Soft" KILL ("maybe don't launch yet") — pick a verdict
-- Generating the revised campaign — that's CMO + Alex, not Viper
+- Generating the revised campaign — that's CMO + Alex, not Stet
 
 ## Failure modes
 

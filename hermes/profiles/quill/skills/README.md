@@ -10,7 +10,7 @@ description: Quill skill registry — every skill is a flat MD file in this dire
 | `draft-linkedin-field-note` | One LinkedIn post draft from WORKS Review public signal sprint context. First live skill — proves the loop. | `~/Projects/marketing/_inbox/quill-drafts/` + PFOS event |
 | `draft-outreach-message`    | Post-acceptance workflow-question DM (the campaign-authorized next move). Never cold outreach.              | `~/Projects/marketing/_inbox/quill-drafts/` + PFOS event |
 | `draft-campaign-asset`      | Scorecard section / landing-page copy / offer one-pager per active campaign brief.                          | `~/Projects/marketing/_inbox/quill-drafts/` + PFOS event |
-| `revise-from-critique`      | Reads a Viper critique from `_inbox/viper-critiques/` and produces a revised draft addressing each finding. | `~/Projects/marketing/_inbox/quill-drafts/` + PFOS event |
+| `revise-from-critique`      | Reads a Stet critique from `_inbox/stet-critiques/` and produces a revised draft addressing each finding. | `~/Projects/marketing/_inbox/quill-drafts/` + PFOS event |
 | `generate-handoff` (shared) | Cross-session handoff per `hermes/shared-skills/generate-handoff/`.                                         | `~/Projects/memory-vault/handoffs/`                      |
 
 ## Skill conventions

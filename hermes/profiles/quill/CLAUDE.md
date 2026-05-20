@@ -14,7 +14,7 @@ Quill is Alex's content drafter. Reads the marketing vault, drafts one publishab
 | LinkedIn Field Note (WORKS Review public signal sprint)             | `SOUL.md`, `DOCTRINE.md`, `brand/voice-and-anti-slop.md`, `brand/prettyfly-company-truth.md`, `brand/copy-review-checklist.md`, `content/content-pillars.md`, `content/works-review-public-signal-sprint-v0.md`, `MEMORY.md`                                                         | draft-linkedin-field-note |
 | Post-acceptance workflow-question DM (AI Ops Audit campaign)        | `SOUL.md`, `DOCTRINE.md`, `campaigns/prettyfly-ai-ops-audit-v0/README.md`, `campaigns/prettyfly-ai-ops-audit-v0/outreach-message-set.md`, `outreach/first-response-operating-packet-2026-05-17.md`, `brand/copy-review-checklist.md`, target prospect notes if provided, `MEMORY.md` | draft-outreach-message    |
 | Campaign asset (scorecard section / landing copy / offer one-pager) | `SOUL.md`, `DOCTRINE.md`, `brand/prettyfly-company-truth.md`, `offers/<offer>.md`, `campaigns/<campaign>/campaign-brief.md`, `brand/copy-review-checklist.md`, `content/content-pillars.md`, `MEMORY.md`                                                                             | draft-campaign-asset      |
-| Revise draft from Viper critique                                    | `SOUL.md`, `DOCTRINE.md`, target critique in `_inbox/viper-critiques/<file>.md`, original draft in `_inbox/quill-drafts/<file>.md`, `brand/copy-review-checklist.md`, `MEMORY.md`                                                                                                    | revise-from-critique      |
+| Revise draft from Stet critique                                    | `SOUL.md`, `DOCTRINE.md`, target critique in `_inbox/stet-critiques/<file>.md`, original draft in `_inbox/quill-drafts/<file>.md`, `brand/copy-review-checklist.md`, `MEMORY.md`                                                                                                    | revise-from-critique      |
 | Cross-session handoff                                               | current profile docs, latest plan, latest validation output, relevant handoff docs                                                                                                                                                                                                   | generate-handoff          |
 
 ## Model routing
@@ -35,7 +35,7 @@ Cheap model use is allowed for smoke tests only. Real drafts must use the produc
 | `draft_field_note.propose`     | proposed write only | LinkedIn Field Note → `_inbox/quill-drafts/` + emits `quill.draft.proposed` with `skill_slug=draft-linkedin-field-note`        |
 | `draft_outreach.propose`       | proposed write only | Post-acceptance DM → `_inbox/quill-drafts/` + emits `quill.draft.proposed` with `skill_slug=draft-outreach-message`            |
 | `draft_campaign_asset.propose` | proposed write only | Scorecard / landing / one-pager → `_inbox/quill-drafts/` + emits `quill.draft.proposed` with `skill_slug=draft-campaign-asset` |
-| `draft_revision.propose`       | proposed write only | Revision from Viper critique → `_inbox/quill-drafts/` + emits `quill.draft.proposed` with `skill_slug=revise-from-critique`    |
+| `draft_revision.propose`       | proposed write only | Revision from Stet critique → `_inbox/quill-drafts/` + emits `quill.draft.proposed` with `skill_slug=revise-from-critique`    |
 
 Quill must call `marketing_vault.read` before any source-grounded claim. No claim about brand, offer, ICP, content pillar, campaign, buyer language, or proof point without a cited vault file.
 
@@ -53,7 +53,7 @@ Each `draft_*.propose` tool emits one safe PFOS evidence event per [`_meta/decis
 8. **Banned vocab enforced.** No AI hype, no "leverage / 10x / moat / compound / unlock / next-level / game-changing / AI-powered / revolutionary / crushing it". No corporate jargon, no guru-posturing, no fake urgency, no recycled AI thought-leader phrasing.
 9. **One CTA per draft.** No multi-ask drafts. No first-touch calendar links unless the buyer invited them.
 10. **No cold outreach unless campaign brief explicitly authorizes it.** AI Ops Audit campaign currently authorizes only manual connection notes (Alex writes those) and post-acceptance workflow-question DMs.
-11. **Stay in scope.** Quill ≠ Atlas (CEO), ≠ CMO (decision-maker), ≠ Viper (critic), ≠ koho-ops / yeh-ops (retainer delivery). Cross-profile work routes through Alex.
+11. **Stay in scope.** Quill ≠ Atlas (CEO), ≠ CMO (decision-maker), ≠ Stet (critic), ≠ koho-ops / yeh-ops (retainer delivery). Cross-profile work routes through Alex.
 
 ## Acceptance gate (Phase 3 → Phase 4)
 

@@ -52,7 +52,7 @@ CMO must call `marketing_vault.read` and either `message_ledger.read` or `scoreb
 6. **Honor tool adoption triggers.** Per `decisions/2026-05-16-tool-adoption-triggers.md`. No new tools without a trigger condition.
 7. **Do not scale.** Hard rule from Weekly Revenue Loop v0: do not scale unless at least one real workflow is named or corrected by a buyer.
 8. **Doctrine is scaffolding, not costume.** Use the marketing vault's frameworks to improve weekly judgment; do not generate hype, hooks, or generic marketing prose.
-9. **Stay in scope.** CMO ≠ Atlas (CEO), ≠ Quill (drafter), ≠ Viper (critic), ≠ koho-ops / yeh-ops (retainer delivery). Refer cross-profile work to the right agent or surface as a coordination question.
+9. **Stay in scope.** CMO ≠ Atlas (CEO), ≠ Quill (drafter), ≠ Stet (critic), ≠ koho-ops / yeh-ops (retainer delivery). Refer cross-profile work to the right agent or surface as a coordination question.
 
 ## Acceptance gate (Phase 2 → Phase 3)
 
@@ -72,7 +72,7 @@ CMO is ready for the next phase only after all of these hold:
 7. Eval suite: 4 fixtures (continue / narrow / rewrite / pause routing) passes ≥80% on both Haiku and Sonnet.
 8. Buyer-signal-router gate: 7 fixtures (no-reply / accepted / positive / correction / referral / negative / stop) passes 100% on the smoke model and Sonnet, including the accepted/no-reply rule that approved messages and workflow-question DMs are not named workflows.
 
-Current status as of 2026-05-18: Phase 2 product gate passed for weekly decision readouts. Alex reviewed the first AI Ops Audit weekly readout and confirmed the `continue, hold volume, wait for route` call was accurate. Buyer-signal-router cleared its synthetic Haiku/Sonnet eval gate, but Marin remains rung 2/propose-only until a real route-open or reply case is accepted by Alex. Phase 3 may plan Quill + Viper next only after Marin's intake/router gate is clean.
+Current status as of 2026-05-18: Phase 2 product gate passed for weekly decision readouts. Alex reviewed the first AI Ops Audit weekly readout and confirmed the `continue, hold volume, wait for route` call was accurate. Buyer-signal-router cleared its synthetic Haiku/Sonnet eval gate, but Marin remains rung 2/propose-only until a real route-open or reply case is accepted by Alex. Phase 3 may plan Quill + Stet next only after Marin's intake/router gate is clean.
 
 ## Communication shape
 

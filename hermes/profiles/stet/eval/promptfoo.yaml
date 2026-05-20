@@ -1,15 +1,15 @@
-description: Viper pre-launch critic evals — verifies critiques cite sources, name fix-paths, enforce kill triggers, and produce verdicts.
+description: Stet pre-launch critic evals — verifies critiques cite sources, name fix-paths, enforce kill triggers, and produce verdicts.
 
 # Atlas eval points at exec:python ../../../../pf-runtime/scripts/eval_profile_prompt.py
-# which is archived. Viper uses the anthropic provider directly so the suite
+# which is archived. Stet uses the anthropic provider directly so the suite
 # actually runs. Requires ANTHROPIC_API_KEY in env.
 
 prompts:
-  - file://fixtures/viper-system-prompt.md
+  - file://fixtures/stet-system-prompt.md
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6
-    label: viper-sonnet
+    label: stet-sonnet
     config:
       max_tokens: 2000
 

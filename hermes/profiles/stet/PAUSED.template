@@ -1,7 +1,7 @@
 PAUSED placeholder per ADR 2026-05-18-agent-shape-11-file-contract.md.
 
-To pause Viper runtime: `touch ~/.hermes/profiles/viper/PAUSED` (or
-`touch ~/Projects/agents/hermes/profiles/viper/PAUSED` if running from repo).
+To pause Stet runtime: `touch ~/.hermes/profiles/stet/PAUSED` (or
+`touch ~/Projects/agents/hermes/profiles/stet/PAUSED` if running from repo).
 
 To resume: `rm` that PAUSED file.
 

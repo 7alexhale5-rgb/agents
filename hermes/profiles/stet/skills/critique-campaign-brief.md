@@ -2,7 +2,7 @@
 name: critique-campaign-brief
 description: Critique one campaign brief at ~/Projects/marketing/campaigns/<name>/campaign-brief.md. Apply kill-list, tool-trigger, do-not-scale, market-thesis tests. Verdict SHIP/REVISE/KILL.
 input: campaign slug (e.g. "prettyfly-ai-ops-audit-v0")
-output: markdown to ~/Projects/marketing/_inbox/viper-critiques/{YYYY-MM-DD}-critique-campaign-{slug}.md + paired viper.critique.proposed PFOS event
+output: markdown to ~/Projects/marketing/_inbox/stet-critiques/{YYYY-MM-DD}-critique-campaign-{slug}.md + paired stet.critique.proposed PFOS event
 ---
 
 # Skill: critique-campaign-brief
@@ -15,7 +15,7 @@ Read one campaign brief, apply campaign-level tests (kill-list, tool-trigger, do
 
 - Read-only on the campaign brief and the campaign dir.
 - Cite a vault file for every flagged finding.
-- No rewrite generation — CMO + Alex revise the brief, not Viper.
+- No rewrite generation — CMO + Alex revise the brief, not Stet.
 
 ## Inputs
 
@@ -58,15 +58,15 @@ Read one campaign brief, apply campaign-level tests (kill-list, tool-trigger, do
 
 6. **Decide verdict.** Kill trigger → `KILL`. Otherwise 1+ critical or 3+ warn → `REVISE`. Otherwise `SHIP`.
 
-7. **Write critique** to `~/Projects/marketing/_inbox/viper-critiques/{YYYY-MM-DD}-critique-campaign-{slug}.md`. `target_artifact_type: campaign-brief`. Body MUST include `## Inversion` and `## Door classification` sections.
+7. **Write critique** to `~/Projects/marketing/_inbox/stet-critiques/{YYYY-MM-DD}-critique-campaign-{slug}.md`. `target_artifact_type: campaign-brief`. Body MUST include `## Inversion` and `## Door classification` sections.
 
 8. **Emit PFOS event**:
 
 ```bash
 python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
-  --profile viper \
+  --profile stet \
   --tool critique_campaign.propose \
-  --readout-path "_inbox/viper-critiques/<YYYY-MM-DD>-critique-campaign-<slug>.md" \
+  --readout-path "_inbox/stet-critiques/<YYYY-MM-DD>-critique-campaign-<slug>.md" \
   --extra-json '{"verdict":"<SHIP|REVISE|KILL>","critical":<N>,"warn":<N>,"info":<N>,"kill_triggers_hit":[<list>],"door":"<two-way|one-way>","target_artifact_path":"campaigns/<slug>/campaign-brief.md"}'
 ```
 

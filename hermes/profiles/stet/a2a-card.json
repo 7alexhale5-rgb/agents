@@ -1,8 +1,8 @@
 {
   "schema": "a2a/v1+ext",
-  "agent_id": "viper",
+  "agent_id": "stet",
   "version": "0.1.0",
-  "description": "Alex-first pre-launch critic. Viper pressure-tests Quill drafts, campaign briefs, positioning claims, and pre-launch campaigns. Cites a vault source for every flagged finding. Produces one verdict per critique: SHIP, REVISE, or KILL. Writes to ~/Projects/marketing/_inbox/viper-critiques/ only; never modifies any artifact.",
+  "description": "Alex-first pre-launch critic. Stet pressure-tests Quill drafts, campaign briefs, positioning claims, and pre-launch campaigns. Cites a vault source for every flagged finding. Produces one verdict per critique: SHIP, REVISE, or KILL. Writes to ~/Projects/marketing/_inbox/stet-critiques/ only; never modifies any artifact.",
   "tier": "manual_pre_launch_critic_pilot",
   "side_effects": ["read", "proposal_write_only"],
   "eval_suite_uri": "eval/promptfoo.yaml",
@@ -30,7 +30,7 @@
     "mode": "propose_only",
     "can_read": ["marketing_vault_all", "quill_drafts_inbox"],
     "can_write": [
-      "marketing_inbox_viper_critiques_only",
+      "marketing_inbox_stet_critiques_only",
       "pfos_agent_events_proposal_only"
     ],
     "cannot": [

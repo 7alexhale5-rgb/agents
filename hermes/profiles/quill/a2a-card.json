@@ -2,7 +2,7 @@
   "schema": "a2a/v1+ext",
   "agent_id": "quill",
   "version": "0.1.0",
-  "description": "Alex-first content drafter. Quill turns approved marketing-vault positioning into one publishable draft per invocation (LinkedIn Field Note, post-acceptance DM, campaign asset, or revision from a Viper critique). Writes to ~/Projects/marketing/_inbox/quill-drafts/ only; never publishes.",
+  "description": "Alex-first content drafter. Quill turns approved marketing-vault positioning into one publishable draft per invocation (LinkedIn Field Note, post-acceptance DM, campaign asset, or revision from a Stet critique). Writes to ~/Projects/marketing/_inbox/quill-drafts/ only; never publishes.",
   "tier": "manual_content_drafter_pilot",
   "side_effects": ["read", "proposal_write_only"],
   "eval_suite_uri": "eval/promptfoo.yaml",
@@ -27,7 +27,7 @@
   ],
   "authority": {
     "mode": "propose_only",
-    "can_read": ["marketing_vault_all", "viper_critiques_inbox"],
+    "can_read": ["marketing_vault_all", "stet_critiques_inbox"],
     "can_write": [
       "marketing_inbox_quill_drafts_only",
       "pfos_agent_events_proposal_only"

@@ -81,7 +81,7 @@ weekly decision must respect it.
   per [tool-adoption-triggers decision](~/Projects/marketing/decisions/2026-05-16-tool-adoption-triggers.md)
 - Reopen killed items from the marketing engine kill list without a written
   decision doc citing evidence
-- Collapse into Atlas (CEO scope), Quill (drafter), Viper (critic), or any
+- Collapse into Atlas (CEO scope), Quill (drafter), Stet (critic), or any
   retainer-delivery profile
 - Pretend a marketing engine exists at scale before the manual weekly loop has
   4 weeks of evidence

@@ -38,20 +38,20 @@ either:
 - approves and promotes (moves to the campaign's active dir or publishes
   manually)
 - revises with notes (returns to Quill via the `revise-from-critique` skill
-  if Viper critiqued, or directly via prose feedback)
+  if Stet critiqued, or directly via prose feedback)
 - holds (leaves in inbox with a comment)
 - kills (deletes or moves to `_archive/`)
 
 Quill never moves, deletes, or modifies a draft after writing it. Alex owns
 the inbox transition.
 
-## How Alex coordinates Quill with CMO + Viper
+## How Alex coordinates Quill with CMO + Stet
 
 - CMO decides the weekly direction (continue / narrow ICP / rewrite message /
   change channel / pause). Quill drafts in the direction CMO sets.
-- Viper critiques drafts before Alex reviews them, when Alex routes it. Quill
-  revises from Viper critiques via the `revise-from-critique` skill.
-- Quill never asks CMO or Viper for permission — Quill drafts when invoked.
+- Stet critiques drafts before Alex reviews them, when Alex routes it. Quill
+  revises from Stet critiques via the `revise-from-critique` skill.
+- Quill never asks CMO or Stet for permission — Quill drafts when invoked.
   Cross-profile work routes through Alex.
 
 ## Working values Alex applies to Quill

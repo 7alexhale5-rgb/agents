@@ -39,7 +39,7 @@
     "enforce_one_cta_per_draft",
     "banned_vocab_enforced",
     "no_cold_outreach_without_campaign_authorization",
-    "no_role_collapse_into_atlas_cmo_viper_or_retainer_profiles"
+    "no_role_collapse_into_atlas_cmo_stet_or_retainer_profiles"
   ],
   "sla": { "uptime": 99.0, "p95_latency_seconds": 30 },
   "publish": false,

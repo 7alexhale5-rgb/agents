@@ -100,7 +100,7 @@ Every campaign-relevant proposal includes:
 
 - Atlas (CEO scope — CMO covers marketing, Atlas covers business operating decisions)
 - Quill (drafter — CMO directs, Quill writes; CMO does not draft polished copy)
-- Viper (critic — CMO proposes, Viper pressure-tests)
+- Stet (critic — CMO proposes, Stet pressure-tests)
 - Retainer-delivery profile (koho-ops / yeh-ops handle client delivery; CMO covers acquisition motion only)
 - Any agent that publishes, sends, or schedules external messages
 
@@ -116,5 +116,5 @@ The marketing vault wins. Re-read the canonical files. If a conflict is real and
 - Weekly Revenue Loop v0: `~/Projects/marketing/metrics/weekly-revenue-loop-v0.md`
 - Marketing engine kill list: `~/Projects/marketing/decisions/2026-05-16-marketing-engine-kill-list.md`
 - Tool adoption triggers: `~/Projects/marketing/decisions/2026-05-16-tool-adoption-triggers.md`
-- Atlas/CMO/Quill/Viper boundary: `~/Projects/marketing/agents/atlas-quill-viper-boundary.md`
+- Atlas/CMO/Quill/Stet boundary: `~/Projects/marketing/agents/atlas-quill-stet-boundary.md`
 - $1M-pivot doctrine: `~/Projects/memory-vault/decisions/2026-05-18-agent-fleet-pivot-1m-arr.md`

@@ -1,4 +1,4 @@
-profile: viper
+profile: stet
 
 agent:
   max_iterations: 32
@@ -31,9 +31,9 @@ tools:
       scope: ~/Projects/marketing/_inbox/quill-drafts/
     critique_draft.propose:
       authority: proposed_write_only
-      write_scope: ~/Projects/marketing/_inbox/viper-critiques/
+      write_scope: ~/Projects/marketing/_inbox/stet-critiques/
       event:
-        type: viper.critique.proposed
+        type: stet.critique.proposed
         status: pending
         surface: cli
         cwd_project: marketing
@@ -44,9 +44,9 @@ tools:
         data_proposal_status: proposed
     critique_campaign.propose:
       authority: proposed_write_only
-      write_scope: ~/Projects/marketing/_inbox/viper-critiques/
+      write_scope: ~/Projects/marketing/_inbox/stet-critiques/
       event:
-        type: viper.critique.proposed
+        type: stet.critique.proposed
         status: pending
         surface: cli
         cwd_project: marketing
@@ -57,9 +57,9 @@ tools:
         data_proposal_status: proposed
     critique_positioning.propose:
       authority: proposed_write_only
-      write_scope: ~/Projects/marketing/_inbox/viper-critiques/
+      write_scope: ~/Projects/marketing/_inbox/stet-critiques/
       event:
-        type: viper.critique.proposed
+        type: stet.critique.proposed
         status: pending
         surface: cli
         cwd_project: marketing
@@ -70,9 +70,9 @@ tools:
         data_proposal_status: proposed
     pressure_test.propose:
       authority: proposed_write_only
-      write_scope: ~/Projects/marketing/_inbox/viper-critiques/
+      write_scope: ~/Projects/marketing/_inbox/stet-critiques/
       event:
-        type: viper.critique.proposed
+        type: stet.critique.proposed
         status: pending
         surface: cli
         cwd_project: marketing
@@ -97,7 +97,7 @@ skills:
     - generate-handoff
 
 channels:
-  # Viper has no external channels. Writes go to marketing/_inbox/viper-critiques/.
+  # Stet has no external channels. Writes go to marketing/_inbox/stet-critiques/.
   slack:
     enabled: false
 
@@ -108,7 +108,7 @@ approval:
   proposals:
     enabled: true
     execute: false
-    write_target: ~/Projects/marketing/_inbox/viper-critiques/
+    write_target: ~/Projects/marketing/_inbox/stet-critiques/
 
 guardrails:
   spend_cap_per_day_usd: 5
@@ -125,4 +125,4 @@ guardrails:
 
 logging:
   trajectory_jsonl: true
-  langfuse_project: hermes-viper
+  langfuse_project: hermes-stet

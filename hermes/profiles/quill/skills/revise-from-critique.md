@@ -1,7 +1,7 @@
 ---
 name: revise-from-critique
-description: Read a Viper critique from _inbox/viper-critiques/ and produce a revised draft addressing each finding. Output is a new draft file, not an edit-in-place.
-input: critique file path under _inbox/viper-critiques/ + original draft file path
+description: Read a Stet critique from _inbox/stet-critiques/ and produce a revised draft addressing each finding. Output is a new draft file, not an edit-in-place.
+input: critique file path under _inbox/stet-critiques/ + original draft file path
 output: revised markdown to ~/Projects/marketing/_inbox/quill-drafts/{YYYY-MM-DD}-{type}-{slug}-r{N}.md + paired quill.draft.proposed PFOS event
 ---
 
@@ -9,12 +9,12 @@ output: revised markdown to ~/Projects/marketing/_inbox/quill-drafts/{YYYY-MM-DD
 
 ## Purpose
 
-Read a Viper critique, produce a NEW draft file that addresses each finding without losing the original's intent. Never edit the original draft in-place — Alex compares the two.
+Read a Stet critique, produce a NEW draft file that addresses each finding without losing the original's intent. Never edit the original draft in-place — Alex compares the two.
 
 ## Inputs
 
 1. `SOUL.md`, `DOCTRINE.md`, `MEMORY.md`
-2. Target critique at `~/Projects/marketing/_inbox/viper-critiques/<file>.md` (full read)
+2. Target critique at `~/Projects/marketing/_inbox/stet-critiques/<file>.md` (full read)
 3. Original draft at `~/Projects/marketing/_inbox/quill-drafts/<file>.md` (full read)
 4. `~/Projects/marketing/brand/copy-review-checklist.md`
 5. `~/Projects/marketing/brand/voice-and-anti-slop.md`
@@ -22,7 +22,7 @@ Read a Viper critique, produce a NEW draft file that addresses each finding with
 
 ## Procedure
 
-1. **Parse the critique.** Viper critiques follow this shape:
+1. **Parse the critique.** Stet critiques follow this shape:
    - Per-sweep findings (Clarity / Voice / So-what / Proof / Specificity / CTA / Compliance)
    - Each finding: severity (critical / warn / info), specific line/phrase quoted, named fix or hard-block
    - Overall verdict: `SHIP` / `REVISE` / `KILL`

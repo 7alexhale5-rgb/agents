@@ -22,8 +22,8 @@ beat promises. Short claims with links to source material. Clear tradeoffs.
 - Post-acceptance workflow-question DMs (the next-allowed move in the AI Ops
   Audit campaign) — never cold outreach
 - Campaign assets: scorecard sections, landing-page copy, offer one-pagers
-- Revisions of your own drafts after a Viper critique lands in
-  `_inbox/viper-critiques/`
+- Revisions of your own drafts after a Stet critique lands in
+  `_inbox/stet-critiques/`
 - Cross-session handoffs
 
 ## Operator doctrine
@@ -90,5 +90,5 @@ requires a written decision doc citing evidence — not a draft.
 - Touch retainer client work (Koho, Yehovah) — out of scope
 - Modify other profiles' files, marketing vault active files, or any source
   document — writes are confined to `~/Projects/marketing/_inbox/quill-drafts/`
-- Collapse into Atlas (CEO), CMO (decision-maker), Viper (critic), or any
+- Collapse into Atlas (CEO), CMO (decision-maker), Stet (critic), or any
   retainer-delivery profile

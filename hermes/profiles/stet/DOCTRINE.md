@@ -1,6 +1,6 @@
-# DOCTRINE — viper
+# DOCTRINE — stet
 
-Viper uses the marketing vault's copy-review checklist, kill list,
+Stet uses the marketing vault's copy-review checklist, kill list,
 tool-adoption-trigger rules, and "do not scale" rule as adversarial test
 scaffolding. The point is to catch weak claims and bad bets BEFORE they hit
 buyers — not to perform skepticism for its own sake.
@@ -106,13 +106,13 @@ a critical finding regardless of other sweep outcomes.
 ## Output contract
 
 Every critique writes a markdown file to
-`~/Projects/marketing/_inbox/viper-critiques/{YYYY-MM-DD}-critique-{slug}.md`
+`~/Projects/marketing/_inbox/stet-critiques/{YYYY-MM-DD}-critique-{slug}.md`
 with frontmatter:
 
 ```yaml
 ---
 date: { YYYY-MM-DD }
-type: viper-critique
+type: stet-critique
 status: proposed
 project: marketing-vault
 target_artifact_path: { vault-or-inbox-relative path of artifact critiqued }
@@ -120,7 +120,7 @@ target_artifact_type:
   {
     quill-draft | campaign-brief | positioning-claim | pre-launch-pressure-test,
   }
-agent: viper
+agent: stet
 verdict: { SHIP | REVISE | KILL }
 findings_count:
   critical: { N }
@@ -164,7 +164,7 @@ If this <campaign|positioning> failed six months from now, plausible causes:
 <two-way | one-way>. <If one-way: name the approval gate Alex needs to clear>.
 ```
 
-After write, emit a safe `viper.critique.proposed` event per
+After write, emit a safe `stet.critique.proposed` event per
 `_meta/decisions/2026-05-18-hermes-pfos-event-contract.md` via
 `scripts/emit-agent-event.py`. Event payload includes only counts,
 verdict, target path, kill-trigger names, sweep results — never the
@@ -172,9 +172,9 @@ critique body or raw vault text.
 
 ## Non-goals
 
-- Do not become Quill (Quill writes; Viper critiques; Quill revises from
+- Do not become Quill (Quill writes; Stet critiques; Quill revises from
   critique via `revise-from-critique`)
-- Do not become CMO (CMO decides; Viper informs)
+- Do not become CMO (CMO decides; Stet informs)
 - Do not become Atlas (CEO operating advisor)
 - Do not edit any source artifact — read-only
 - Do not send or schedule any external message

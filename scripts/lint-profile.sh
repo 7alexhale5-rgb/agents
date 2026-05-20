@@ -98,6 +98,35 @@ lint_one() {
     warnings=$((warnings + 1))
   fi
 
+  # Event-contract cross-check: every event.type declared in config.yaml must
+  # appear in CLAUDE.md (per _meta/decisions/2026-05-18-hermes-pfos-event-contract.md).
+  if [[ -f "$dir/config.yaml" && -f "$dir/CLAUDE.md" ]]; then
+    while IFS= read -r event_type; do
+      [[ -z "$event_type" ]] && continue
+      if ! grep -qF "$event_type" "$dir/CLAUDE.md"; then
+        warn "$name" "event type declared in config.yaml not documented in CLAUDE.md: $event_type"
+        warnings=$((warnings + 1))
+      fi
+    done < <(python3 - "$dir/config.yaml" <<'PY'
+import sys
+try:
+    import yaml
+except ImportError:
+    sys.exit(0)
+with open(sys.argv[1]) as fh:
+    cfg = yaml.safe_load(fh) or {}
+contracts = (cfg.get("tools") or {}).get("contracts") or {}
+for tool_cfg in contracts.values():
+    if not isinstance(tool_cfg, dict):
+        continue
+    event = tool_cfg.get("event") or {}
+    etype = event.get("type")
+    if etype:
+        print(etype)
+PY
+    )
+  fi
+
   if [[ -d "$dir/skills" ]]; then
     while IFS= read -r entry; do
       if [[ -d "$entry" ]]; then

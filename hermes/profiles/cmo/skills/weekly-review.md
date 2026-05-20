@@ -46,7 +46,19 @@ Turn the marketing vault into ONE weekly decision and ONE smallest next action, 
 
 8. **Write** — output to `~/Projects/marketing/_inbox/cmo-readouts/{YYYY-MM-DD}-week-of-{YYYY-MM-DD}.md` using the Weekly Review Template structure.
 
-9. **Emit safe event summary** — after the readout is written, emit a `cmo.weekly_decision.proposed` event summary per `_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`. Include only the decision, counts, source file names, confidence, readout path relative to `~/Projects/marketing/`, and `private_payload_redacted: true`.
+9. **Emit safe event summary** — after the readout is written, run the canonical emitter:
+
+   ```bash
+   source ~/.config/prettyfly-marketing/hermes-tokens.env
+   python3 ~/Projects/agents/scripts/emit-agent-event.py \
+     --profile cmo \
+     --tool weekly_decision.propose \
+     --readout-path "_inbox/cmo-readouts/<YYYY-MM-DD>-week-of-<YYYY-MM-DD>.md" \
+     --decision <continue|narrow|rewrite|change-channel|pause> \
+     --confidence <0.0-1.0>
+   ```
+
+   The emitter loads CMO's `config.yaml` event block, builds an ADR-compliant payload (per `_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`), and POSTs to PFOS `/api/silos/skills/agent-event`. Successful runs print the inserted row UUID. Do not hand-write the event payload — the contract is enforced by `hermes/lib/agent_events.py`.
 
 ## Output shape
 

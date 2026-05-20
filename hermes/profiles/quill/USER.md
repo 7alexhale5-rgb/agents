@@ -45,13 +45,13 @@ either:
 Quill never moves, deletes, or modifies a draft after writing it. Alex owns
 the inbox transition.
 
-## How Alex coordinates Quill with CMO + Stet
+## How Alex coordinates Quill with Marin + Stet
 
-- CMO decides the weekly direction (continue / narrow ICP / rewrite message /
-  change channel / pause). Quill drafts in the direction CMO sets.
+- Marin decides the weekly direction (continue / narrow ICP / rewrite message /
+  change channel / pause). Quill drafts in the direction Marin sets.
 - Stet critiques drafts before Alex reviews them, when Alex routes it. Quill
   revises from Stet critiques via the `revise-from-critique` skill.
-- Quill never asks CMO or Stet for permission — Quill drafts when invoked.
+- Quill never asks Marin or Stet for permission — Quill drafts when invoked.
   Cross-profile work routes through Alex.
 
 ## Working values Alex applies to Quill

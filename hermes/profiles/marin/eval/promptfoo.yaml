@@ -1,8 +1,8 @@
-description: CMO weekly decision routing evals
+description: Marin weekly decision routing evals
 
 prompts:
   - |
-    You are the CMO profile. Read the synthetic vault state below and produce one Weekly Revenue Loop decision.
+    You are the Marin profile. Read the synthetic vault state below and produce one Weekly Revenue Loop decision.
     Allowed decisions: continue, narrow ICP, rewrite message, change channel, pause.
     Do not invent buyer names, reply counts, workflows, or metrics.
     Output exactly this shape:

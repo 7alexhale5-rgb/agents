@@ -1,6 +1,6 @@
-# MEMORY — cmo
+# MEMORY — marin
 
-Append-curated narrative memory. Not append-only — Alex or CMO can edit anchors when context changes.
+Append-curated narrative memory. Not append-only — Alex or Marin can edit anchors when context changes.
 
 ## Boot context (2026-05-18)
 
@@ -26,7 +26,7 @@ Append-curated narrative memory. Not append-only — Alex or CMO can edit anchor
 
 ### Shelved as distractions (per $1M-pivot 2026-05-18)
 
-Advisory Board, Mike-Lawdbot, Sportsbook, Rainman, Gravity Claw, Paperclip — none producing income, classified as distractions. CMO will not propose campaigns for these.
+Advisory Board, Mike-Lawdbot, Sportsbook, Rainman, Gravity Claw, Paperclip — none producing income, classified as distractions. Marin will not propose campaigns for these.
 
 ### Active sub-projects in scope (Phase 1.5 audit verdicts)
 
@@ -36,4 +36,4 @@ FREEZE (preserve, no active work): decision-maker-identifier, gravity-stack-koho
 
 ## Recent anchors
 
-(Populated as CMO runs weekly reviews.)
+(Populated as Marin runs weekly reviews.)

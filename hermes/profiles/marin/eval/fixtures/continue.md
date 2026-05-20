@@ -17,7 +17,7 @@ Source: message-outcome-ledger-v0.md
 - Diagnostics booked: 0
 - WORKS Reviews offered: 0
 
-# Expected CMO Behavior
+# Expected Marin Behavior
 
 Decision: continue.
 

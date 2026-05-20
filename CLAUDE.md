@@ -13,14 +13,14 @@ You've opened the consolidated Hermes monorepo. This file is the Layer-1 router 
 | Task                                                                                                | Descend to                                     |
 | --------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
 | Source-grounded CEO operating advisor; weekly brief; decision memos                                 | `hermes/profiles/atlas-ceo/CLAUDE.md`          |
-| Weekly campaign decision + ICP + content direction + revenue-loop review                            | `hermes/profiles/cmo/CLAUDE.md` (Phase 2)      |
+| Weekly campaign decision + ICP + content direction + revenue-loop review                            | `hermes/profiles/marin/CLAUDE.md` (Phase 2)      |
 | Content drafting from approved positioning (drafts to `_inbox/quill-drafts/`, never publishes)      | `hermes/profiles/quill/CLAUDE.md`              |
 | Pre-launch pressure-test on campaigns, claims, positioning (critiques to `_inbox/stet-critiques/`) | `hermes/profiles/stet/CLAUDE.md`              |
 | Koho retainer delivery (Marc routing, ConsultOps demos, Excerpa work)                               | `hermes/profiles/koho-ops/CLAUDE.md` (Phase 5) |
 | Yehovah retainer delivery (trial-to-GA monitoring, CTO duties)                                      | `hermes/profiles/yeh-ops/CLAUDE.md` (Phase 5)  |
 | Repo-wide refactor / multi-file coordination / PR drafts on revenue products                        | `hermes/profiles/codex/CLAUDE.md` (Phase 5.5)  |
 
-Profiles in parentheses are scheduled for build per the plan; `atlas-ceo`, `codex`, `cmo`, `quill`, and `stet` exist on disk as of 2026-05-20 (Phase 3 of $1M plan landed).
+Profiles in parentheses are scheduled for build per the plan; `atlas-ceo`, `codex`, `marin`, `quill`, and `stet` exist on disk as of 2026-05-20 (Phase 3 of $1M plan landed).
 
 ### Karpathy ladder per profile
 
@@ -74,13 +74,13 @@ These tools live at env scope and stay where they are. Per-project addenda layer
 
 ## Phase pointer
 
-**Current phase: $1M-pivot Phase 2 (CMO weekly decision pilot) — in progress 2026-05-18.**
+**Current phase: $1M-pivot Phase 2 (Marin weekly decision pilot) — in progress 2026-05-18.**
 
 Per `~/.claude/plans/here-is-what-we-joyful-torvalds.md`:
 
 - Phase 1: archive dead weight (pf-runtime, marketplace, non-revenue profiles, experimental forks) ✅ landed 2026-05-18
 - Phase 1.5: PrettyFly sub-project revenue audit (audit-engine, decision-maker-identifier, LAIK, gravity-stack-koho-starter, etc.)
-- Phase 2: build CMO profile from Atlas template (1 week)
+- Phase 2: build Marin profile from Atlas template (1 week)
 - Phase 3: build Quill + Stet from Atlas template (1 week)
 - Phase 4: extend Atlas with marketing-vault read path (2-3 hours)
 - Phase 5: build koho-ops + yeh-ops retainer-delivery profiles (2 weeks)

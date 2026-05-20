@@ -30,7 +30,7 @@ gating each one.
 4. Compute verdict distribution: `{ship: N, revise: N, kill: N}`.
 5. Write evidence to
    `hermes/profiles/stet/eval/{YYYY-MM-DD}-self-audit.md` with frontmatter
-   matching CMO/Quill shape, plus `recent_critiques:` array and
+   matching Marin/Quill shape, plus `recent_critiques:` array and
    `verdict_distribution:` object.
 6. Emit the event:
    ```bash
@@ -43,7 +43,7 @@ gating each one.
 
 ## Anti-patterns
 
-- Same as CMO/Quill — no skipping, no editing failing tests to inflate pass
+- Same as Marin/Quill — no skipping, no editing failing tests to inflate pass
   rate, always list failures.
 - Specific to Stet: do NOT self-critique critique quality (that's a meta-loop
   Viper would love but adds zero value — eval suite already checks for
@@ -51,4 +51,4 @@ gating each one.
 
 ## Failure modes
 
-- Same as CMO/Quill.
+- Same as Marin/Quill.

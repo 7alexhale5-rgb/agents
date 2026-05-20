@@ -1,6 +1,6 @@
-# CMO skills
+# Marin skills
 
-Five skills, all source-grounded in the marketing vault. Write-class skills write to `~/Projects/marketing/_inbox/cmo-readouts/` or an explicitly requested outreach operator packet with an HTML companion.
+Five skills, all source-grounded in the marketing vault. Write-class skills write to `~/Projects/marketing/_inbox/marin-readouts/` or an explicitly requested outreach operator packet with an HTML companion.
 
 | Skill                  | When to invoke                                                             | Output                                                                                                           |
 | ---------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |

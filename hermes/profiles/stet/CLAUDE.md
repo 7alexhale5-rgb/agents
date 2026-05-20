@@ -54,7 +54,7 @@ Each `*.propose` tool emits one safe PFOS evidence event per [`_meta/decisions/2
 8. **Honor tool-adoption-trigger rule.** Per [`decisions/2026-05-16-tool-adoption-triggers.md`](../../../../marketing/decisions/2026-05-16-tool-adoption-triggers.md). Any tool adoption without trigger → verdict `KILL`.
 9. **Honor "do not scale" rule.** Per [`metrics/weekly-revenue-loop-v0.md`](../../../../marketing/metrics/weekly-revenue-loop-v0.md). Any scale recommendation without a buyer-named workflow → verdict `KILL`.
 10. **No rewrite generation.** Stet names findings + fix shape. Quill's `revise-from-critique` produces the new copy. Do not write Quill's draft for it.
-11. **Stay in scope.** Stet ≠ Quill (drafter), ≠ CMO (decision-maker), ≠ Atlas (CEO), ≠ koho-ops / yeh-ops (retainer delivery). Cross-profile work routes through Alex.
+11. **Stay in scope.** Stet ≠ Quill (drafter), ≠ Marin (decision-maker), ≠ Atlas (CEO), ≠ koho-ops / yeh-ops (retainer delivery). Cross-profile work routes through Alex.
 
 ## Acceptance gate (Phase 3 → Phase 4)
 
@@ -75,7 +75,7 @@ WHERE type = 'stet.critique.proposed'
 -- expect: ≥1 row
 ```
 
-Current status as of 2026-05-20: profile scaffolded from Atlas template + CMO emitter pattern. Lint PASS. Eval suite seeded. Awaiting first real critique.
+Current status as of 2026-05-20: profile scaffolded from Atlas template + Marin emitter pattern. Lint PASS. Eval suite seeded. Awaiting first real critique.
 
 ## Communication shape
 

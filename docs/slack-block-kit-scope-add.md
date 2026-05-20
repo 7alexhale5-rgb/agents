@@ -104,12 +104,12 @@ You should:
    Expect the count to include both the original `agent_events` row (status flipped) AND a sibling `approval_decision` row (audit trail).
 4. Tap the same button twice → second click returns 409 `{ok: false, reason: "not_pending"}` — the idempotency guard mirrors `poll-slack-approvals.py`.
 
-### 6. Switch CMO / Stet / Atlas skills to use the Block Kit emitter
+### 6. Switch Marin / Stet / Atlas skills to use the Block Kit emitter
 
 Once smoke passes, swap call sites in:
 
 - `hermes/profiles/atlas-ceo/skills/weekly-ceo-brief.md` → swap `notify_decision(...)` for `notify_decision_block_kit(...)`
-- `hermes/profiles/cmo/skills/weekly-review.md` → same swap
+- `hermes/profiles/marin/skills/weekly-review.md` → same swap
 - `hermes/profiles/stet/skills/critique-draft.md` → same swap
 
 Old emoji path remains operational throughout — these swaps are additive, not replacement. After one week of clean Block Kit operation, delete the legacy `notify_decision()` function + `scripts/poll-slack-approvals.py` + the cron entry for the poller.

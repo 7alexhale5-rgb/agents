@@ -402,7 +402,7 @@ class TestFleetLimitsFile(unittest.TestCase):
         limits = raw["limits"]
         # All four manually-capped profiles per the research must be present;
         # codex is intentionally absent (uncapped — refactor bursts).
-        for profile in ("atlas-ceo", "cmo", "stet", "quill"):
+        for profile in ("atlas-ceo", "marin", "stet", "quill"):
             self.assertIn(profile, limits)
             self.assertIsInstance(limits[profile], int)
             self.assertGreater(limits[profile], 0)
@@ -414,7 +414,7 @@ class TestFleetLimitsFile(unittest.TestCase):
     "Skipping live PFOS test. Set HERMES_TEST_LIVE_EMIT=1 to enable.",
 )
 class TestEmitEventLive(unittest.TestCase):
-    """Live test against PFOS — uses the real CMO profile.
+    """Live test against PFOS — uses the real Marin profile.
 
     Inserts a row tagged with ``test_marker`` in data; relies on Phase 4
     verifier to detect contract-shape regressions. Test-emitted rows are
@@ -423,15 +423,15 @@ class TestEmitEventLive(unittest.TestCase):
     """
 
     def test_live_smoke_against_cmo(self) -> None:
-        cmo_profile = ROOT / "hermes" / "profiles" / "cmo"
+        cmo_profile = ROOT / "hermes" / "profiles" / "marin"
         if not cmo_profile.is_dir():
-            self.skipTest(f"cmo profile not available at {cmo_profile}")
+            self.skipTest(f"marin profile not available at {cmo_profile}")
         result = emit_event(
             cmo_profile,
             "weekly_decision.propose",
             overrides={
                 "data": {
-                    "readout_path": "_inbox/cmo-readouts/live-test-marker.md",
+                    "readout_path": "_inbox/marin-readouts/live-test-marker.md",
                     "decision": "continue",
                     "test_marker": "hermes-lib-live-smoke",
                 },

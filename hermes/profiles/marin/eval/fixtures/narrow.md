@@ -16,7 +16,7 @@ Source: message-outcome-ledger-v0.md
 - Buyer corrections: 1 correction says the pain is handoff ownership, not AI tooling
 - Diagnostics booked: 0
 
-# Expected CMO Behavior
+# Expected Marin Behavior
 
 Decision: narrow ICP.
 

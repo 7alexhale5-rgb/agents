@@ -2,7 +2,7 @@
 # inbox-archive.sh — age out marketing-vault inbox files older than 14 days.
 #
 # Files in:
-#   ~/Projects/marketing/_inbox/cmo-readouts/
+#   ~/Projects/marketing/_inbox/marin-readouts/
 #   ~/Projects/marketing/_inbox/quill-drafts/
 #   ~/Projects/marketing/_inbox/stet-critiques/
 # that are older than 14 days move to ~/Projects/marketing/_inbox/_archive/YYYY-WW/.
@@ -24,7 +24,7 @@ archived=0
 flagged=0
 skipped=0
 
-for dir in cmo-readouts quill-drafts stet-critiques; do
+for dir in marin-readouts quill-drafts stet-critiques; do
   src="$INBOX_ROOT/$dir"
   [[ -d "$src" ]] || continue
 

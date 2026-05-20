@@ -5,7 +5,7 @@
 Initial profile. Built per the 11-file contract ADR + Hermes ↔ PFOS event
 contract ADR + sub-project trigger ADR (Phase 3 of `~/.claude/plans/here-is-what-we-joyful-torvalds.md`
 supersedes the 30-day trigger because Stet sits inside the same revenue
-motion as CMO + Quill).
+motion as Marin + Quill).
 
 - Identity: SOUL / DOCTRINE / USER / MEMORY written against marketing vault
   (voice-and-anti-slop, copy-review-checklist applied adversarially,

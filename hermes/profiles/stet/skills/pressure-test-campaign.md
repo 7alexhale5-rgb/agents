@@ -13,7 +13,7 @@ Pre-launch pressure test of a whole campaign — distinct from `critique-campaig
 
 ## Hard scope rules
 
-- Run only when Alex or CMO explicitly invokes for a pre-launch decision. Not a routine review.
+- Run only when Alex or Marin explicitly invokes for a pre-launch decision. Not a routine review.
 - Read-only across the entire campaign dir + adjacent vault inputs.
 - Verdict is binding for the launch scope named in the input — `SHIP` means Alex can launch under that scope; `REVISE` means hold launch until findings addressed; `KILL` means do not launch this scope, period.
 - Inversion + door classification are mandatory body sections.
@@ -29,7 +29,7 @@ Pre-launch pressure test of a whole campaign — distinct from `critique-campaig
 6. `~/Projects/marketing/metrics/weekly-revenue-loop-v0.md` — do-not-scale rule + revenue loop cadence
 7. `~/Projects/marketing/metrics/message-outcome-ledger-v0.md` — actual buyer language baseline
 8. `~/Projects/marketing/metrics/marketing-signal-contract-v0.md` — signal contract (what events the campaign produces)
-9. `~/Projects/marketing/agents/cmo-operating-brief.md` — CMO charter
+9. `~/Projects/marketing/agents/marin-operating-brief.md` — Marin charter
 
 ## Procedure
 
@@ -80,7 +80,7 @@ python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
 - SHIP verdict on a one-way door without a kill-switch condition
 - Inversion sections that don't map causes to specific findings
 - "Soft" KILL ("maybe don't launch yet") — pick a verdict
-- Generating the revised campaign — that's CMO + Alex, not Stet
+- Generating the revised campaign — that's Marin + Alex, not Stet
 
 ## Failure modes
 

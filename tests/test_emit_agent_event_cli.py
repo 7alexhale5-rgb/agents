@@ -55,8 +55,8 @@ class _Fixture:
 
 class TestParseArgs(unittest.TestCase):
     def test_required_args(self) -> None:
-        args = emit_cli.parse_args(["--profile", "cmo", "--tool", "weekly_decision.propose"])
-        self.assertEqual(args.profile, "cmo")
+        args = emit_cli.parse_args(["--profile", "marin", "--tool", "weekly_decision.propose"])
+        self.assertEqual(args.profile, "marin")
         self.assertEqual(args.tool, "weekly_decision.propose")
         self.assertIsNone(args.readout_path)
         self.assertIsNone(args.confidence)
@@ -64,16 +64,16 @@ class TestParseArgs(unittest.TestCase):
 
     def test_optional_flags(self) -> None:
         args = emit_cli.parse_args([
-            "--profile", "cmo",
+            "--profile", "marin",
             "--tool", "weekly_decision.propose",
-            "--readout-path", "_inbox/cmo-readouts/foo.md",
+            "--readout-path", "_inbox/marin-readouts/foo.md",
             "--decision", "continue",
             "--confidence", "0.7",
             "--trace-id", "abc-123",
             "--extra-json", '{"k":"v"}',
             "--dry-run",
         ])
-        self.assertEqual(args.readout_path, "_inbox/cmo-readouts/foo.md")
+        self.assertEqual(args.readout_path, "_inbox/marin-readouts/foo.md")
         self.assertEqual(args.decision, "continue")
         self.assertEqual(args.confidence, 0.7)
         self.assertEqual(args.trace_id, "abc-123")
@@ -93,12 +93,12 @@ class TestResolveProfile(unittest.TestCase):
         self.assertEqual(resolved, self.fixture.profile.resolve())
 
     def test_resolve_by_name_under_hermes_profiles(self) -> None:
-        # Only succeeds if hermes/profiles/cmo exists in the live repo
-        cmo = ROOT / "hermes" / "profiles" / "cmo"
-        if not cmo.is_dir():
-            self.skipTest("cmo profile not available")
-        resolved = emit_cli.resolve_profile("cmo")
-        self.assertEqual(resolved, cmo.resolve())
+        # Only succeeds if hermes/profiles/marin exists in the live repo
+        marin = ROOT / "hermes" / "profiles" / "marin"
+        if not marin.is_dir():
+            self.skipTest("marin profile not available")
+        resolved = emit_cli.resolve_profile("marin")
+        self.assertEqual(resolved, marin.resolve())
 
     def test_resolve_unknown_raises(self) -> None:
         with self.assertRaises(FileNotFoundError):

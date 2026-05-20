@@ -15,7 +15,7 @@ Read one campaign brief, apply campaign-level tests (kill-list, tool-trigger, do
 
 - Read-only on the campaign brief and the campaign dir.
 - Cite a vault file for every flagged finding.
-- No rewrite generation — CMO + Alex revise the brief, not Stet.
+- No rewrite generation — Marin + Alex revise the brief, not Stet.
 
 ## Inputs
 
@@ -30,7 +30,7 @@ Read one campaign brief, apply campaign-level tests (kill-list, tool-trigger, do
 6. `~/Projects/marketing/decisions/2026-05-16-tool-adoption-triggers.md`
 7. `~/Projects/marketing/metrics/weekly-revenue-loop-v0.md` — "do not scale" rule
 8. `~/Projects/marketing/metrics/message-outcome-ledger-v0.md` — actual buyer language
-9. `~/Projects/marketing/agents/cmo-operating-brief.md` — CMO charter (campaign briefs route through CMO)
+9. `~/Projects/marketing/agents/marin-operating-brief.md` — Marin charter (campaign briefs route through Marin)
 
 ## Procedure
 

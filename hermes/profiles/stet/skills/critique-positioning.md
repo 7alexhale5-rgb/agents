@@ -14,7 +14,7 @@ Pressure-test a positioning claim BEFORE it goes onto a public surface. Distinct
 ## Inputs
 
 1. `SOUL.md`, `DOCTRINE.md`, `MEMORY.md`
-2. The positioning claim (provided by Alex or CMO) + intended surface
+2. The positioning claim (provided by Alex or Marin) + intended surface
 3. `~/Projects/marketing/brand/market-thesis-v0.md` — the positioning anchor
 4. `~/Projects/marketing/brand/buyer-belief-ladder.md` — buyer-journey rungs
 5. `~/Projects/marketing/brand/channel-positioning-map-v0.md` — per-channel rules
@@ -65,5 +65,5 @@ python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
 ## Failure modes
 
 - Claim doesn't have a target surface → cannot run channel-fit check; flag with `info` finding requesting surface
-- Surface isn't in `channel-positioning-map-v0.md` → flag with `warn` finding requesting CMO to add it before any positioning change ships there
+- Surface isn't in `channel-positioning-map-v0.md` → flag with `warn` finding requesting Marin to add it before any positioning change ships there
 - Claim is too vague to position against (e.g. "we should sound more confident") → return with `info` finding asking for the specific claim text

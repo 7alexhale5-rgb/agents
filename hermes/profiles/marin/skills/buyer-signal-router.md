@@ -2,7 +2,7 @@
 name: buyer-signal-router
 description: Route a buyer signal into the next allowed manual action without creating automation, CRM, PFOS, or outreach-volume work.
 input: one buyer signal or ledger state from the active PrettyFly AI Ops Audit loop
-output: proposed next-action memo; inline by default, or markdown to ~/Projects/marketing/_inbox/cmo-readouts/{YYYY-MM-DD}-buyer-signal-{slug}.md if requested
+output: proposed next-action memo; inline by default, or markdown to ~/Projects/marketing/_inbox/marin-readouts/{YYYY-MM-DD}-buyer-signal-{slug}.md if requested
 ---
 
 # Skill: buyer-signal-router

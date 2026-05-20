@@ -29,7 +29,7 @@ auto-emission for the campaign-authorized next move.
    each has a matching `agent_events` row.
 4. Write evidence to
    `hermes/profiles/quill/eval/{YYYY-MM-DD}-self-audit.md` with frontmatter
-   matching the CMO self-audit shape, plus `recent_drafts:` array of the
+   matching the Marin self-audit shape, plus `recent_drafts:` array of the
    draft summary list.
 5. Emit the event:
    ```bash
@@ -39,16 +39,16 @@ auto-emission for the campaign-authorized next move.
      --readout-path "hermes/profiles/quill/eval/<YYYY-MM-DD>-self-audit.md" \
      --extra-json '{"audit_type":"self","pass_rate":<N>,"tests_run":<N>,"tests_failed":<N>}'
    ```
-   (Reuses `draft_field_note.propose` for now; same rationale as CMO's
+   (Reuses `draft_field_note.propose` for now; same rationale as Marin's
    self-audit. `audit_type=self` in data distinguishes from production
    drafts.)
 
 ## Anti-patterns
 
-- Same as CMO self-audit: skipping eval because nothing visibly changed;
+- Same as Marin self-audit: skipping eval because nothing visibly changed;
   editing failing tests; reporting pass_rate without listing failures.
 
 ## Failure modes
 
-- Same handling as CMO: eval failure still emits an event with `failure_reason`
+- Same handling as Marin: eval failure still emits an event with `failure_reason`
   set so the gate watcher knows the audit ran.

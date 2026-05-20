@@ -15,7 +15,7 @@ Source: message-outcome-ledger-v0.md
 - Strongest ICP segment: implementation-heavy service firms
 - Weakest message angle: AI capability angle
 
-# Expected CMO Behavior
+# Expected Marin Behavior
 
 Decision: rewrite message.
 

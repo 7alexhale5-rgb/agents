@@ -1,4 +1,4 @@
-profile: cmo
+profile: marin
 
 agent:
   max_iterations: 32
@@ -32,9 +32,9 @@ tools:
       scope: ~/Projects/marketing/metrics/first-30-days-scoreboard.md
     weekly_decision.propose:
       authority: proposed_write_only
-      write_scope: ~/Projects/marketing/_inbox/cmo-readouts/
+      write_scope: ~/Projects/marketing/_inbox/marin-readouts/
       event:
-        type: cmo.weekly_decision.proposed
+        type: marin.weekly_decision.proposed
         status: pending
         surface: cli
         cwd_project: marketing
@@ -61,7 +61,7 @@ skills:
     - generate-handoff
 
 channels:
-  # CMO has no external channels. Writes go to marketing/_inbox/cmo-readouts/.
+  # Marin has no external channels. Writes go to marketing/_inbox/marin-readouts/.
   # Slack / Telegram / email all disabled.
   slack:
     enabled: false
@@ -73,7 +73,7 @@ approval:
   proposals:
     enabled: true
     execute: false
-    write_target: ~/Projects/marketing/_inbox/cmo-readouts/
+    write_target: ~/Projects/marketing/_inbox/marin-readouts/
 
 guardrails:
   spend_cap_per_day_usd: 5
@@ -86,4 +86,4 @@ guardrails:
 
 logging:
   trajectory_jsonl: true
-  langfuse_project: hermes-cmo
+  langfuse_project: hermes-marin

@@ -10,7 +10,7 @@
 #   fleet-invoke.sh <profile> <skill> [prompt-extras...]
 #
 # Examples:
-#   fleet-invoke.sh cmo weekly-review
+#   fleet-invoke.sh marin weekly-review
 #   fleet-invoke.sh quill draft-linkedin-field-note "Pillar 1 (workflow drag)"
 #   fleet-invoke.sh stet critique-draft "target: _inbox/quill-drafts/<file>.md"
 
@@ -23,7 +23,7 @@ EXTRAS="${*:-}"
 
 if [[ -z "$PROFILE" || -z "$SKILL" ]]; then
   echo "Usage: $0 <profile> <skill> [prompt-extras]" >&2
-  echo "Profiles: atlas-ceo cmo codex quill stet" >&2
+  echo "Profiles: atlas-ceo marin codex quill stet" >&2
   exit 2
 fi
 

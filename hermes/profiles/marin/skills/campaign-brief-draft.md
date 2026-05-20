@@ -2,7 +2,7 @@
 name: campaign-brief-draft
 description: Draft a campaign brief tied to one offer, one audience, one source, one metric. Mirrors the AI Ops Audit campaign brief shape.
 input: campaign name + intended offer + intended audience
-output: markdown to ~/Projects/marketing/_inbox/cmo-readouts/{YYYY-MM-DD}-brief-{slug}.md
+output: markdown to ~/Projects/marketing/_inbox/marin-readouts/{YYYY-MM-DD}-brief-{slug}.md
 ---
 
 # Skill: campaign-brief-draft
@@ -53,6 +53,6 @@ Every claim about audience, pain, offer mechanics, or proof must cite a vault fi
 
 ## Output destination
 
-`~/Projects/marketing/_inbox/cmo-readouts/{YYYY-MM-DD}-brief-{campaign-slug}.md`
+`~/Projects/marketing/_inbox/marin-readouts/{YYYY-MM-DD}-brief-{campaign-slug}.md`
 
 Never write to `campaigns/<campaign-slug>/campaign-brief.md` directly — Alex promotes from inbox to active campaign folder.

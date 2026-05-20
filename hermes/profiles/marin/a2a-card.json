@@ -1,8 +1,8 @@
 {
   "schema": "a2a/v1+ext",
-  "agent_id": "cmo",
+  "agent_id": "marin",
   "version": "0.1.0",
-  "description": "Alex-first marketing operating agent. CMO reads the marketing vault, runs the weekly revenue loop, and proposes ONE weekly decision (continue / narrow ICP / rewrite message / change channel / pause). Writes only to marketing/_inbox/cmo-readouts/ or approved outreach operator packets.",
+  "description": "Alex-first marketing operating agent. Marin reads the marketing vault, runs the weekly revenue loop, and proposes ONE weekly decision (continue / narrow ICP / rewrite message / change channel / pause). Writes only to marketing/_inbox/marin-readouts/ or approved outreach operator packets.",
   "tier": "manual_weekly_marketing_decision_pilot",
   "side_effects": ["read", "inbox_draft_only"],
   "eval_suite_uri": "eval/promptfoo.yaml",

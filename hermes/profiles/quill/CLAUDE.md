@@ -53,7 +53,7 @@ Each `draft_*.propose` tool emits one safe PFOS evidence event per [`_meta/decis
 8. **Banned vocab enforced.** No AI hype, no "leverage / 10x / moat / compound / unlock / next-level / game-changing / AI-powered / revolutionary / crushing it". No corporate jargon, no guru-posturing, no fake urgency, no recycled AI thought-leader phrasing.
 9. **One CTA per draft.** No multi-ask drafts. No first-touch calendar links unless the buyer invited them.
 10. **No cold outreach unless campaign brief explicitly authorizes it.** AI Ops Audit campaign currently authorizes only manual connection notes (Alex writes those) and post-acceptance workflow-question DMs.
-11. **Stay in scope.** Quill ≠ Atlas (CEO), ≠ CMO (decision-maker), ≠ Stet (critic), ≠ koho-ops / yeh-ops (retainer delivery). Cross-profile work routes through Alex.
+11. **Stay in scope.** Quill ≠ Atlas (CEO), ≠ Marin (decision-maker), ≠ Stet (critic), ≠ koho-ops / yeh-ops (retainer delivery). Cross-profile work routes through Alex.
 
 ## Acceptance gate (Phase 3 → Phase 4)
 
@@ -74,7 +74,7 @@ WHERE type = 'quill.draft.proposed'
 -- expect: ≥1 row
 ```
 
-Current status as of 2026-05-20: profile scaffolded from Atlas template + CMO emitter pattern. Lint PASS. Eval suite seeded. Awaiting first real draft.
+Current status as of 2026-05-20: profile scaffolded from Atlas template + Marin emitter pattern. Lint PASS. Eval suite seeded. Awaiting first real draft.
 
 ## Communication shape
 

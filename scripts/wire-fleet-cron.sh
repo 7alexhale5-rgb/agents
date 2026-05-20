@@ -73,12 +73,12 @@ create_cron_job \
   "atlas-ceo" \
   "weekly-ceo-brief"
 
-# CMO: weekly marketing readout (Mondays 8am)
+# Marin: weekly marketing readout (Mondays 8am)
 create_cron_job \
-  "cmo-weekly-review" \
+  "marin-weekly-review" \
   "0 8 * * 1" \
-  "Run weekly-review against current marketing-vault state. Produce weekly decision readout. Write to ~/Projects/marketing/_inbox/cmo-readouts/. Emit cmo.weekly_decision.proposed." \
-  "cmo" \
+  "Run weekly-review against current marketing-vault state. Produce weekly decision readout. Write to ~/Projects/marketing/_inbox/marin-readouts/. Emit marin.weekly_decision.proposed." \
+  "marin" \
   "weekly-review"
 
 # Quill: Field Note drafts (Tue + Thu 9am)
@@ -118,10 +118,10 @@ create_cron_job \
 
 # Per-profile self-audits (Sundays 6am — staggered 5 min apart)
 create_cron_job \
-  "cmo-self-audit" \
+  "marin-self-audit" \
   "0 6 * * 0" \
-  "Run self-audit. Run promptfoo eval, sample last 7 days of readouts, write evidence, emit cmo.weekly_decision.proposed with audit_type=self in data." \
-  "cmo" \
+  "Run self-audit. Run promptfoo eval, sample last 7 days of readouts, write evidence, emit marin.weekly_decision.proposed with audit_type=self in data." \
+  "marin" \
   "self-audit"
 
 create_cron_job \

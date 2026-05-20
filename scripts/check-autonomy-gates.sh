@@ -64,7 +64,7 @@ emit_graduation() {
 # we reuse existing tool contracts rather than declaring new ones).
 graduation_tool_for() {
   case "$1" in
-    cmo) echo "weekly_decision.propose" ;;
+    marin) echo "weekly_decision.propose" ;;
     quill) echo "draft_field_note.propose" ;;
     stet) echo "critique_draft.propose" ;;
     atlas-ceo) echo "atlas.propose_action" ;;
@@ -74,19 +74,19 @@ graduation_tool_for() {
 
 echo "=== Autonomy gate state — $(date -u +%Y-%m-%dT%H:%M:%SZ) ==="
 
-# ---- Gate: cmo.confidence_auto_approve ----
-# 5 consecutive approved cmo.weekly_decision.proposed events, 0 critical failures
-GATE_NAME="cmo.confidence_auto_approve"
-GRADUATION_EVENT="cmo.autonomy.graduated"
-APPROVALS="$(query_count "type='cmo.weekly_decision.proposed' AND status='approved' AND data->>'audit_type' IS NULL")"
-FAILURES="$(query_count "type='cmo.weekly_decision.proposed' AND status='rejected' AND created_at > NOW() - INTERVAL '30 days'")"
+# ---- Gate: marin.confidence_auto_approve ----
+# 5 consecutive approved marin.weekly_decision.proposed events, 0 critical failures
+GATE_NAME="marin.confidence_auto_approve"
+GRADUATION_EVENT="marin.autonomy.graduated"
+APPROVALS="$(query_count "type='marin.weekly_decision.proposed' AND status='approved' AND data->>'audit_type' IS NULL")"
+FAILURES="$(query_count "type='marin.weekly_decision.proposed' AND status='rejected' AND created_at > NOW() - INTERVAL '30 days'")"
 echo "$GATE_NAME: $APPROVALS/5 approvals, $FAILURES/0 failures"
 if [[ "$APPROVALS" -ge 5 && "$FAILURES" -eq 0 ]]; then
   if graduation_fired "$GRADUATION_EVENT"; then
     echo "  already graduated"
   else
     echo "  → GRADUATING"
-    emit_graduation "cmo" "$GATE_NAME" "$GRADUATION_EVENT" "{\"approvals\":$APPROVALS,\"failures\":$FAILURES}"
+    emit_graduation "marin" "$GATE_NAME" "$GRADUATION_EVENT" "{\"approvals\":$APPROVALS,\"failures\":$FAILURES}"
   fi
 fi
 

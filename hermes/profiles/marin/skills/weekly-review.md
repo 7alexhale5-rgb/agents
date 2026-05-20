@@ -2,7 +2,7 @@
 name: weekly-review
 description: Produce a Weekly Readout from the marketing vault. Uses Weekly Revenue Loop v0 cadence. Outputs ONE decision and ONE smallest next action.
 input: optional `week_of` date (defaults to current week)
-output: markdown to ~/Projects/marketing/_inbox/cmo-readouts/{YYYY-MM-DD}-week-of-{YYYY-MM-DD}.md
+output: markdown to ~/Projects/marketing/_inbox/marin-readouts/{YYYY-MM-DD}-week-of-{YYYY-MM-DD}.md
 ---
 
 # Skill: weekly-review
@@ -13,7 +13,7 @@ Turn the marketing vault into ONE weekly decision and ONE smallest next action, 
 
 ## Inputs (must read before generating)
 
-1. `~/Projects/marketing/agents/cmo-operating-brief.md` (your charter)
+1. `~/Projects/marketing/agents/marin-operating-brief.md` (your charter)
 2. `~/Projects/marketing/metrics/weekly-revenue-loop-v0.md` (the cadence definition)
 3. `~/Projects/marketing/metrics/weekly-review-template.md` (the output shape)
 4. `~/Projects/marketing/metrics/message-outcome-ledger-v0.md` (signal data)
@@ -21,7 +21,7 @@ Turn the marketing vault into ONE weekly decision and ONE smallest next action, 
 6. `~/Projects/marketing/decisions/2026-05-16-marketing-engine-kill-list.md` (what NOT to propose)
 7. Active campaign README (e.g. `~/Projects/marketing/campaigns/prettyfly-ai-ops-audit-v0/README.md`)
 8. Recent buyer activity: `~/Projects/marketing/outreach/*` for the current sprint period
-9. `MEMORY.md` (CMO profile narrative anchors)
+9. `MEMORY.md` (Marin profile narrative anchors)
 
 ## Procedure
 
@@ -44,21 +44,21 @@ Turn the marketing vault into ONE weekly decision and ONE smallest next action, 
 
 7. **Kill-list check** — confirm no part of the readout proposes a killed item per `decisions/2026-05-16-marketing-engine-kill-list.md`. If a killed item is being considered, drop it and note the kill-rule violation.
 
-8. **Write** — output to `~/Projects/marketing/_inbox/cmo-readouts/{YYYY-MM-DD}-week-of-{YYYY-MM-DD}.md` using the Weekly Review Template structure.
+8. **Write** — output to `~/Projects/marketing/_inbox/marin-readouts/{YYYY-MM-DD}-week-of-{YYYY-MM-DD}.md` using the Weekly Review Template structure.
 
 9. **Emit safe event summary** — after the readout is written, run the canonical emitter:
 
    ```bash
    source ~/.config/prettyfly-marketing/hermes-tokens.env
    python3 ~/Projects/agents/scripts/emit-agent-event.py \
-     --profile cmo \
+     --profile marin \
      --tool weekly_decision.propose \
-     --readout-path "_inbox/cmo-readouts/<YYYY-MM-DD>-week-of-<YYYY-MM-DD>.md" \
+     --readout-path "_inbox/marin-readouts/<YYYY-MM-DD>-week-of-<YYYY-MM-DD>.md" \
      --decision <continue|narrow|rewrite|change-channel|pause> \
      --confidence <0.0-1.0>
    ```
 
-   The emitter loads CMO's `config.yaml` event block, builds an ADR-compliant payload (per `_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`), and POSTs to PFOS `/api/silos/skills/agent-event`. Successful runs print the inserted row UUID. Do not hand-write the event payload — the contract is enforced by `hermes/lib/agent_events.py`.
+   The emitter loads Marin's `config.yaml` event block, builds an ADR-compliant payload (per `_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`), and POSTs to PFOS `/api/silos/skills/agent-event`. Successful runs print the inserted row UUID. Do not hand-write the event payload — the contract is enforced by `hermes/lib/agent_events.py`.
 
 ## Output shape
 
@@ -82,8 +82,8 @@ Every factual claim in the readout must cite the vault file it came from (e.g. `
 
 ```json
 {
-  "agent_slug": "cmo",
-  "type": "cmo.weekly_decision.proposed",
+  "agent_slug": "marin",
+  "type": "marin.weekly_decision.proposed",
   "status": "pending",
   "surface": "cli",
   "cwd_project": "marketing",
@@ -93,7 +93,7 @@ Every factual claim in the readout must cite the vault file it came from (e.g. `
     "runtime": "hermes",
     "proposal_status": "proposed",
     "decision": "continue",
-    "readout_path": "_inbox/cmo-readouts/YYYY-MM-DD-week-of-YYYY-MM-DD.md",
+    "readout_path": "_inbox/marin-readouts/YYYY-MM-DD-week-of-YYYY-MM-DD.md",
     "private_payload_redacted": true
   }
 }

@@ -90,5 +90,5 @@ requires a written decision doc citing evidence — not a draft.
 - Touch retainer client work (Koho, Yehovah) — out of scope
 - Modify other profiles' files, marketing vault active files, or any source
   document — writes are confined to `~/Projects/marketing/_inbox/quill-drafts/`
-- Collapse into Atlas (CEO), CMO (decision-maker), Stet (critic), or any
+- Collapse into Atlas (CEO), Marin (decision-maker), Stet (critic), or any
   retainer-delivery profile

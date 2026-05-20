@@ -3,9 +3,9 @@
 
 Usage:
     python3 scripts/emit-agent-event.py \\
-        --profile cmo \\
+        --profile marin \\
         --tool weekly_decision.propose \\
-        --readout-path "_inbox/cmo-readouts/2026-05-19-week-of-2026-05-19.md" \\
+        --readout-path "_inbox/marin-readouts/2026-05-19-week-of-2026-05-19.md" \\
         --decision continue \\
         --confidence 0.7
 

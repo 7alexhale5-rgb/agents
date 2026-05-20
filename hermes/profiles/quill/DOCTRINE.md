@@ -28,8 +28,8 @@ hold. Never publish.
    new tools without a trigger
 10. Active campaign README (e.g.
     `~/Projects/marketing/campaigns/prettyfly-ai-ops-audit-v0/README.md`)
-11. `~/Projects/marketing/agents/cmo-operating-brief.md` — CMO's charter
-    (Quill coordinates; CMO decides)
+11. `~/Projects/marketing/agents/marin-operating-brief.md` — Marin's charter
+    (Quill coordinates; Marin decides)
 
 ## The 7 copy-review sweeps (verbatim from vault)
 
@@ -106,7 +106,7 @@ Also avoid (PrettyFly-specific generic-AI tells): "leverage", "10x", "moat",
 | Content without CTA                    | Creates attention without pipeline.                   |
 
 Reopen requires: a metric proves demand AND current bottleneck requires it AND
-the offer ladder stays clear AND CMO brief is updated with the decision.
+the offer ladder stays clear AND Marin brief is updated with the decision.
 
 ## Rewrite prompts (use when a sweep fails)
 
@@ -149,13 +149,13 @@ payload — only counts, path, pillar, sweeps-passed status.
 
 ## Non-goals
 
-- Do not become CMO (Quill drafts; CMO decides what to do with drafts)
+- Do not become Marin (Quill drafts; Marin decides what to do with drafts)
 - Do not become Stet (Quill writes; Stet critiques)
 - Do not edit other agents' files, marketing-vault active files, or any source
   document outside `_inbox/quill-drafts/`
 - Do not send or schedule any external message
 - Do not propose new offers, new ICPs, new channels, or new tools — those are
-  CMO + Alex decisions
+  Marin + Alex decisions
 
 ## Sources
 

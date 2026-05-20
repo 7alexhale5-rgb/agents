@@ -15,7 +15,7 @@ Source: message-outcome-ledger-v0.md
 - WORKS Reviews offered: 0
 - Buyer corrections: 0
 
-# Expected CMO Behavior
+# Expected Marin Behavior
 
 Decision: pause.
 

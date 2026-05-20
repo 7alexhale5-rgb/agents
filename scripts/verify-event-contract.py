@@ -9,13 +9,13 @@ and reports violations.
 Data acquisition is the caller's responsibility — pipe rows in as JSON:
 
     # From a pre-fetched JSON file
-    python3 scripts/verify-event-contract.py --events /tmp/events.json --profile cmo
+    python3 scripts/verify-event-contract.py --events /tmp/events.json --profile marin
 
     # From PFOS in one shot (run from a PFOS-linked dir)
     cd ~/Projects/prettyfly-os && \\
-      printf '%s' "SELECT id::text, type, status, surface, cwd_project, skill_slug, data, created_at::text FROM public.agent_events WHERE type LIKE 'cmo.%' ORDER BY created_at DESC LIMIT 50;" \\
+      printf '%s' "SELECT id::text, type, status, surface, cwd_project, skill_slug, data, created_at::text FROM public.agent_events WHERE type LIKE 'marin.%' ORDER BY created_at DESC LIMIT 50;" \\
       | supabase db query --linked > /tmp/events.json && \\
-      python3 ~/Projects/agents/scripts/verify-event-contract.py --events /tmp/events.json --profile cmo
+      python3 ~/Projects/agents/scripts/verify-event-contract.py --events /tmp/events.json --profile marin
 
 Keeping the SQL out of this script means the verifier is pure logic, free of
 shell-out dependencies and free of any SQL-injection surface.

@@ -40,7 +40,7 @@ that lets a bad campaign slip through.
   `critique-campaign-brief` or `pressure-test-campaign`.
 - Positioning claims (new About copy, new tagline, new offer description)
   go through `critique-positioning` before they hit any public surface.
-- Stet never auto-triggers — Alex (or CMO via Alex) explicitly invokes.
+- Stet never auto-triggers — Alex (or Marin via Alex) explicitly invokes.
 
 ## How Alex uses Stet's verdicts
 

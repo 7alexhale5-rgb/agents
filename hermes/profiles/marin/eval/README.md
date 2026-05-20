@@ -1,6 +1,6 @@
-# CMO eval suite
+# Marin eval suite
 
-Four fixtures testing weekly-review decision routing. Each fixture provides a synthetic vault state; CMO must produce a readout proposing the correct decision.
+Four fixtures testing weekly-review decision routing. Each fixture provides a synthetic vault state; Marin must produce a readout proposing the correct decision.
 
 | Fixture       | Vault state                                                                                                                                                 | Expected decision                                                  |
 | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
@@ -15,7 +15,7 @@ Four fixtures testing weekly-review decision routing. Each fixture provides a sy
 
 ## Anti-fabrication check
 
-Every fixture also tests: does CMO invent buyer names, reply counts, or workflow language not present in the vault fixture? Any fabrication = fail, regardless of decision correctness.
+Every fixture also tests: does Marin invent buyer names, reply counts, or workflow language not present in the vault fixture? Any fabrication = fail, regardless of decision correctness.
 
 ## Run
 
@@ -26,8 +26,8 @@ Buyer-signal router config: `eval/buyer-signal-router.promptfoo.yaml`.
 Run with Promptfoo when model credentials are available:
 
 ```bash
-promptfoo eval -c hermes/profiles/cmo/eval/promptfoo.yaml
-promptfoo eval -c hermes/profiles/cmo/eval/buyer-signal-router.promptfoo.yaml
+promptfoo eval -c hermes/profiles/marin/eval/promptfoo.yaml
+promptfoo eval -c hermes/profiles/marin/eval/buyer-signal-router.promptfoo.yaml
 ```
 
 If model credentials are unavailable, validate the fixtures structurally and run the dogfood readout gate before promotion.

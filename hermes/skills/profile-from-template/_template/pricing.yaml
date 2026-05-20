@@ -1,0 +1,7 @@
+internal_only: true
+billable_to_alex: false
+hypothetical_external_tiers:
+  starter: { monthly_price: 49, actions_per_day: 50 }
+  pro: { monthly_price: 199, actions_per_day: 500 }
+  scale: { monthly_price: 999, actions_per_day: unlimited }
+byok_keys: []

@@ -1,0 +1,27 @@
+{
+  "sku": "__PROFILE_NAME__",
+  "name": "__PROFILE_NAME__",
+  "version": "0.1.0",
+  "category": "internal",
+  "department": "__DOMAIN__",
+  "tagline": "__DESCRIPTION__",
+  "tier": "rung_1_read_only_scaffold",
+  "depends_on": [],
+  "channels": [],
+  "model_routing": {
+    "default": "__MODEL_DEFAULT__",
+    "escalate": "__MODEL_ESCALATE__"
+  },
+  "tools": ["__SOURCE_TOOL_NAME__"],
+  "skills": [],
+  "memory_axes": ["working", "episodic", "procedural"],
+  "guardrails": [
+    "alex_first_internal_only",
+    "source_grounded_metrics_only",
+    "no_external_sends",
+    "pii_redaction"
+  ],
+  "sla": { "uptime": 99.0, "p95_latency_seconds": 30 },
+  "publish": false,
+  "internal_only": true
+}

@@ -1,0 +1,11 @@
+{
+  "_doc": "Throwaway fixture for the Karpathy gate: 'one profile scaffolded end-to-end from skill, lint pass'. Profile name uses the `xfail-` prefix so the lint-all sweep and any cron scans can spot it as a test artifact. Cleanup: rm -rf hermes/profiles/xfail-scaffold-test and revert the fleet/limits.json entry.",
+  "profile_name": "xfail-scaffold-test",
+  "description": "Throwaway profile to verify hermes/skills/profile-from-template scaffolds cleanly.",
+  "domain": "agents",
+  "channels": "none",
+  "daily_cap": 1,
+  "model_default": "openrouter:nvidia/nemotron-3-nano-30b-a3b:free",
+  "model_escalate": "anthropic:claude-sonnet-4-6",
+  "source_tool_name": "agents_vault.read"
+}

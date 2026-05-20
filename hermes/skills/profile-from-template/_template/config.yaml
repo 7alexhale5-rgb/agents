@@ -1,0 +1,56 @@
+profile: __PROFILE_NAME__
+
+agent:
+  max_iterations: 32
+  iteration_budget_tokens: 200000
+
+model:
+  default: __MODEL_DEFAULT__
+  provider: openrouter
+  routing:
+    smoke_test: __MODEL_DEFAULT__
+    escalate: __MODEL_ESCALATE__
+
+tools:
+  builtin:
+    - __SOURCE_TOOL_NAME__
+  contracts:
+    __SOURCE_TOOL_NAME__:
+      authority: read_only
+      scope: ~/Projects/__DOMAIN__/
+
+memory:
+  built_in:
+    enabled: true
+    fts5_enabled: true
+  honcho:
+    enabled: false
+
+mcp_servers: {}
+skills:
+  install: []
+  global:
+    - cost-watch
+    - daily-digest
+  shared:
+    - generate-handoff
+
+channels:
+  slack:
+    enabled: false
+
+approval:
+  mode: propose_only
+  outbound_channels: []
+  pii_redaction: true
+  proposals:
+    enabled: false
+    execute: false
+
+guardrails:
+  spend_cap_per_day_usd: 5
+  alert_threshold_pct: 80
+
+logging:
+  trajectory_jsonl: true
+  langfuse_project: hermes-__PROFILE_NAME__

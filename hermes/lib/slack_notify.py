@@ -1,25 +1,38 @@
 """Slack notification helper for fleet decision events.
 
-Posts a Slack DM via the existing Hermes send_message tool with a footer
-that invites emoji-reaction approvals. The paired poll-slack-approvals.py
-script polls reactions and updates agent_events.status accordingly.
+Two delivery paths live here side-by-side:
 
-Requires SLACK_BOT_TOKEN + SLACK_APP_TOKEN env vars (same as Atlas's
-existing Slack DM config). If tokens are missing, notify_decision logs
-the failure but does NOT raise — the upstream skill should still complete
-successfully even when the Slack DM can't be sent.
+1. ``notify_decision`` (live) — posts a Slack DM via the existing Hermes
+   send_message tool with a footer that invites emoji-reaction approvals.
+   The paired ``poll-slack-approvals.py`` script polls reactions and
+   updates ``agent_events.status`` accordingly. This is what the live
+   fleet uses today.
 
-Approval mapping (mirrored by poll-slack-approvals.py):
-  ✅ → status='approved'
-  ✏️ → status='revise'
-  ❌ → status='rejected'
+2. ``notify_decision_block_kit`` (dormant) — posts an interactive Block
+   Kit message with Approve / Reject / Defer buttons that fire the
+   ``/api/slack/interactive`` webhook in PFOS. Webhook writes a structured
+   ``approval_decision`` event back to ``agent_events`` on each click,
+   skipping the polling layer. Activates when SLACK_BOT_TOKEN gains
+   ``chat:write`` + the workspace adds the Interactive Components endpoint
+   (see ``docs/slack-block-kit-scope-add.md`` for the steps).
+
+Requires SLACK_BOT_TOKEN env var. If missing, both functions log + return
+None — the upstream skill should still complete successfully.
+
+Approval mapping (mirrored by poll-slack-approvals.py / interactive webhook):
+  ✅ / approve_*   → status='approved'
+  ✏️ / revise_*    → status='revise'
+  ❌ / reject_*    → status='rejected'
 """
 
 from __future__ import annotations
 
+import json as _json
 import logging
 import os
 import sys
+import urllib.error
+import urllib.request
 from pathlib import Path
 from typing import Optional
 
@@ -92,6 +105,150 @@ def notify_decision(message_text: str, agent_event_id: str, slack_user: Optional
         return None
 
 
+# --------------------------------------------------------------------------- #
+# Block Kit path — dormant until Slack scopes + interactive webhook land.
+# --------------------------------------------------------------------------- #
+
+
+def build_decision_blocks(message_text: str, agent_event_id: str) -> list[dict]:
+    """Build a Block Kit message body with Approve / Reject / Defer buttons.
+
+    The button ``value`` carries the agent_event_id back to the webhook so
+    /api/slack/interactive can write a structured approval_decision event
+    against the right row. ``action_id`` carries the decision verb.
+
+    Pulled out as a pure function so callers can render the same shape
+    into a dry-run preview, a unit test, or a manual ``chat.postMessage``.
+    """
+    return [
+        {
+            "type": "section",
+            "text": {"type": "mrkdwn", "text": message_text},
+        },
+        {
+            "type": "context",
+            "elements": [
+                {"type": "mrkdwn", "text": f"_event: `{agent_event_id}`_"},
+            ],
+        },
+        {
+            "type": "actions",
+            "block_id": f"approval:{agent_event_id}",
+            "elements": [
+                {
+                    "type": "button",
+                    "style": "primary",
+                    "text": {"type": "plain_text", "text": "Approve"},
+                    "action_id": "approve_decision",
+                    "value": agent_event_id,
+                },
+                {
+                    "type": "button",
+                    "text": {"type": "plain_text", "text": "Revise"},
+                    "action_id": "revise_decision",
+                    "value": agent_event_id,
+                },
+                {
+                    "type": "button",
+                    "style": "danger",
+                    "text": {"type": "plain_text", "text": "Reject"},
+                    "action_id": "reject_decision",
+                    "value": agent_event_id,
+                    "confirm": {
+                        "title": {"type": "plain_text", "text": "Reject proposal?"},
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": "Marks this agent event `rejected`. Cannot be undone without manual SQL.",
+                        },
+                        "confirm": {"type": "plain_text", "text": "Reject"},
+                        "deny": {"type": "plain_text", "text": "Cancel"},
+                    },
+                },
+            ],
+        },
+    ]
+
+
+def notify_decision_block_kit(
+    message_text: str,
+    agent_event_id: str,
+    *,
+    channel: Optional[str] = None,
+) -> Optional[str]:
+    """Post an interactive Block Kit DM with Approve / Reject / Defer buttons.
+
+    Pairs with the ``/api/slack/interactive`` webhook in PFOS, which receives
+    each button click, verifies the Slack signature, and updates the matching
+    ``agent_events.status``. No polling.
+
+    Currently DORMANT — does nothing useful until the bot has ``chat:write``
+    and the workspace's Slack app has the Interactive Components endpoint
+    configured. See ``docs/slack-block-kit-scope-add.md`` for the steps.
+
+    Args:
+        message_text: Markdown-formatted decision summary (2-4 lines).
+        agent_event_id: PFOS agent_events row UUID — carried as the button
+            ``value`` so the webhook can correlate clicks back to rows.
+        channel: Slack channel/DM ID. Defaults to ``SLACK_DM_RECIPIENT`` env,
+            falling back to ``alex``. Channel-name resolution is the caller's
+            responsibility — pass a ``D...`` / ``C...`` ID for reliability.
+
+    Returns:
+        Slack message ``ts`` on success, ``None`` on any failure. Never raises.
+    """
+    bot_token = os.environ.get("SLACK_BOT_TOKEN")
+    if not bot_token:
+        logger.warning(
+            "SLACK_BOT_TOKEN not set — notify_decision_block_kit skipped (event=%s)",
+            agent_event_id,
+        )
+        return None
+
+    target_channel = channel or os.environ.get("SLACK_DM_RECIPIENT", "alex")
+    blocks = build_decision_blocks(message_text, agent_event_id)
+    body = _json.dumps(
+        {
+            "channel": target_channel,
+            "text": message_text,  # accessibility/fallback for clients that can't render blocks
+            "blocks": blocks,
+        }
+    ).encode("utf-8")
+    req = urllib.request.Request(
+        "https://slack.com/api/chat.postMessage",
+        data=body,
+        method="POST",
+        headers={
+            "Authorization": f"Bearer {bot_token}",
+            "Content-Type": "application/json; charset=utf-8",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            parsed = _json.loads(resp.read().decode("utf-8"))
+    except urllib.error.URLError as exc:
+        logger.warning("Slack chat.postMessage failed (%s) — Block Kit DM skipped", exc)
+        return None
+    except (ValueError, OSError) as exc:
+        logger.warning("Slack chat.postMessage parse/IO error (%s) — DM skipped", exc)
+        return None
+
+    if not parsed.get("ok"):
+        # Slack returns ok=false with an error code (e.g. missing_scope,
+        # channel_not_found). Log the code only — do not surface raw response
+        # because misconfigured tokens can leak workspace metadata.
+        logger.warning(
+            "Slack chat.postMessage refused (error=%s) — event %s left pending",
+            parsed.get("error", "unknown"),
+            agent_event_id,
+        )
+        return None
+
+    ts = parsed.get("ts")
+    if ts:
+        logger.info("Block Kit DM posted (ts=%s, event=%s)", ts, agent_event_id)
+    return ts
+
+
 if __name__ == "__main__":
     # Smoke test: python3 -m hermes.lib.slack_notify "test message" fake-uuid-123
     import argparse
@@ -99,7 +256,15 @@ if __name__ == "__main__":
     p.add_argument("message")
     p.add_argument("event_id")
     p.add_argument("--recipient", default=None)
+    p.add_argument(
+        "--block-kit",
+        action="store_true",
+        help="Use the dormant Block Kit interactive path instead of the legacy emoji-reaction path.",
+    )
     args = p.parse_args()
     logging.basicConfig(level=logging.INFO)
-    ts = notify_decision(args.message, args.event_id, slack_user=args.recipient)
+    if args.block_kit:
+        ts = notify_decision_block_kit(args.message, args.event_id, channel=args.recipient)
+    else:
+        ts = notify_decision(args.message, args.event_id, slack_user=args.recipient)
     print(f"ts={ts}")

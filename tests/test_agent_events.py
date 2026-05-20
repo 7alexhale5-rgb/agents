@@ -23,6 +23,7 @@ sys.path.insert(0, str(ROOT))
 
 from hermes.lib.agent_events import (  # noqa: E402
     EmitError,
+    RateLimitExceeded,
     build_payload,
     emit_event,
 )
@@ -276,6 +277,136 @@ class TestEmitEventOffline(unittest.TestCase):
         self.assertEqual(body["type"], "test.thing.proposed")
         self.assertEqual(body["cwd_project"], "testlab")
         self.assertEqual(body["skill_slug"], "my-skill")
+
+
+class TestRateLimits(unittest.TestCase):
+    """Per-profile daily emit caps (Move 3 — fleet/limits.json + counter store)."""
+
+    def setUp(self) -> None:
+        self.fixture = _ProfileFixture()
+        self.work = Path(tempfile.mkdtemp(prefix="hermes-cap-"))
+        self.limits_path = self.work / "limits.json"
+        self.counter_path = self.work / ".emit-counters.json"
+        # Default test limit: 2 emissions/day for "test-profile" (matches fixture).
+        self.limits_path.write_text(json.dumps({"limits": {"test-profile": 2}}))
+        self._env = patch.dict(
+            os.environ,
+            {
+                "HERMES_AGENT_EVENTS_TOKEN": "fake-token",
+                "HERMES_AGENT_EVENTS_URL": "http://example.test",
+                "HERMES_FLEET_LIMITS_FILE": str(self.limits_path),
+                "HERMES_FLEET_COUNTER_FILE": str(self.counter_path),
+            },
+            clear=True,
+        )
+        self._env.start()
+
+    def tearDown(self) -> None:
+        self._env.stop()
+        self.fixture.cleanup()
+        shutil.rmtree(self.work, ignore_errors=True)
+
+    def _mock_urlopen(self) -> MagicMock:
+        # Helper that returns a context manager mock for urllib.request.urlopen.
+        mock_resp = MagicMock()
+        mock_resp.read.return_value = json.dumps({"ok": True, "event_id": "id"}).encode()
+        mock_resp.__enter__.return_value = mock_resp
+        mock_resp.__exit__.return_value = None
+        return mock_resp
+
+    @patch("hermes.lib.agent_events.urllib.request.urlopen")
+    def test_emit_under_cap_succeeds(self, mock_urlopen: MagicMock) -> None:
+        mock_urlopen.return_value = self._mock_urlopen()
+        result = emit_event(self.fixture.profile, "my_tool.go")
+        self.assertTrue(result.get("ok"))
+
+    @patch("hermes.lib.agent_events.urllib.request.urlopen")
+    def test_emit_at_cap_raises(self, mock_urlopen: MagicMock) -> None:
+        mock_urlopen.return_value = self._mock_urlopen()
+        # Cap is 2; first two succeed, third raises.
+        emit_event(self.fixture.profile, "my_tool.go")
+        emit_event(self.fixture.profile, "my_tool.go")
+        with self.assertRaises(RateLimitExceeded) as cm:
+            emit_event(self.fixture.profile, "my_tool.go")
+        self.assertEqual(cm.exception.profile, "test-profile")
+        self.assertEqual(cm.exception.limit, 2)
+        # Cap-trip must happen BEFORE the POST (third urlopen call never fires).
+        self.assertEqual(mock_urlopen.call_count, 2)
+
+    @patch("hermes.lib.agent_events.urllib.request.urlopen")
+    def test_uncapped_profile_no_counter_write(self, mock_urlopen: MagicMock) -> None:
+        # Replace limits with one that doesn't include test-profile.
+        self.limits_path.write_text(json.dumps({"limits": {"someone-else": 1}}))
+        mock_urlopen.return_value = self._mock_urlopen()
+        # Many emits should all succeed.
+        for _ in range(5):
+            emit_event(self.fixture.profile, "my_tool.go")
+        # Uncapped profiles must NOT touch the counter file (avoids disk churn
+        # from codex-style high-frequency emitters).
+        self.assertFalse(self.counter_path.exists())
+
+    @patch("hermes.lib.agent_events.urllib.request.urlopen")
+    def test_missing_limits_file_no_cap(self, mock_urlopen: MagicMock) -> None:
+        self.limits_path.unlink()
+        mock_urlopen.return_value = self._mock_urlopen()
+        for _ in range(5):
+            emit_event(self.fixture.profile, "my_tool.go")
+
+    @patch("hermes.lib.agent_events.urllib.request.urlopen")
+    def test_corrupt_counter_resets(self, mock_urlopen: MagicMock) -> None:
+        # Garbage in the counter file should be treated as fresh state, not
+        # crash the emitter. A failure here would brick the fleet anytime the
+        # file got mangled (disk full mid-write, manual edit, etc.).
+        self.counter_path.write_text("not valid json {")
+        mock_urlopen.return_value = self._mock_urlopen()
+        result = emit_event(self.fixture.profile, "my_tool.go")
+        self.assertTrue(result.get("ok"))
+        # Counter rebuilt as valid JSON with today's bucket = 1.
+        state = json.loads(self.counter_path.read_text())
+        today = next(iter(state.keys()))
+        self.assertEqual(state[today]["test-profile"], 1)
+
+    @patch("hermes.lib.agent_events.urllib.request.urlopen")
+    def test_dry_run_bypasses_counter(self, mock_urlopen: MagicMock) -> None:
+        # dry_run should never consume quota — callers use it to inspect
+        # built payloads (CI lint, smoke tests). If dry_run counted, the
+        # CI suite would exhaust per-day caps on every run.
+        for _ in range(10):
+            result = emit_event(self.fixture.profile, "my_tool.go", dry_run=True)
+            self.assertTrue(result["dry_run"])
+        self.assertFalse(self.counter_path.exists())
+        self.assertEqual(mock_urlopen.call_count, 0)
+
+    @patch("hermes.lib.agent_events.urllib.request.urlopen")
+    def test_zero_and_negative_caps_treated_as_uncapped(self, mock_urlopen: MagicMock) -> None:
+        # Config bug: someone sets cap to 0 or -1. The defensible behavior is
+        # "ignore the config, log a warning, run uncapped" — a cap of 0 would
+        # silently brick the profile, and skipping it is more recoverable than
+        # turning every emit into a stop-the-world error.
+        self.limits_path.write_text(
+            json.dumps({"limits": {"test-profile": 0, "other": -5}})
+        )
+        mock_urlopen.return_value = self._mock_urlopen()
+        for _ in range(3):
+            emit_event(self.fixture.profile, "my_tool.go")
+
+
+class TestFleetLimitsFile(unittest.TestCase):
+    """The shipped fleet/limits.json should parse and cover the live profiles."""
+
+    def test_repo_limits_file_is_well_formed(self) -> None:
+        path = ROOT / "fleet" / "limits.json"
+        self.assertTrue(path.exists(), f"limits file missing at {path}")
+        raw = json.loads(path.read_text())
+        self.assertIn("limits", raw)
+        limits = raw["limits"]
+        # All four manually-capped profiles per the research must be present;
+        # codex is intentionally absent (uncapped — refactor bursts).
+        for profile in ("atlas-ceo", "cmo", "stet", "quill"):
+            self.assertIn(profile, limits)
+            self.assertIsInstance(limits[profile], int)
+            self.assertGreater(limits[profile], 0)
+        self.assertNotIn("codex", limits)
 
 
 @unittest.skipUnless(

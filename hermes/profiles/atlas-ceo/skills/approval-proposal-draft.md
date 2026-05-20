@@ -25,3 +25,20 @@ proposal.
   learned a preference.
 - If the source packet is stale or missing, draft the proposal text but do not
   write the PFOS row.
+
+## Event emission (after proposal lands)
+
+After writing the PFOS proposal row, emit a safe `atlas.action.proposed` event
+per `_meta/decisions/2026-05-18-hermes-pfos-event-contract.md` via:
+
+```bash
+python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
+  --profile atlas-ceo \
+  --tool atlas.propose_action \
+  --extra-json '{"door_type":"<one-way|two-way>","confidence":"<low|med|high>","approval_gate":"<short>","source_packet_ref":"<id-or-summary>"}'
+```
+
+Capture the returned row UUID into the proposal record's footer as
+`pfos_event_uuid: <uuid>`. Confirm exit 0. Event must not include
+`recommended_action` body, `source_packet` raw text, or any secret — only
+classification fields per the ADR.

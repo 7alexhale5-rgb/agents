@@ -20,6 +20,38 @@ tools:
     - business.scorecard.snapshot
     - atlas.propose_action
     - atlas.record_follow_up
+  contracts:
+    fleet.snapshot:
+      authority: read_only
+      scope: pfos+pf_runtime+local_api_usage
+    business.scorecard.snapshot:
+      authority: read_only
+      scope: pfos_business_scorecard
+    atlas.propose_action:
+      authority: proposed_write_only
+      write_scope: pfos_agent_actions_proposed_only
+      event:
+        type: atlas.action.proposed
+        status: pending
+        surface: cli
+        cwd_project: agents
+        skill_slug: approval-proposal-draft
+        silo_slug: skills
+        private_payload_redacted: true
+        data_runtime: hermes
+        data_proposal_status: proposed
+    atlas.record_follow_up:
+      authority: evidence_write_only
+      write_scope: pfos_follow_up_evidence_only
+      event:
+        type: atlas.follow_up.recorded
+        status: completed
+        surface: cli
+        cwd_project: agents
+        skill_slug: weekly-ceo-operating-loop
+        silo_slug: skills
+        private_payload_redacted: true
+        data_runtime: hermes
 
 memory:
   built_in:

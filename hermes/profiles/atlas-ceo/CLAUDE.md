@@ -13,23 +13,23 @@ PFOS approval rows; it does not execute work.
 
 ## Per-task routing
 
-| Task | Read | Skills |
-|------|------|--------|
-| Slack DM / threaded reply | `SOUL.md`, `MEMORY.md`, current message | none |
-| Weekly executive brief | `SOUL.md`, `DOCTRINE.md`, `fleet.snapshot`, `BUSINESS.md`, `MEMORY.md` | source-packet-triage, weekly-ceo-brief, weekly-ceo-operating-loop |
-| Business scorecard brief | `SOUL.md`, `DOCTRINE.md`, `business.scorecard.snapshot`, `BUSINESS.md`, `MEMORY.md` | source-packet-triage, business-scorecard-brief |
-| Priority decision request | `SOUL.md`, `DOCTRINE.md`, current request, `fleet.snapshot` when facts are needed, `BUSINESS.md`, `MEMORY.md` | decision-memo |
-| Approval-needed proposal | `SOUL.md`, `DOCTRINE.md`, verified source packet, `BUSINESS.md` | approval-proposal-draft |
-| Strategy or operator doctrine request | `SOUL.md`, `DOCTRINE.md`, current request, relevant source signals | decision-memo |
-| Cross-session handoff | current profile docs, latest plan, latest validation output, relevant handoff docs | generate-handoff |
+| Task                                  | Read                                                                                                          | Skills                                                            |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Slack DM / threaded reply             | `SOUL.md`, `MEMORY.md`, current message                                                                       | none                                                              |
+| Weekly executive brief                | `SOUL.md`, `DOCTRINE.md`, `fleet.snapshot`, `BUSINESS.md`, `MEMORY.md`                                        | source-packet-triage, weekly-ceo-brief, weekly-ceo-operating-loop |
+| Business scorecard brief              | `SOUL.md`, `DOCTRINE.md`, `business.scorecard.snapshot`, `BUSINESS.md`, `MEMORY.md`                           | source-packet-triage, business-scorecard-brief                    |
+| Priority decision request             | `SOUL.md`, `DOCTRINE.md`, current request, `fleet.snapshot` when facts are needed, `BUSINESS.md`, `MEMORY.md` | decision-memo                                                     |
+| Approval-needed proposal              | `SOUL.md`, `DOCTRINE.md`, verified source packet, `BUSINESS.md`                                               | approval-proposal-draft                                           |
+| Strategy or operator doctrine request | `SOUL.md`, `DOCTRINE.md`, current request, relevant source signals                                            | decision-memo                                                     |
+| Cross-session handoff                 | current profile docs, latest plan, latest validation output, relevant handoff docs                            | generate-handoff                                                  |
 
 ## Model routing
 
-| Task class | Model | Why |
-| ---------- | ----- | --- |
-| Default Slack reply | `openrouter:nvidia/nemotron-3-nano-30b-a3b:free` | Cheap smoke-test path while Atlas is incubating |
-| Source-grounded CEO brief | `anthropic:claude-sonnet-4-6` | Required path for real briefs and decision memos |
-| Strategic review | `anthropic:claude-opus-4-7` | Reserved for rare high-stakes reviews after Atlas passes evals |
+| Task class                | Model                                            | Why                                                            |
+| ------------------------- | ------------------------------------------------ | -------------------------------------------------------------- |
+| Default Slack reply       | `openrouter:nvidia/nemotron-3-nano-30b-a3b:free` | Cheap smoke-test path while Atlas is incubating                |
+| Source-grounded CEO brief | `anthropic:claude-sonnet-4-6`                    | Required path for real briefs and decision memos               |
+| Strategic review          | `anthropic:claude-opus-4-7`                      | Reserved for rare high-stakes reviews after Atlas passes evals |
 
 Cheap model use is allowed for smoke tests only. Real CEO briefs and decision
 memos must use the source-grounded route. If the premium route degrades because
@@ -38,16 +38,21 @@ evidence only, not production CEO counsel.
 
 ## Built-in tools
 
-| Tool | Authority | Use |
-|------|-----------|-----|
-| `fleet.snapshot` | read-only | Gather compact fleet signals, profile sync health, PF Runtime buffer counts, local API usage cost, and Atlas eval inventory. |
-| `business.scorecard.snapshot` | read-only | Gather compact PFOS business scorecard signals: silos, proposal pipeline, pending actions, fleet status, costs, and missing signals. |
-| `atlas.propose_action` | proposed write only | Create a PFOS `agent_actions` row with status `proposed`; never execute the action. |
-| `atlas.record_follow_up` | evidence write only | Record the five-field follow-up brief after a verified PFOS approval queue event; never execute the proposal. |
+| Tool                          | Authority           | Use                                                                                                                                  |
+| ----------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `fleet.snapshot`              | read-only           | Gather compact fleet signals, profile sync health, PF Runtime buffer counts, local API usage cost, and Atlas eval inventory.         |
+| `business.scorecard.snapshot` | read-only           | Gather compact PFOS business scorecard signals: silos, proposal pipeline, pending actions, fleet status, costs, and missing signals. |
+| `atlas.propose_action`        | proposed write only | Create a PFOS `agent_actions` row with status `proposed`; never execute the action.                                                  |
+| `atlas.record_follow_up`      | evidence write only | Record the five-field follow-up brief after a verified PFOS approval queue event; never execute the proposal.                        |
 
 Atlas must call `fleet.snapshot` or `business.scorecard.snapshot` before making
 source-grounded claims about fleet health, costs, profile drift, recent runtime
 activity, project pulse, proposal pipeline, or eval status.
+
+Each write tool emits one safe PFOS evidence event per [`_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`](../../../_meta/decisions/2026-05-18-hermes-pfos-event-contract.md):
+
+- `atlas.propose_action` → `type=atlas.action.proposed`, `status=pending`, `surface=cli`, `cwd_project=agents`, `skill_slug=approval-proposal-draft`, `silo_slug=skills`, `data.runtime=hermes`, `data.proposal_status=proposed`, `data.private_payload_redacted=true`. Event may include `door_type`, `confidence`, `approval_gate`, `source_packet_ref`. Never includes the proposal body or raw packet text.
+- `atlas.record_follow_up` → `type=atlas.follow_up.recorded`, `status=completed`, `surface=cli`, `cwd_project=agents`, `skill_slug=weekly-ceo-operating-loop`, `silo_slug=skills`, `data.runtime=hermes`, `data.private_payload_redacted=true`. Event may include `follow_up_ref`, `decision_outcome`, `source_packet_ref`. Never includes the follow-up body or raw packet text.
 
 ## Hard rules
 

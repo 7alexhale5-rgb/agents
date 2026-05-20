@@ -54,6 +54,19 @@ Verified at runtime: `/meta` returns `redact_secrets_enabled: true`, and the red
 
 The dashboard process resolves `HERMES_HOME` to the active profile path (e.g. `~/.hermes/profiles/personal`). The canonical Hermes state files (`.emit-counters.json`, `cron/jobs.json`) live at the **root**, not under any profile. The plugin uses `hermes_constants.get_default_hermes_root()` to unwind the profile suffix; if `HERMES_HOME` ends in `/profiles/<name>`, the helper returns the grandparent — the actual `~/.hermes/`.
 
+## PFOS token wiring
+
+As of 2026-05-20, the dashboard process is launched through the env-scope helper `~/.local/bin/hermes-dashboard-prettyfly`. The helper sources `~/.config/prettyfly-marketing/hermes-tokens.env` as the single credential source, then starts `hermes dashboard --no-open --port 9119` with `HERMES_AGENT_EVENTS_TOKEN` in-process.
+
+PFOS now exposes the narrow bearer read path the plugin already called:
+
+```
+GET /api/silos/skills/agent-events?limit=N
+GET /api/silos/skills/agent-events?status=pending&limit=50
+```
+
+The token row keeps `agent_events:write` and now also carries `agent_events:read`. The read endpoint returns tenant-scoped row metadata with `agent_slug` flattened and JSONB `data` values replaced by key-preserving `[redacted]` placeholders, so Fleet panels can render previews without a raw event-body export.
+
 ## Per-profile rung
 
 The Karpathy ladder rung (1=crimson, 2=bronze, 3=gold, 4=olympian) is **hardcoded** in the plugin as a name→int dict. Profile manifests do not carry a rung field; rung is a doctrine concept, not a config primitive. When a profile graduates, update `PROFILE_RUNG` in `plugin_api.py`. YAGNI on building rung-discovery logic until we have 10+ profiles.
@@ -69,6 +82,8 @@ The Karpathy ladder rung (1=crimson, 2=bronze, 3=gold, 4=olympian) is **hardcode
 3. Routes ✅ (post dashboard restart)
    - `/meta` returns `{version: 0.1.0, redact_secrets_enabled: true, hermes_home: /Users/alexhale/.hermes}`
    - `/profiles` returns all 5 profiles with rung, tier, daily_cap, today_emit_count
+   - `/events/recent?limit=1` returns live PFOS rows with no `error`
+   - `/approvals/pending` returns live PFOS pending rows with no `error`
    - `/crons` returns jobs from `~/.hermes/cron/jobs.json` with normalized `last_status`
 4. Redaction smoke ✅
    - `xoxb-fake-token-1234567890abcdef` → `xoxb-f...cdef`

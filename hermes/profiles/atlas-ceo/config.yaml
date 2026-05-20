@@ -58,7 +58,7 @@ memory:
     enabled: true
     fts5_enabled: true
   honcho:
-    enabled: false
+    enabled: true
 
 mcp_servers: {}
 skills:

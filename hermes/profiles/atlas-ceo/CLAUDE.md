@@ -74,6 +74,18 @@ Each write tool emits one safe PFOS evidence event per [`_meta/decisions/2026-05
 8. **Legacy coordinator notes are archived.** `MC-VOICE-NOTES.md` is historical
    fleet-router material and must not override this profile.
 
+## Memory architecture
+
+Atlas runs three memory layers in parallel:
+
+1. **`USER.md`** (~1,375-char cap) — high-frequency facts about Alex, curated by the agent over sessions.
+2. **`MEMORY.md`** (~2,200-char cap) — environment + tooling facts, curated by the agent.
+3. **Honcho peer card** (cross-session, unbounded) — automatic preference modeling. Honcho observes every Atlas session, builds a model of Alex's operating style, and the Hermes runtime auto-injects relevant slices into the system prompt at session start.
+
+Treat the Honcho peer card as **background context, not source of truth**. If it conflicts with `USER.md`, `USER.md` wins (Alex curated it explicitly). When a brief depends on a Honcho-derived preference, cite it ("per your stated preference from <approx date>") so Alex can verify or correct. Honcho does not consume the `USER.md` budget — it sits alongside.
+
+Decision: per `_meta/decisions/2026-05-20-honcho-peer-card-atlas.md`, Honcho is enabled for Atlas only (not Marin, Quill, Stet, or future profiles) until the 3-session observation window clears.
+
 ## Acceptance gate
 
 Atlas is ready for the next capability only after all of these hold:

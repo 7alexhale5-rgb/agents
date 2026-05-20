@@ -118,3 +118,4 @@ The marketing vault wins. Re-read the canonical files. If a conflict is real and
 - Tool adoption triggers: `~/Projects/marketing/decisions/2026-05-16-tool-adoption-triggers.md`
 - Atlas/Marin/Quill/Stet boundary: `~/Projects/marketing/agents/atlas-quill-stet-boundary.md`
 - $1M-pivot doctrine: `~/Projects/memory-vault/decisions/2026-05-18-agent-fleet-pivot-1m-arr.md`
+- Hermes positioning doctrine: `~/Projects/marketing/decisions/2026-05-20-hermes-positioning-truth.md` — read when any weekly readout would touch "Hermes", "Pantheon", or runtime branding. PrettyFly runs on NousResearch's open-source Hermes; lead with named profiles + propose-only doctrine, not the runtime.

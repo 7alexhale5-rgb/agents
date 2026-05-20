@@ -12,7 +12,8 @@
     "default": "openrouter:nvidia/nemotron-3-nano-30b-a3b:free",
     "weekly_review": "anthropic:claude-sonnet-4-6",
     "campaign_brief_draft": "anthropic:claude-sonnet-4-6",
-    "kill_list_enforce_hard_call": "anthropic:claude-opus-4-7"
+    "kill_list_enforce_hard_call": "anthropic:claude-opus-4-7",
+    "aeo_opportunity_scout": "anthropic:claude-sonnet-4-6"
   },
   "tools": [
     "marketing_vault.read",
@@ -25,6 +26,7 @@
     "buyer-signal-router",
     "supervised-dispatch",
     "campaign-brief-draft",
+    "aeo-opportunity-scout",
     "kill-list-enforce",
     "generate-handoff"
   ],

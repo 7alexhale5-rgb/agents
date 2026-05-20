@@ -16,6 +16,7 @@
     "buyer-signal-router",
     "supervised-dispatch",
     "campaign-brief-draft",
+    "aeo-opportunity-scout",
     "kill-list-enforce",
     "generate-handoff"
   ],

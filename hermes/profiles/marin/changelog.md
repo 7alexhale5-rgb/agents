@@ -1,5 +1,11 @@
 # Changelog - marin
 
+## 2026-05-20
+
+- Added `aeo-opportunity-scout` as a Marin-owned AEO/GEO research and proposal skill.
+- Registered the skill in Marin routing surfaces while preserving propose-only, inbox-only boundaries.
+- Added eval coverage for local-only AEO memos, buyer-prompt expansion, no `llms.txt` hype, no publishing/scale, and AI referral analytics.
+
 ## 2026-05-18
 
 - Scaffold validated against the Atlas-shaped profile contract.

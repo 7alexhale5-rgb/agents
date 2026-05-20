@@ -12,6 +12,7 @@ model:
     smoke_test: nvidia/nemotron-3-nano-30b-a3b:free
     weekly_review: anthropic:claude-sonnet-4-6
     campaign_brief_draft: anthropic:claude-sonnet-4-6
+    aeo_opportunity_scout: anthropic:claude-sonnet-4-6
     kill_list_enforce_hard_call: anthropic:claude-opus-4-7
 
 tools:

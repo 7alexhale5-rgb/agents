@@ -23,11 +23,14 @@ Primary config: `eval/promptfoo.yaml`.
 
 Buyer-signal router config: `eval/buyer-signal-router.promptfoo.yaml`.
 
+AEO opportunity scout config: `eval/aeo-opportunity-scout.promptfoo.yaml`.
+
 Run with Promptfoo when model credentials are available:
 
 ```bash
 promptfoo eval -c hermes/profiles/marin/eval/promptfoo.yaml
 promptfoo eval -c hermes/profiles/marin/eval/buyer-signal-router.promptfoo.yaml
+promptfoo eval -c hermes/profiles/marin/eval/aeo-opportunity-scout.promptfoo.yaml
 ```
 
 If model credentials are unavailable, validate the fixtures structurally and run the dogfood readout gate before promotion.

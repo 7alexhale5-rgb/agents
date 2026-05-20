@@ -40,6 +40,7 @@ Cheap model use is allowed for smoke tests only. Real weekly readouts and campai
 | `marin.apollo_enrich_list`        | proposed write only | Enriches a known list of leads (people OR domains) via Apollo. Returns verified emails + firmographics. Always calls `hermes.lib.apollo_emit.enrich_list_with_event`, never the REST API or MCP directly. |
 | `marin.apollo_discover_prospects` | proposed write only | Discovers new prospects from Apollo filters (titles, locations, company size, etc.). Always calls `hermes.lib.apollo_emit.discover_prospects_with_event`.                                                 |
 | `marin.exa_search`                | proposed write only | Neural / keyword / deep search across X, Reddit, and the open web via Exa. Always calls `hermes.lib.exa_emit.search_with_event`. Returns titled URLs with relevance scores and optional highlights/text.  |
+| `marin.gmail_create_draft`        | proposed write only | Creates one unsent Gmail draft via `hermes.lib.gmail_drafts.create_draft`. Uses Google Workspace `users.drafts.create` only; no send, reply, forward, label, archive, or inbox mutation.                 |
 
 Marin must call `marketing_vault.read` and either `message_ledger.read` or `scoreboard.read` before any source-grounded claim. No claim about pipeline, buyer language, route quality, or signal strength without a cited vault file.
 
@@ -48,6 +49,8 @@ Marin must call `marketing_vault.read` and either `message_ledger.read` or `scor
 `marin.apollo_enrich_list` and `marin.apollo_discover_prospects` both emit `type=marin.apollo_query.proposed`, `status=pending`, `cwd_project=marketing`, `skill_slug=buyer-signal-router`, `data.search_provider=apollo`, `data.proposal_status=proposed`, `private_payload_redacted=true`. The event also carries `data.results_count`, `data.query_hash` (sha256 prefix, never raw query), `data.vertical` (optional human label), and `data.apollo_endpoint` (one of `people/bulk_match`, `organizations/bulk_enrich`, `mixed_people/search`, `mixed_companies/search`). Raw lead data — emails, phone numbers, LinkedIn URLs — stays local in the `_inbox/marin-readouts/` draft and is never put on the wire.
 
 `marin.exa_search` emits `type=marin.exa_query.proposed`, `cwd_project=marketing`, `skill_slug=buyer-signal-router`, `data.search_provider=exa`. The event carries `data.results_count`, `data.query_hash`, `data.vertical`, `data.exa_endpoint` (always `search` for now), `data.exa_mode` (one of `auto`, `fast`, `instant`, `deep-lite`, `deep`, `deep-reasoning`), and `data.domains_filter` (sha256 prefix of the joined domain list — buyer-research domain choices are not readable in PFOS logs). Raw URLs, snippets, and full text stay local; PFOS sees only the structured ledger.
+
+`marin.gmail_create_draft` emits `type=marin.gmail_draft.proposed`, `cwd_project=marketing`, `skill_slug=buyer-signal-router`, `data.transport=google_workspace`, and `data.gmail_endpoint=users.drafts.create`. The event may carry Gmail draft/message/thread IDs plus hashed recipient/account identifiers. It must never include the raw subject, body, recipient address, or target Gmail account. Alex reviews and sends manually from Gmail.
 
 ## Hard rules
 

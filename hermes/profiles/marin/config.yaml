@@ -23,6 +23,7 @@ tools:
     - marin.apollo_enrich_list
     - marin.apollo_discover_prospects
     - marin.exa_search
+    - marin.gmail_create_draft
   contracts:
     marketing_vault.read:
       authority: read_only
@@ -88,6 +89,21 @@ tools:
         data_runtime: hermes
         data_proposal_status: proposed
         data_search_provider: exa
+    marin.gmail_create_draft:
+      authority: proposed_write_only
+      write_scope: gmail:drafts
+      event:
+        type: marin.gmail_draft.proposed
+        status: pending
+        surface: cli
+        cwd_project: marketing
+        skill_slug: buyer-signal-router
+        silo_slug: skills
+        private_payload_redacted: true
+        data_runtime: hermes
+        data_proposal_status: proposed
+        data_transport: google_workspace
+        data_gmail_endpoint: users.drafts.create
 
 memory:
   built_in:

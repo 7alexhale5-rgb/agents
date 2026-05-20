@@ -13,6 +13,8 @@ operator_authorization: |
   Alex selected the hybrid cockpit path, runtime lanes as the first proof, and observe+recommend authority for v1.
 ---
 
+> **Partially superseded by 2026-05-18 $1M pivot (commit `7e1340c`):** The cockpit-and-lanes framing stands — PFOS as command cockpit, multiple runtime lanes visible side-by-side. The `pf_runtime` lane is dead (PF Runtime archived to `_archive/2026/pf-runtime/`). The active lane registry is now `hermes_canonical`, `openclaw_external`, `claude_code`, `codex`, `manual_operator`. The "no unmeasured hybrid mode" guardrail and the safe-event-payload rules still bind. See `~/.claude/plans/here-is-what-we-joyful-torvalds.md` and `_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`.
+
 # ADR-007 — Agentic OS hybrid runtime lanes
 
 ## Context
@@ -38,14 +40,14 @@ This amends ADR-006's "no hybrid mode" line to: **no unmeasured hybrid mode**. A
 
 Initial display-level lanes:
 
-| Lane | Purpose | Authority |
-| --- | --- | --- |
-| `pf_runtime` | Owned profile execution path | Profile-specific, receipt-gated |
-| `hermes_reference` | Frozen reference and profile source | Read/reference only |
-| `openclaw_external` | Mike/OpenClaw legacy service lane | External observed service |
-| `claude_code` | Repo implementation lane | Operator-controlled |
-| `codex` | Implementation, review, planning lane | Operator-controlled |
-| `manual_operator` | Alex-approved human action lane | Human only |
+| Lane                | Purpose                               | Authority                       |
+| ------------------- | ------------------------------------- | ------------------------------- |
+| `pf_runtime`        | Owned profile execution path          | Profile-specific, receipt-gated |
+| `hermes_reference`  | Frozen reference and profile source   | Read/reference only             |
+| `openclaw_external` | Mike/OpenClaw legacy service lane     | External observed service       |
+| `claude_code`       | Repo implementation lane              | Operator-controlled             |
+| `codex`             | Implementation, review, planning lane | Operator-controlled             |
+| `manual_operator`   | Alex-approved human action lane       | Human only                      |
 
 PFOS keeps the existing `agents.runtime` enum: `pf_runtime | external | legacy`. Runtime lanes are a display/source-packet derivation from agent rows and event surfaces, not a new database enum in v1.
 

@@ -1,6 +1,8 @@
 # LAIK MCP — runtime-agnostic boundary spec
 
-> **Status:** **DRAFT pending Phase 4.5 lead sign-off.** Authored 2026-05-06 per Phase 4.7 PLAN.md §14.A. Phase 4.5 ships against this contract; PF Runtime consumes it identically to Hermes. The "locked" stamp moves here only after the Phase 4.5 lead has reviewed the surface in-context, signed off in commit-message form, and the contract test (`tests/laik_mcp_contract.py`) is green against the actual Phase 4.5 implementation.
+> **Updated 2026-05-19 ($1M pivot):** PF Runtime was archived per the 2026-05-18 pivot. The runtime-agnostic framing below still holds — this is an MCP boundary, designed to attach to any MCP-aware runtime. The single canonical consumer today is **Hermes Agent v0.12.0**. References to "Phase 4.5" and "Phase 4.7" below are historical artifacts of the pre-pivot multi-phase roadmap; they don't gate the spec or its consumers. Live phases are in `docs/migration-runbook.md`.
+
+> **Status (original):** **DRAFT pending lead sign-off.** Authored 2026-05-06. The "locked" stamp moves here only after the LAIK lead has reviewed the surface in-context, signed off in commit-message form, and a contract test is green against the actual implementation.
 
 ## Purpose
 

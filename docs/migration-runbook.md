@@ -1,211 +1,113 @@
-# Migration runbook — Hermes consolidation + Company AGI fusion
+# Migration runbook — $1M ARR agent fleet (post-pivot)
 
-> **Status pointer:** Phase 0 done · Phase 1 foundation committed · Phase 1.5 in flight (Honcho laptop, Slack pairing per ADR-004) · Phase 4.5 inserted between 4 and 5 (LAIK-as-MCP fusion) · **Phase 4.7 inserted between 4.5 and 5 (PrettyFly Runtime bare-metal cutover, per ADR-006).**
+> **Status pointer:** $1M-pivot Phase 2 (CMO weekly decision pilot) — in progress 2026-05-18. PF Runtime archived; Hermes Agent v0.12.0 is the canonical runtime.
+
+## Context
+
+The 2026-05-18 $1M pivot dropped the PFOS agent marketplace and reset the agent fleet around revenue-pipeline roles. Thirteen non-revenue profiles moved to `hermes/_archive/2026/`. PrettyFly Runtime moved to `_archive/2026/pf-runtime/`. The plan driving this is [`~/.claude/plans/here-is-what-we-joyful-torvalds.md`](../../.claude/plans/here-is-what-we-joyful-torvalds.md).
+
+The earlier multi-phase Hermes-consolidation runbook is preserved at [`_archive/2026/docs/migration-runbook-pre-pivot.md`](../_archive/2026/docs/migration-runbook-pre-pivot.md) for historical record. The phases below are the live ones.
 
 ## Phase index
 
-| Phase   | Goal                                                                                                                                                                                                                                                                                                                                                           | Money pipelines?                             | Estimated calendar                                  | Status                                                                                                                                                                                                  |
-| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0       | Probe + scaffold + dry-run                                                                                                                                                                                                                                                                                                                                     | No                                           | 1–2 days                                            | ✅ Done 2026-05-04                                                                                                                                                                                      |
-| 1       | Personal profile cutover (gravity-claw heir) + foundation                                                                                                                                                                                                                                                                                                      | No                                           | 3–5 days active + 14-day shadow                     | 🟡 In flight                                                                                                                                                                                            |
-| 1.5     | Honcho stand up + Slack ecosystem pairing (per ADR-004)                                                                                                                                                                                                                                                                                                        | No                                           | 1 day                                               | 🟡 In flight                                                                                                                                                                                            |
-| 2       | Mike-lawdbot migration via `hermes claw migrate` + BOT_TOKEN rotation                                                                                                                                                                                                                                                                                          | **Yes (Telegram)**                           | 2–3 days + 14-day shadow                            | ⬜ Not started                                                                                                                                                                                          |
-| 3       | Paperclip activation (Claude Max session, NOT metered)                                                                                                                                                                                                                                                                                                         | No                                           | 3–4 days                                            | ⬜ Not started                                                                                                                                                                                          |
-| 4       | Mission Control data migration + retirement                                                                                                                                                                                                                                                                                                                    | **Yes (ConsultOps Marc, sportsbook ingest)** | 5–7 days + 14-day shadow + 90-day archive           | ⬜ Not started                                                                                                                                                                                          |
-| **4.5** | **LAIK-as-MCP fusion** (per Company AGI report §3.2)                                                                                                                                                                                                                                                                                                           | **Yes (ConsultOps daily, YEH dry_run)**      | 5–7 days                                            | ⬜ Not started                                                                                                                                                                                          |
-| **4.7** | **PrettyFly Runtime bare-metal** (per ADR-006 + **[`PIVOT_2026-05-06.md`](../.planning/phase-4-7-prettyfly-runtime/PIVOT_2026-05-06.md)**) — sub-phases **A–E**: loop+loader → memory 1–2 → Slack cutover (personal) → dream+tier3–4 → Kanban+shadow. G1 Hermes baseline **skipped** per pivot; cutover gates are absolute (Wilson/Ragas/real-job/latency/P0). | **Yes (13 profiles at end state)**           | ~25–40 focused hours + soak windows + 14-day shadow | 🟡 **In flight** — A/B in repo; **C** Slack gateway; operator playbook: [`.planning/phase-4-7-prettyfly-runtime/CUTOVER_C_PLAYBOOK.md`](../.planning/phase-4-7-prettyfly-runtime/CUTOVER_C_PLAYBOOK.md) |
-| 5       | Gravity-claw retirement (Fly.io heartbeat off)                                                                                                                                                                                                                                                                                                                 | No                                           | 2–3 days                                            | ⬜ Not started                                                                                                                                                                                          |
-| 6       | OpenClaw retirement + PrettyFly OS branding + marketplace launch                                                                                                                                                                                                                                                                                               | No (all migrated)                            | 1–2 weeks                                           | ⬜ Not started                                                                                                                                                                                          |
+| Phase | Goal                                                                                         | Status                                  |
+| ----- | -------------------------------------------------------------------------------------------- | --------------------------------------- |
+| 1     | Archive dead weight (pf-runtime, marketplace, 13 non-revenue profiles)                       | ✅ Landed 2026-05-18 (commit `7e1340c`) |
+| 1.5   | PrettyFly sub-project revenue audit                                                          | 🟡 In progress                          |
+| 2     | Build CMO profile from Atlas template                                                        | 🟡 In progress                          |
+| 3     | Build Quill + Viper profiles from Atlas template                                             | ⬜ Not started                          |
+| 4     | Extend Atlas with marketing-vault read path                                                  | ⬜ Not started                          |
+| 5     | Build koho-ops + yeh-ops retainer-delivery profiles                                          | ⬜ Not started                          |
+| 5.5   | Rebuild codex profile from Atlas template                                                    | ⬜ Not started                          |
+| 6     | Wake one dormant Hermes capability (trigger-gated per the sub-project → profile trigger ADR) | ⬜ Not started                          |
+| 7     | Quarterly compound review                                                                    | Next: 2026-08-18                        |
 
-> **Hermes pin (per ADR-006):** v0.12.0 (2026.4.30). Do not run `hermes update`. Subscribe to releases for security-fix porting only. Hermes is reframed from "unified runtime" to "frozen reference implementation through Phase 4.7 cutover." All Phase 1–4.5 work runs on this pin.
+## Hermes pin
+
+Hermes Agent v0.12.0 (2026.4.30) is the canonical runtime. Do not run `hermes update` — port security-relevant fixes manually. The v0.12.0 pin holds indefinitely.
 
 ## Authoritative specs
 
-- Architecture v1+v2: `~/Projects/research-vault/research/2026-05-04-hermes-agent-unified-overhaul.md` (24,069 words)
-- Company AGI fusion: `~/Projects/research-vault/research/2026-05-04-company-agi-laik-hermes-fusion.md` (6,350 words)
-- Surgical plan: `~/.claude/plans/before-we-start-make-ticklish-island.md`
+- $1M plan (drives this runbook): [`~/.claude/plans/here-is-what-we-joyful-torvalds.md`](../../.claude/plans/here-is-what-we-joyful-torvalds.md)
+- Profile shape contract: [`_meta/decisions/2026-05-18-agent-shape-11-file-contract.md`](../_meta/decisions/2026-05-18-agent-shape-11-file-contract.md)
+- Sub-project → profile trigger: [`_meta/decisions/2026-05-18-subproject-to-profile-trigger.md`](../_meta/decisions/2026-05-18-subproject-to-profile-trigger.md)
+- Hermes → PFOS event contract: [`_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`](../_meta/decisions/2026-05-18-hermes-pfos-event-contract.md)
+- Shared-handoff skill: [`_meta/decisions/2026-05-18-generate-handoff-shared-skill.md`](../_meta/decisions/2026-05-18-generate-handoff-shared-skill.md)
+- Historical ADRs (superseded): [`ADR-006 PF Runtime bare-metal`](../_meta/decisions/2026-05-06-prettyfly-runtime-bare-metal.md), [`ADR-007 hybrid runtime lanes`](../_meta/decisions/2026-05-16-agentic-os-hybrid-runtime-lanes.md)
 
-This runbook is the operator's view. Read those specs for the why.
+## Live profile roster (target: 7)
 
-## Phase 0 — completed 2026-05-04
+| Profile     | Status                                          | Phase |
+| ----------- | ----------------------------------------------- | ----- |
+| `atlas-ceo` | Live (template, rung 3)                         | —     |
+| `cmo`       | Live (scaffolded 2026-05-18)                    | 2     |
+| `quill`     | Not built                                       | 3     |
+| `viper`     | Not built                                       | 3     |
+| `koho-ops`  | Not built                                       | 5     |
+| `yeh-ops`   | Not built (rebuild clean; old version archived) | 5     |
+| `codex`     | Live (rebuild from Atlas template pending)      | 5.5   |
 
-Hermes v0.12.0 installed. Dry-run captured at `docs/phase0-claw-dry-run.log` (24 migratable / 2 conflicts / 25 N/A). Repo scaffolded. ADR-001 written. MANIFEST updated with `agents` row + migration phase notes on the four retiring projects.
+## Archived (2026-05-18)
 
-## Phase 1 — personal profile cutover (in flight)
+Profiles moved to `hermes/_archive/2026/`: `atelier`, `consultops`, `forge-audit`, `lawdbot`, `mobile`, `ops`, `personal`, `personal-baseline`, `quill-content`, `sportsbook`, `vanclief`, `viper-outreach`, `yeh-ops`.
 
-Acceptance: 7 consecutive days of voice replies referencing yesterday's conversation correctly via Hermes session DB recall, zero cross-talk vs gravity-claw transcript baseline.
+Code moved to `_archive/2026/`: `pf-runtime/`, `marketplace/`.
 
-Steps committed today (commit `0462724`):
+## Phase 1 — archive dead weight (done)
 
-- Personal profile SOUL/USER/MEMORY/CLAUDE/manifest/pricing/config (versioned)
-- Layer-2 rooms: voice / daily-digest / obsidian-sync (CONTEXT.md each)
-- voice-loop skill (Groq Whisper Turbo + Google TTS)
-- 4d-senses MCP server (smoke-tested green: 5 tools, status call returns JSON)
-- Scripts: sync-profile.sh / bootstrap-profile.sh / seal-profile.sh
-- Email-triage SKU (full marketplace package)
+Commit `7e1340c` (2026-05-18) physically moved 13 profile dirs + the `pf-runtime/` tree + the `marketplace/` tree under `_archive/2026/`. New roster locked: `atlas-ceo`, `cmo`, `quill`, `viper`, `koho-ops`, `yeh-ops`, `codex`.
 
-Steps remaining:
+## Phase 1.5 — PrettyFly sub-project revenue audit (in progress)
 
-- Phase 1.5 (below) — Honcho + Telegram
-- Run `scripts/sync-profile.sh push personal` to mirror versioned tree → `~/.hermes/profiles/personal/`
-- Pair the new Telegram bot
-- Smoke voice exchange
-- 14-day shadow window starts on first real voice exchange
+Audit each sub-project against the trigger rule from `_meta/decisions/2026-05-18-subproject-to-profile-trigger.md` (30 consecutive days of $2k/mo OR 3hr/week × 4wks OR 3 paying customers). Demote any that don't trigger; promote any that do.
 
-## Phase 1.5 — Honcho self-host + Telegram pairing (in flight)
+Sub-projects under audit: `audit-engine`, `decision-maker-identifier`, LAIK, `gravity-stack-koho-starter`, others per `~/Projects/MANIFEST.md`.
 
-### Honcho laptop stand-up
+## Phase 2 — build CMO profile (in progress)
 
-```bash
-cd ~/Projects/agents/honcho
-cp .env.template .env
-# Generate secrets:
-openssl rand -hex 32  # → HONCHO_DB_PASSWORD
-openssl rand -hex 32  # → HONCHO_JWT_SECRET
-# Edit .env, paste secrets + Anthropic + OpenAI keys
+CMO is the marketing operating agent. Reads the marketing vault, runs the weekly revenue loop, proposes ONE weekly decision (continue / narrow ICP / rewrite message / change channel / pause). Never publishes, sends, or schedules external messages.
 
-# Start Docker Desktop first (currently not running — gates this step)
-open -a Docker
+**Acceptance**: CMO ships one weekly readout against the AI Ops Audit campaign through the supervised dispatch packet.
 
-# Wait ~30s for daemon, then:
-docker compose up -d
-docker compose logs -f honcho-api  # wait for "Application startup complete"
-curl -fsS http://localhost:8765/health  # smoke test
-```
+**Current state**: `hermes/profiles/cmo/` exists with SOUL, DOCTRINE, USER, MEMORY, CLAUDE, manifest, a2a-card, config, plus the `buyer-signal-router` and `supervised-dispatch` skills (per 2026-05-18 commit `9270bfc` + `a9e811d`).
 
-Acceptance: `curl http://localhost:8765/health` returns 200. Honcho API up at `localhost:8765`, DB on `localhost:8764` (loopback only).
+## Phase 3 — build Quill + Viper (not started)
 
-### Telegram pairing
+- **Quill**: drafts content from approved positioning in the marketing vault. Drafts to `_inbox/`, never publishes.
+- **Viper**: pressure-tests campaigns, claims, positioning, and campaign logic before launch.
 
-```bash
-# 1. Talk to @BotFather on Telegram, /newbot, get a token (do NOT paste into a chat)
-# 2. Run the pairing script
-~/Projects/agents/scripts/pair-telegram.sh personal <bot-token-from-botfather>
-# 3. Smoke test
-hermes profile use personal
-hermes channel test telegram
-```
+Both built from the Atlas template per the 11-file contract.
 
-Acceptance: send a "/start" to the new bot, agent responds with the pairing-confirmation message.
+## Phase 4 — extend Atlas with marketing-vault read path (not started)
 
-## Phase 2 — mike-lawdbot migration
+Wire Atlas to read `~/Projects/marketing/` directly (currently advisor-only against the repo). **Acceptance**: Atlas's weekly brief references named items from the marketing vault by relative path.
 
-`hermes claw migrate --workspace ~/Projects/mike-lawdbot/openclaw/workspace --target ~/.hermes/profiles/lawdbot/` (after Phase 0 dry-run review).
+## Phase 5 — build koho-ops + yeh-ops (not started)
 
-**BOT_TOKEN rotation procedure** (cutover day, end of 14-day shadow):
+- **koho-ops**: Koho retainer delivery — Marc routing, ConsultOps demos, Excerpa work.
+- **yeh-ops**: Yehovah retainer delivery — trial-to-GA monitoring, CTO duties.
 
-1. During shadow: pair Hermes-lawdbot to a temporary second bot (`@MikeLawdbot2_dev`).
-2. On flip day: in @BotFather, `/revoke` the production Mike bot token, generate fresh.
-3. `hermes channel update telegram --profile lawdbot --token $ROTATED_TOKEN && hermes profile restart lawdbot`.
-4. `ssh vps 'systemctl stop openclaw.service'` (do NOT delete; warm fallback for 14 more days).
-5. Rotated token never returns to OpenClaw.
+Both consume the [`email-triage`](../hermes/shared-skills/email-triage/SKILL.md) shared skill salvaged in this same pivot cleanup.
 
-Skip the two skills the dry-run wants to import: `personal-skills/rls-audit` and `personal-skills/staged-review`. Those stay env-scope at `~/.agents/skills/` per Hard Constraint #6.
+## Phase 5.5 — rebuild codex from Atlas template (not started)
 
-## Phase 3 — paperclip activation
+Codex is the developer helper. Rebuild against the 11-file contract for consistency with the rest of the roster.
 
-Five separate profiles: `paperclip-atlas`, `paperclip-viper`, `paperclip-quill`, `paperclip-forge`, `paperclip-radar`. Each `config.yaml` MUST set:
+## Phase 6 — wake dormant Hermes capability (trigger-gated)
 
-```yaml
-model:
-  provider: claude-max-subscription
-  channel: oauth-session
-  fallback: none
-```
+Per the sub-project-to-profile trigger ADR. Reserved for the first capability that earns trigger-gated promotion after Phase 5 ships.
 
-Verify with `hermes model probe --profile paperclip-atlas` — must report `provider=claude-max-subscription`, NOT `anthropic-api`.
+## Phase 7 — quarterly compound review
 
-## Phase 4 — Mission Control retirement
+Next: **2026-08-18**. Audit fleet health against revenue targets, demote unused profiles per the 30-day no-trigger rule, surface candidate profiles from sub-projects that crossed the trigger threshold.
 
-Honcho on VPS port 8766. Hybrid data preservation: `observations` table → Honcho via bulk import; `crm_leads`/`approval_queue`/`cost_ledger`/`shared_context` → stay in Postgres, exposed via readonly MCP `mission-control-archive` for 90 days.
+## Operator notes
 
-Verify Langfuse trace volume ±5% before MC service stop.
+- Profile additions go through `scripts/lint-profile.sh` before any commit (per the 11-file contract ADR).
+- Channel updates emit PFOS `agent_events` per the event-contract ADR. No raw vault text, no prompts, no secrets in payloads.
+- Shared skills live in `hermes/shared-skills/`; profile-specific skills in `hermes/profiles/<name>/skills/`.
+- Cross-session handoffs use the `generate-handoff` shared skill.
 
-## Phase 4.5 — LAIK-as-MCP fusion (NEW)
+## Phase pointer
 
-**Inserted between MC retirement and gravity-claw retirement per Company AGI fusion report §3.2.**
-
-Goal: strip LAIK's FastAPI wrapper into a Python MCP server (`mcp-servers/laik/`) that exposes `laik_query`, `laik_sql`, `laik_propose_mutation`, `laik_confirm_mutation`, `laik_list_tenants`, `laik_status` to every Hermes profile.
-
-Steps:
-
-1. Build `mcp-servers/laik/` Python MCP server importing `kit.retrieval.pipeline` + `kit.orchestrator.tools` from the existing LAIK codebase.
-2. Smoke test against ConsultOps tenant locally.
-3. Register `laik` in shared-skills catalog so any profile can install it.
-4. Update `personal/config.yaml` to attach `laik` MCP — first profile to consume.
-5. Update `consultops/config.yaml` and `yeh-ops/config.yaml` similarly.
-6. Move existing LAIK FastAPI service to read-only mode for 30-day overlap.
-7. After 30 days of zero traffic to old FastAPI, decommission.
-
-Acceptance: every Hermes profile that needs grounded company facts reads them through `laik_query()` or `laik_sql()` instead of Postgres-direct.
-
-## Phase 4.7 — PrettyFly Runtime bare-metal (ADR-006 + pivot)
-
-**Authoritative sequencing:** `.planning/phase-4-7-prettyfly-runtime/PIVOT_2026-05-06.md` (locked 2026-05-06). The pivot **supersedes** PLAN.md §1 G1 (7-night Hermes baseline before loop work). Status tracker: `.planning/phase-4-7-prettyfly-runtime/STATUS.md`.
-
-**Sub-phases A–E (PIVOT §4):**
-
-| Sub-phase | Delivers                                              | Gate (high level)                |
-| --------- | ----------------------------------------------------- | -------------------------------- |
-| **A**     | CLI + `run_session()` real reply                      | Trace + `finish_reason=stop`     |
-| **B**     | Memory tiers 1–2 in loop                              | Buffer tests                     |
-| **C**     | Slack Socket Mode for `personal` (Iris on PF Runtime) | 50 DMs/24h; see CUTOVER playbook |
-| **D**     | Dream loop + tiers 3–4                                | Soak + bounds                    |
-| **E**     | Postgres Kanban + 48h personal shadow                 | Load + P0                        |
-
-**Final cutover gates (PIVOT §3):** (1) Wilson lower-CI ≥0.80 per profile (2) Ragas answer_relevance ≥0.83 personal golden set N=150 (3) real-job execution per profile in shadow (4) latency/throughput thresholds (5) zero P0.
-
-**Operator procedure for personal Slack swap:** `.planning/phase-4-7-prettyfly-runtime/CUTOVER_C_PLAYBOOK.md`
-
-### Historical PLAN.md detail (sub-phases 4.7.1–4.7.5)
-
-The following bullets match the pre-pivot charter in `.planning/phase-4-7-prettyfly-runtime/PLAN.md` for file-level depth; **PIVOT wins** on sequencing and gates.
-
-### Sub-phase 4.7.1 — Loop primitive (PLAN reference)
-
-Build `pf-runtime/runtime/{loop,model_adapter,tool_dispatch,stop_condition,audit}.py`. Run the `personal` profile through one Slack DM round-trip via the LiteLLM proxy at `http://127.0.0.1:4000`. **Gate:** same prompt → same tool calls → ≤ 5% token delta vs Hermes baseline on the 30-question golden set.
-
-### Sub-phase 4.7.2 — Memory + skills
-
-Build the 4-tier memory stack (SOUL.md / rolling buffer in SQLite / episodic via LAIK MCP from Phase 4.5 / agentskills.io skill loader) plus skill self-generation (auto-author after 5+ tool calls) and the dream loop (post-session reflection that prunes contradictions into MEMORY.md). **Gate:** Ragas faithfulness ≥ 0.85 on the golden set; ≥ 1 skill auto-authored after a 5+ tool-call session; dream loop produces a non-empty post-session pruning diff.
-
-### Sub-phase 4.7.3 — Channel gateway
-
-Slack adapter first (Socket Mode + 13 OAuth-scoped apps from ADR-004), then Telegram, Email, Discord, optional voice via `file_shared`. **Gate:** identical action across runtimes for a 50-message corpus on `atlas-ceo`; money-pipeline OAuth scopes still read-only on `vanclief` and `sportsbook` (no `chat:write`/`im:write`/`reactions:write`/`files:write`).
-
-### Sub-phase 4.7.4 — Kanban + Fleet Console
-
-**Postgres-backed** task board (sibling schema in mission-control's existing Neon Postgres; revised from the original SQLite spec per architecture-finding-3 + concurrency-finding-A in PLAN.md §5/§10) + REST/WebSocket API + Fleet Console extension at `~/Projects/mission-control/api-cost-dashboard/` (extending ADR-005's dashboard, not building parallel). Tier 2 memory buffer remains SQLite per MEMORY_LIFECYCLE.md; only Kanban moves to Postgres. 14-day parallel shadow of all 13 profiles on PF Runtime alongside Hermes. **Gate:** trace volume ±5%, p95 latency ≤150% of baseline, concurrent throughput ≥80% of baseline, zero P0 incidents, per-profile real-job execution.
-
-### Sub-phase 4.7.5 — Cutover (PLAN reference — gates superseded)
-
-**Post-pivot canonical gates:** PIVOT §3 (Wilson ≥0.80, Ragas ≥0.83, real-job, latency/throughput, P0). The list below is the **pre-pivot** PLAN.md §11 text kept for file-layout history.
-
-Operator decision against the five gates (historical PLAN.md §11 wording):
-
-1. **Promptfoo Wilson lower-CI ≥ 85% per profile** on the existing `email-triage-eval-nightly` golden set; per-profile failures are not averaged.
-2. **Ragas faithfulness ≥ Hermes baseline – 0.02** on personal profile golden set.
-3. **Per-profile real-job execution gate** — every profile completes ≥1 full real-world job through PF Runtime during shadow (ConsultOps Marc lead intake, sportsbook predictions, lawdbot Telegram message, YEH-ops daily check-in, etc.); Sentry + Langfuse trace each end-to-end with zero P0.
-4. **Latency + throughput gate** — p95 latency ≤150% of Hermes baseline; concurrent throughput ≥80% of baseline. Replaces the original backward-looking cost ±10% gate per skeptic-finding-4.
-5. **Zero P0 incidents** across the full 14-day shadow (Sentry-defined P0 = production data loss, security breach, or ≥1 hour outage of a money-pipeline profile).
-
-If all five pass: stop the Hermes service, flip profile dirs from `~/.hermes/profiles/` mirror to canonical at `pf-runtime/runtime-state/profiles/`, archive `~/.hermes/hermes-agent/` for 90-day forensic window. If any gate fails: stay on Hermes, document gaps in a follow-up ADR.
-
-### Pre-work that fires now (parallel with Phase 1)
-
-- `pf-runtime/SPEC.md` — runtime surface contract (profile loader, channel ABC, tool protocol, memory tier interfaces, kanban schema). ~1 day.
-- LAIK MCP boundary lock — confirm Phase 4.5's MCP surface is runtime-agnostic before it ships. ~2 hours.
-- `tests/profile_dir_contract.py` — nightly assertion that all 13 profile dirs are loadable by Hermes today and the PF Runtime spec. ~3 hours.
-- Hermes commit-watcher — daily diff of HEAD..origin/main mailed to `forge-audit`. ~30 minutes.
-
-## Phase 5 — gravity-claw retirement
-
-Fly.io heartbeat: `flyctl scale count 0 --app gravity-claw-heartbeat`. Edit `.github/workflows/heartbeat.yml` → `on: workflow_dispatch:` only. Verify Fly.io billing $0 for 7 consecutive days. Stop primary app. Vercel paused. Repo tagged `retired-2026-XX-XX`, moved to `_archive/2026/`. MANIFEST updated.
-
-## Phase 6 — OpenClaw retirement + marketplace launch
-
-`ssh vps 'systemctl stop openclaw.service && systemctl disable openclaw.service'`. Archive `~/.openclaw/` for 90-day forensic window. PrettyFly OS branding ships. console.prettyflyforai.com/company-agi catalog goes live with three tiers (Lite $499 / Pro $1,999 / Scale $9,999) per Company AGI fusion §5.
-
-## Phase pointer (current)
-
-Edit this line as phases complete: **CURRENT PHASE: 1 + 1.5 (parallel) · Phase 4.7 pivot A–C in flight (`pf-runtime/` Slack gateway); see STATUS.md**.
+Edit this line as phases complete: **Current phase: $1M-pivot Phase 2 (CMO weekly decision pilot) — in progress 2026-05-18.**

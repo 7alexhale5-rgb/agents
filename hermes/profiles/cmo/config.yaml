@@ -1,0 +1,88 @@
+profile: cmo
+
+agent:
+  max_iterations: 32
+  iteration_budget_tokens: 200000
+
+model:
+  # PF Runtime and Hermes loaders read `default` and `provider`.
+  default: nvidia/nemotron-3-nano-30b-a3b:free
+  provider: openrouter
+  routing:
+    smoke_test: nvidia/nemotron-3-nano-30b-a3b:free
+    weekly_review: anthropic:claude-sonnet-4-6
+    campaign_brief_draft: anthropic:claude-sonnet-4-6
+    kill_list_enforce_hard_call: anthropic:claude-opus-4-7
+
+tools:
+  builtin:
+    - marketing_vault.read
+    - message_ledger.read
+    - scoreboard.read
+    - weekly_decision.propose
+  contracts:
+    marketing_vault.read:
+      authority: read_only
+      scope: ~/Projects/marketing/
+    message_ledger.read:
+      authority: read_only
+      scope: ~/Projects/marketing/metrics/message-outcome-ledger-v0.md
+    scoreboard.read:
+      authority: read_only
+      scope: ~/Projects/marketing/metrics/first-30-days-scoreboard.md
+    weekly_decision.propose:
+      authority: proposed_write_only
+      write_scope: ~/Projects/marketing/_inbox/cmo-readouts/
+      event:
+        type: cmo.weekly_decision.proposed
+        status: pending
+        surface: cli
+        cwd_project: marketing
+        skill_slug: weekly-review
+        private_payload_redacted: true
+        data_runtime: hermes
+        data_proposal_status: proposed
+
+memory:
+  built_in:
+    enabled: true
+    fts5_enabled: true
+  honcho:
+    enabled: false
+
+mcp_servers: {}
+skills:
+  install: []
+  global:
+    - cost-watch
+    - daily-digest
+  shared:
+    - generate-handoff
+
+channels:
+  # CMO has no external channels. Writes go to marketing/_inbox/cmo-readouts/.
+  # Slack / Telegram / email all disabled.
+  slack:
+    enabled: false
+
+approval:
+  mode: propose_only
+  outbound_channels: []
+  pii_redaction: true
+  proposals:
+    enabled: true
+    execute: false
+    write_target: ~/Projects/marketing/_inbox/cmo-readouts/
+
+guardrails:
+  spend_cap_per_day_usd: 5
+  alert_threshold_pct: 80
+  honor_marketing_vault_kill_list: true
+  honor_tool_adoption_triggers: true
+  do_not_scale_without_named_workflow: true
+  redact_raw_vault_text_from_pfos_events: true
+  forbid_external_sends: true
+
+logging:
+  trajectory_jsonl: true
+  langfuse_project: hermes-cmo

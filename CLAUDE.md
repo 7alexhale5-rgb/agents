@@ -20,7 +20,7 @@ You've opened the consolidated Hermes monorepo. This file is the Layer-1 router 
 | Yehovah retainer delivery (trial-to-GA monitoring, CTO duties)                    | `hermes/profiles/yeh-ops/CLAUDE.md` (Phase 5)  |
 | Repo-wide refactor / multi-file coordination / PR drafts on revenue products      | `hermes/profiles/codex/CLAUDE.md` (Phase 5.5)  |
 
-Profiles in parentheses are scheduled for build per the plan; only `atlas-ceo` and `codex` exist on disk as of 2026-05-18.
+Profiles in parentheses are scheduled for build per the plan; `atlas-ceo`, `codex`, and `cmo` exist on disk as of 2026-05-18.
 
 ### Karpathy ladder per profile
 
@@ -42,6 +42,7 @@ Atlas is at rung 3 — use it as the reference shape. Every new profile starts a
 - **agentskills.io / SKILL.md** for every procedural skill — progressive disclosure (metadata → body → referenced files)
 - **MCP for tools, A2A for agents** — never blur the line
 - **One ADR per architectural decision** in `_meta/decisions/`, dated, never edit historical ADRs
+- **1% closeout discipline** — after each completed task, name the next obvious 1% move. When Alex asks for planning around it, produce a decision-complete plan, then autonomously execute up to the next three small, safe 1% moves unless a real blocker appears.
 
 ## Source-of-truth ↔ runtime
 
@@ -73,7 +74,7 @@ These tools live at env scope and stay where they are. Per-project addenda layer
 
 ## Phase pointer
 
-**Current phase: $1M-pivot Phase 1 (archive + reset) — in progress 2026-05-18.**
+**Current phase: $1M-pivot Phase 2 (CMO weekly decision pilot) — in progress 2026-05-18.**
 
 Per `~/.claude/plans/here-is-what-we-joyful-torvalds.md`:
 

@@ -23,6 +23,8 @@ operator_authorization: |
   system engineer would." — Alex, 2026-05-06 morning
 ---
 
+> **Superseded by 2026-05-18 $1M pivot (commit `7e1340c`):** PF Runtime archived to `_archive/2026/pf-runtime/`. Hermes Agent v0.12.0 remains the canonical runtime — the "frozen reference implementation" framing in this ADR is dead, and the Phase 4.7 cutover gates (Wilson / Ragas / real-job / latency / P0) are obsolete. The six locked commitments below held for ~12 days; the operator decision to drop the agent marketplace closed the G0 gate as NO and removed the only reason to own the runtime. See `~/.claude/plans/here-is-what-we-joyful-torvalds.md` for the active plan, and the four 2026-05-18 ADRs (`agent-shape-11-file-contract`, `subproject-to-profile-trigger`, `hermes-pfos-event-contract`, `generate-handoff-shared-skill`) for the post-pivot world. This ADR is retained as historical record.
+
 # ADR-006 — PrettyFly Runtime, bare-metal-first commitment
 
 ## Context

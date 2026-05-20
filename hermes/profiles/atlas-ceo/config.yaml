@@ -34,6 +34,8 @@ skills:
   global:
     - cost-watch
     - daily-digest
+  shared:
+    - generate-handoff
 
 channels:
   slack:

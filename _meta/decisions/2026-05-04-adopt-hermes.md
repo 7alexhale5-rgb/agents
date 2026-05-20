@@ -1,10 +1,12 @@
 # ADR-001 — Adopt Hermes Agent as the unified runtime
 
 **Date:** 2026-05-04
-**Status:** Accepted (amended 2026-05-06 by ADR-006)
+**Status:** Accepted (amended 2026-05-06 by ADR-006, which itself was superseded by the 2026-05-18 $1M pivot — see header notes)
 **Phase:** 0 complete
 
-> **Amended by ADR-006 (2026-05-06):** Hermes v0.12.0 is reframed from "unified runtime" to "frozen reference implementation through Phase 4.7 cutover." This ADR's reasoning is correct for Phase 0 — Hermes gave us conventions (`SOUL.md` / `MEMORY.md` / `USER.md` / `CLAUDE.md`), the OpenClaw migrator (24 items migrated cleanly), and a working 13-profile cutover path. We keep all of those. ADR-006 commits to building **PrettyFly Runtime** at `~/Projects/agents/pf-runtime/` and replacing the runtime layer at Phase 4.7 (between LAIK-as-MCP fusion at 4.5 and gravity-claw retirement at 5). See `_meta/decisions/2026-05-06-prettyfly-runtime-bare-metal.md` for full reasoning.
+> **Latest amendment (2026-05-18 $1M pivot, commit `7e1340c`):** The ADR-006 "frozen reference implementation through Phase 4.7 cutover" reframing below is dead. PF Runtime was archived to `_archive/2026/pf-runtime/`; Phase 4.7 was archived. Hermes Agent v0.12.0 is again the unmodified canonical runtime — no reframing, no cutover pending. The original ADR-001 decision (this doc) stands cleanly on its own. See `~/.claude/plans/here-is-what-we-joyful-torvalds.md` and the four 2026-05-18 ADRs for the post-pivot world.
+
+> **Earlier amendment (ADR-006, 2026-05-06, now superseded):** Hermes v0.12.0 is reframed from "unified runtime" to "frozen reference implementation through Phase 4.7 cutover." This ADR's reasoning is correct for Phase 0 — Hermes gave us conventions (`SOUL.md` / `MEMORY.md` / `USER.md` / `CLAUDE.md`), the OpenClaw migrator (24 items migrated cleanly), and a working 13-profile cutover path. We keep all of those. ADR-006 commits to building **PrettyFly Runtime** at `~/Projects/agents/pf-runtime/` and replacing the runtime layer at Phase 4.7 (between LAIK-as-MCP fusion at 4.5 and gravity-claw retirement at 5). See `_meta/decisions/2026-05-06-prettyfly-runtime-bare-metal.md` for full reasoning.
 
 ## Context
 

@@ -1,0 +1,51 @@
+{
+  "schema": "a2a/v1+ext",
+  "agent_id": "cmo",
+  "version": "0.1.0",
+  "description": "Alex-first marketing operating agent. CMO reads the marketing vault, runs the weekly revenue loop, and proposes ONE weekly decision (continue / narrow ICP / rewrite message / change channel / pause). Writes only to marketing/_inbox/cmo-readouts/ or approved outreach operator packets.",
+  "tier": "manual_weekly_marketing_decision_pilot",
+  "side_effects": ["read", "inbox_draft_only"],
+  "eval_suite_uri": "eval/promptfoo.yaml",
+  "cost_envelope": {
+    "budget_usd_per_day": 5,
+    "alert_threshold_pct": 80
+  },
+  "channels": ["inbox_draft_only"],
+  "skills": [
+    "weekly-review",
+    "buyer-signal-router",
+    "supervised-dispatch",
+    "campaign-brief-draft",
+    "kill-list-enforce",
+    "generate-handoff"
+  ],
+  "tools": [
+    "marketing_vault.read",
+    "message_ledger.read",
+    "scoreboard.read",
+    "weekly_decision.propose"
+  ],
+  "authority": {
+    "mode": "propose_only",
+    "can_read": [
+      "marketing_vault",
+      "message_outcome_ledger",
+      "first_30_days_scoreboard"
+    ],
+    "can_write": ["marketing_inbox_cmo_readouts_only", "marketing_outreach_operator_packet", "safe_pfos_event_summary"],
+    "cannot": [
+      "publish_external_messages",
+      "send_linkedin_dms",
+      "run_unattended_linkedin_automation",
+      "send_email",
+      "schedule_content",
+      "modify_active_campaign_files",
+      "modify_offer_files",
+      "modify_icp_files",
+      "modify_other_profiles",
+      "execute_actions",
+      "spend_money_outside_budget"
+    ]
+  },
+  "stamped_at": "2026-05-18T00:00:00Z"
+}

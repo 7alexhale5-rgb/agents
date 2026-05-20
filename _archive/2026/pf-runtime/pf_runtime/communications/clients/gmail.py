@@ -32,6 +32,11 @@ log = logging.getLogger(__name__)
 
 _API_BASE = "https://gmail.googleapis.com/gmail/v1/users/me"
 _FULL_RESYNC_LIMIT = 50
+# After a full resync we anchor the cursor to the historyId of the first
+# successfully-fetched message. Cap how many we try to anchor against — if
+# the top of the inbox has all been deleted/archived since the listing, we
+# accept no anchor and let the next cycle redo a full resync.
+_ANCHOR_TRY_LIMIT = 5
 _FORBIDDEN_GMAIL_SCOPES: frozenset[str] = frozenset(
     {
         "https://www.googleapis.com/auth/gmail.modify",
@@ -151,18 +156,19 @@ class GmailClient:
 
     def _derive_history_id_from_messages(self, ids: list[str]) -> str | None:
         # Peek at the newest message (Gmail returns most-recent first) for its
-        # historyId. We do a single extra GET; subsequent _get_message calls
-        # in the caller will re-fetch but that's fine — the API is idempotent
-        # and the first id is typically already in our cache by the time the
-        # caller reaches it. To stay simple we just return None when the
-        # listing was empty; cursor will be set on the first non-empty pull.
-        if not ids:
-            return None
-        msg = self._get_message(ids[0])
-        if msg is None:
-            return None
-        history_id = msg.get("historyId")
-        return str(history_id) if history_id else None
+        # historyId. We iterate the first few rather than only ids[0] because
+        # there's a race between the messages.list and messages.get calls:
+        # if the user (or another client) archived/deleted the top message in
+        # that window, the get returns 404 and we'd otherwise lose the entire
+        # cycle. Cap at _ANCHOR_TRY_LIMIT to avoid pathological cases.
+        for message_id in ids[:_ANCHOR_TRY_LIMIT]:
+            msg = self._get_message(message_id)
+            if msg is None:
+                continue
+            history_id = msg.get("historyId")
+            if history_id:
+                return str(history_id)
+        return None
 
     def _history_list(self, start_history_id: str) -> tuple[list[str], str | None]:
         params = {
@@ -198,7 +204,14 @@ class GmailClient:
     def _get_message(self, message_id: str) -> dict[str, Any] | None:
         safe_id = urllib.parse.quote(message_id, safe="")
         url = f"{_API_BASE}/messages/{safe_id}?format=full"
-        body = self._http_get_json(url)
+        try:
+            body = self._http_get_json(url)
+        except urllib.error.HTTPError as exc:
+            if exc.code == 404:
+                # Message was deleted/archived between list and get.
+                # Treat as a soft miss; caller skips this id.
+                return None
+            raise
         return body if body else None
 
     def _http_get_json(self, url: str) -> dict[str, Any]:

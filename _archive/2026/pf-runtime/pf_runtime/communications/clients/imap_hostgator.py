@@ -68,7 +68,13 @@ class ImapHostgatorClient:
         self._entry = entry
         self._store = sync_store
         self._password = password
-        self._imap_factory: ImapFactory = imap_factory or _default_imap_factory
+        # The default factory takes the entry so it can derive `mail.<domain>`
+        # from the account address. Tests inject their own zero-arg factories
+        # (see test_clients_imap.py) — keep the call-site signature `()` and
+        # bind the entry into the closure here.
+        self._imap_factory: ImapFactory = imap_factory or (
+            lambda: _default_imap_factory(entry)
+        )
 
     @property
     def account_id(self) -> str:
@@ -247,7 +253,36 @@ def _parse_uid_search(data: Any) -> list[int]:
     return sorted(out)
 
 
-def _default_imap_factory() -> Any:
+def _derive_imap_host(entry: RegistryEntry) -> str:
+    """Derive the IMAP hostname for ``entry`` from its account address.
+
+    Hostgator (and most cPanel hosts) serves IMAP at ``mail.<domain>`` for
+    customer-owned domains. We extract the local-part + domain from the
+    address — strip RFC 5233 subaddress suffixes (``alex+tag@...``) and
+    normalize to lowercase before composing the host.
+
+    Raises:
+        ValueError: ``entry.account.address`` lacks an ``@`` separator —
+            the registry should reject this at load time but we surface
+            a clear error in case it slips through.
+    """
+    address = (entry.account.address or "").strip().lower()
+    if "@" not in address:
+        raise ValueError(
+            f"account {entry.account.account_id}: address {address!r} has no domain "
+            "(expected user@domain.tld)"
+        )
+    _, _, domain = address.rpartition("@")
+    if not domain:
+        raise ValueError(
+            f"account {entry.account.account_id}: empty domain in address"
+        )
+    return f"mail.{domain}"
+
+
+def _default_imap_factory(entry: RegistryEntry) -> Any:
+    """Construct an ``imaplib.IMAP4_SSL`` for ``entry`` using the derived host."""
     import imaplib
 
-    return imaplib.IMAP4_SSL("imap.hostgator.com", 993)
+    host = _derive_imap_host(entry)
+    return imaplib.IMAP4_SSL(host, 993)

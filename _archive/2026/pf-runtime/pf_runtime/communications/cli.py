@@ -28,14 +28,26 @@ from pf_runtime.communications.account_registry import (
     RegistryEntry,
 )
 from pf_runtime.communications.proposal_store import ProposalStore
+from pf_runtime.communications.rules import TriageRules
 from pf_runtime.communications.sync_state_store import SyncStateStore
 from pf_runtime.communications.tools import CreateProposalTool
-from pf_runtime.communications.triage_skill import TriageRunResult, triage_all_accounts
+from pf_runtime.communications.triage_skill import (
+    TriageRunResult,
+    make_refreshing_client_factory,
+    triage_all_accounts,
+)
 from pf_runtime.config import load_profile
-from pf_runtime.runtime.model_adapter import ModelAdapter, OpenRouterAdapter
+from pf_runtime.runtime.model_adapter import ModelAdapter, OpenRouterAdapter, _load_dotenv
 
 DEFAULT_PROFILE_SLUG = "personal"
-DEFAULT_CLASSIFIER_MODEL = "openrouter/cerebras/llama-3.1-8b-instruct"
+# Phase 3 default: claude-haiku-4.5 (~$5/day at hourly cadence). Higher
+# accuracy on ambiguous NEEDS_ALEX_TODAY classifications matters more
+# than the ~$5/day delta vs cerebras-llama-3.1-8b. Drop to
+# `google/gemini-2.0-flash` via PF_TRIAGE_CLASSIFIER_MODEL env var or
+# --model flag if monthly cost becomes the binding constraint. Slug is
+# bare `vendor/model[:tag]` — the adapter posts directly to OpenRouter's
+# /chat/completions, no LiteLLM `openrouter/` prefix.
+DEFAULT_CLASSIFIER_MODEL = "anthropic/claude-haiku-4.5"
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _DEFAULT_MANIFEST = (
@@ -89,6 +101,16 @@ def register_subparser(subparsers: argparse._SubParsersAction[Any]) -> None:
         help=(
             "Path to account-registry.yaml "
             "(default: <hermes-home>/profiles/<profile>/account-registry.yaml)"
+        ),
+    )
+    triage.add_argument(
+        "--scheduled",
+        action="store_true",
+        help=(
+            "Cron mode: emit a single JSON line on stdout instead of "
+            "human-readable summary. Never prompts. Intended for launchd "
+            "invocation; logs from this run are captured by launchd's "
+            "StandardOutPath."
         ),
     )
     _add_profile_args(triage)
@@ -194,6 +216,13 @@ def _handle_triage(args: argparse.Namespace) -> int:
         print(f"profile not found: {exc}", file=sys.stderr)
         return 1
 
+    # Load profile .env into os.environ. launchd/cron does NOT source the
+    # profile dotenv, so without this the account_registry, PFOS emit, and
+    # provider clients all see empty credentials. setdefault preserves any
+    # explicit shell override.
+    for k, v in _load_dotenv(profile.env_path).items():
+        os.environ.setdefault(k, v)
+
     registry_path = (
         Path(args.registry)
         if args.registry
@@ -230,6 +259,12 @@ def _handle_triage(args: argparse.Namespace) -> int:
     sync_store = SyncStateStore(db_path)
     adapter = _build_adapter(profile)
 
+    # Phase 4: load operator triage rules from the personal profile.
+    # Missing-file fallback returns empty rules (all messages land at P3,
+    # no label suggestions); the cycle still runs.
+    rules_path = home / "profiles" / args.profile / "triage-rules.yaml"
+    rules = TriageRules.load(rules_path)
+
     result = asyncio.run(
         triage_all_accounts(
             registry,
@@ -238,11 +273,49 @@ def _handle_triage(args: argparse.Namespace) -> int:
             sync_store=sync_store,
             classifier_model=args.model,
             profile_slug=args.profile,
+            client_factory=make_refreshing_client_factory(args.profile),
+            rules=rules,
         )
     )
 
-    print(_format_run_result(result))
+    if getattr(args, "scheduled", False):
+        print(_format_run_result_json(result))
+    else:
+        print(_format_run_result(result))
     return 0 if result.errors == 0 else 1
+
+
+def _format_run_result_json(result: TriageRunResult) -> str:
+    """One-line JSON summary for launchd capture.
+
+    Stable shape so log greppers downstream don't have to parse human
+    text. Contains the run_id, duration, proposal/error counts, and one
+    object per account with status + counts.
+    """
+    duration_ms = int((result.finished_at - result.started_at).total_seconds() * 1000)
+    accounts_payload = [
+        {
+            "account_id": a.account_id,
+            "provider": a.provider.value,
+            "fetched": a.fetched,
+            "classified": a.classified,
+            "proposed": a.proposed,
+            "error": a.error,
+        }
+        for a in result.accounts
+    ]
+    return json.dumps(
+        {
+            "run_id": result.run_id,
+            "started_at": result.started_at.isoformat(),
+            "finished_at": result.finished_at.isoformat(),
+            "duration_ms": duration_ms,
+            "proposals_created": result.proposals_created,
+            "errors": result.errors,
+            "accounts": accounts_payload,
+        },
+        separators=(",", ":"),
+    )
 
 
 def _build_adapter(profile: Any) -> ModelAdapter:

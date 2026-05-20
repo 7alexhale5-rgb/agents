@@ -65,7 +65,7 @@ def normalize_gmail_message(
     raw_payload = raw.get("payload")
     payload = raw_payload if isinstance(raw_payload, dict) else {}
     headers = {
-        str(h.get("name", "")).lower(): str(h.get("value", ""))
+        str(h.get("name", "")).lower(): str(h.get("value", "")).strip()
         for h in _list(payload.get("headers"))
         if isinstance(h, dict)
     }
@@ -91,6 +91,10 @@ def normalize_gmail_message(
         provider_ids={
             "gmail_message_id": str(raw.get("id", "")),
             "gmail_thread_id": str(raw.get("threadId", "")),
+            # Cross-provider stable key: RFC 822 Message-ID is global across
+            # mailboxes (the same thread reaching 2 Gmail accounts shares
+            # this header). Used by triage_skill._dedupe_key().
+            "rfc822_message_id": headers.get("message-id", "").strip(),
         },
     )
 
@@ -161,6 +165,9 @@ def normalize_graph_message(
         provider_ids={
             "graph_message_id": str(raw.get("id", "")),
             "graph_conversation_id": str(raw.get("conversationId", "")),
+            # Cross-provider stable key: Microsoft Graph exposes the
+            # RFC 822 Message-ID directly as internetMessageId.
+            "rfc822_message_id": str(raw.get("internetMessageId", "")).strip(),
         },
     )
 
@@ -202,7 +209,14 @@ def normalize_imap_message(
         received_at=_parse_dt(message.get("date")),
         snippet=_plain_snippet(message),
         attachments_meta=tuple(attachments),
-        provider_ids={"imap_uid": uid, "imap_message_id": str(message.get("message-id", ""))},
+        provider_ids={
+            "imap_uid": uid,
+            "imap_message_id": str(message.get("message-id", "")),
+            # Cross-provider stable key: IMAP's "message-id" header IS the
+            # RFC 822 Message-ID. Aliased here so the same key works
+            # uniformly across Gmail / Graph / IMAP in triage_skill.
+            "rfc822_message_id": str(message.get("message-id", "")).strip(),
+        },
     )
 
 

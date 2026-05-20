@@ -9,8 +9,10 @@ requires-python = ">=3.11"
 
 # Production deps will populate as sub-phases ship.
 # pyyaml is required by communications/account_registry.py (Slice 1).
+# urllib3 floor patches CVE-2026-44431 / CVE-2026-44432 (transitive via requests).
 dependencies = [
     "pyyaml>=6.0",
+    "urllib3>=2.7.0",
 ]
 
 [project.optional-dependencies]
@@ -84,6 +86,17 @@ ignore = [
 # refuses non-https schemes implicitly via the urllib.request.Request URL.
 "pf_runtime/communications/clients/gmail.py" = ["S310"]
 "pf_runtime/communications/clients/graph.py" = ["S310"]
+# Calendar freebusy client posts only to the fixed Google Calendar v3 host.
+"pf_runtime/communications/clients/google_calendar.py" = ["S310"]
+# OAuth: hits fixed Google/Microsoft token endpoints. S105 fires on URL constants
+# that contain the word "token" (GOOGLE_TOKEN_URL). S310 fires on urllib calls to
+# those known HTTPS hosts.
+"pf_runtime/oauth/google.py" = ["S310", "S105"]
+"pf_runtime/oauth/microsoft.py" = ["S310", "S105"]
+# OAuth provisioner: same fixed-endpoint pattern, plus subprocess to /usr/bin/open
+# (macOS) or xdg-open (Linux) for browser launch (S603/S607 — fixed binary, no
+# user-controlled args), plus intentional broken-pipe suppression (SIM105).
+"pf_runtime/oauth/provision.py" = ["S310", "S105", "S603", "S607", "SIM105"]
 
 # ----- mypy (type-check) -----
 [tool.mypy]

@@ -368,7 +368,8 @@ async def test_proposal_filtering(tmp_path: Path) -> None:
     2. medium + needs_reply     → NOT proposed (low confidence)
     3. low + promotion          → NOT proposed
     4. high + fyi               → NOT proposed (non-proposable bucket)
-    5. high + needs_alex_today  → NOT proposed (digest-only bucket)
+    5. high + needs_alex_today  → proposed (FOLLOW_UP_TASK; Phase 2 addition —
+       NEEDS_ALEX_TODAY now lands a real PFOS task plus an agent_actions row)
     """
     entry = _gmail_entry()
     raw = [
@@ -416,16 +417,20 @@ async def test_proposal_filtering(tmp_path: Path) -> None:
     )
     assert result.fetched == 5
     assert result.classified == 5
-    assert result.proposed == 1
+    assert result.proposed == 2
 
-    # Only the first message should have triggered a proposal.
-    assert proposal_spy.await_count == 1
-    args, _ = proposal_spy.await_args
-    payload = args[0]
-    assert payload["target_id"] == "m1"
-    assert payload["action_type"] == "reply_draft"
-    assert payload["confidence_bucket"] == "high"
-    assert payload["action_id"] == "gmail-1-m1-reply_draft"
+    assert proposal_spy.await_count == 2
+    by_target = {
+        call.args[0]["target_id"]: call.args[0]
+        for call in proposal_spy.await_args_list
+    }
+    assert set(by_target) == {"m1", "m5"}
+    assert by_target["m1"]["action_type"] == "reply_draft"
+    assert by_target["m1"]["confidence_bucket"] == "high"
+    assert by_target["m1"]["action_id"] == "gmail-1-m1-reply_draft"
+    assert by_target["m5"]["action_type"] == "follow_up_task"
+    assert by_target["m5"]["confidence_bucket"] == "high"
+    assert by_target["m5"]["action_id"] == "gmail-1-m5-follow_up_task"
 
 
 # ---------------------------------------------------------------------------
@@ -550,15 +555,15 @@ async def test_golden_mailbox_classification_and_proposals(tmp_path: Path) -> No
     assert result.classified == 10
 
     # Proposable subset = NEEDS_REPLY (g1, g9) + PROMOTION (g2, g10) +
-    # SCHEDULE (g3) + RELEASE_UPDATE (g4) + NOISE (g5) = 7. The 3 digest-only
-    # buckets (NEEDS_ALEX_TODAY g6, WAITING g7, FYI g8) are deliberately
-    # excluded from the proposal queue per spec.
-    assert result.proposed == 7
+    # SCHEDULE (g3) + RELEASE_UPDATE (g4) + NOISE (g5) + NEEDS_ALEX_TODAY
+    # (g6, Phase 2) = 8. The 2 remaining digest-only buckets (WAITING g7,
+    # FYI g8) stay excluded from the proposal queue per spec.
+    assert result.proposed == 8
 
     proposed_target_ids = {
         c.args[0]["target_id"] for c in proposal_spy.await_args_list
     }
-    assert proposed_target_ids == {"g1", "g2", "g3", "g4", "g5", "g9", "g10"}
+    assert proposed_target_ids == {"g1", "g2", "g3", "g4", "g5", "g6", "g9", "g10"}
 
     # Spot-check action mapping for one message of each proposable bucket.
     action_by_target = {
@@ -570,6 +575,7 @@ async def test_golden_mailbox_classification_and_proposals(tmp_path: Path) -> No
     assert action_by_target["g3"] == "calendar_hold"
     assert action_by_target["g4"] == "label"
     assert action_by_target["g5"] == "archive"
+    assert action_by_target["g6"] == "follow_up_task"
 
 
 # ---------------------------------------------------------------------------
@@ -1006,11 +1012,16 @@ def test_normalize_unsupported_provider_raises() -> None:
 
 
 def test_module_constants_match_spec() -> None:
-    """Lock the bucket→action mapping and proposable set to spec."""
+    """Lock the bucket→action mapping and proposable set to spec.
+
+    Phase 2 added NEEDS_ALEX_TODAY → FOLLOW_UP_TASK so the urgent bucket
+    lands a real PFOS todo on each cycle (not just a digest line).
+    """
     from pf_runtime.communications.schema import ActionType
 
     expected_proposable = frozenset(
         {
+            TriageBucket.NEEDS_ALEX_TODAY,
             TriageBucket.NEEDS_REPLY,
             TriageBucket.SCHEDULE,
             TriageBucket.PROMOTION,
@@ -1020,6 +1031,7 @@ def test_module_constants_match_spec() -> None:
     )
     assert expected_proposable == triage_skill._PROPOSABLE_BUCKETS
     expected_action_map = {
+        TriageBucket.NEEDS_ALEX_TODAY: ActionType.FOLLOW_UP_TASK,
         TriageBucket.NEEDS_REPLY: ActionType.REPLY_DRAFT,
         TriageBucket.SCHEDULE: ActionType.CALENDAR_HOLD,
         TriageBucket.PROMOTION: ActionType.UNSUBSCRIBE_DRAFT,
@@ -1027,3 +1039,485 @@ def test_module_constants_match_spec() -> None:
         TriageBucket.RELEASE_UPDATE: ActionType.LABEL,
     }
     assert expected_action_map == triage_skill._BUCKET_TO_DEFAULT_ACTION
+
+
+# ---------------------------------------------------------------------------
+# Phase 3: cross-account dedupe — same RFC 822 Message-ID across mailboxes
+# collapses to one proposal with also_seen_in covering both accounts.
+# ---------------------------------------------------------------------------
+
+
+def _gmail_raw_with_rfc822(
+    message_id: str,
+    sender: str,
+    subject: str,
+    snippet: str,
+    *,
+    rfc822_id: str,
+) -> dict[str, Any]:
+    """Gmail payload with an explicit Message-ID header for dedupe."""
+    return {
+        "id": message_id,
+        "threadId": f"thr-{message_id}",
+        "snippet": snippet,
+        "payload": {
+            "headers": [
+                {"name": "From", "value": sender},
+                {"name": "To", "value": "alex@example.com"},
+                {"name": "Subject", "value": subject},
+                {"name": "Date", "value": "Thu, 8 May 2026 12:00:00 +0000"},
+                {"name": "Message-ID", "value": rfc822_id},
+            ],
+            "parts": [],
+        },
+    }
+
+
+@pytest.mark.asyncio
+async def test_cross_account_dedupe_collapses_to_one_proposal(tmp_path: Path) -> None:
+    """A thread reaching gmail-1 and gmail-2 with the same RFC 822
+    Message-ID should produce ONE proposal with also_seen_in covering
+    both account_ids. The second cycle hits ``find_by_dedupe`` and
+    calls ``append_also_seen`` instead of inserting a duplicate row."""
+    rfc822 = "<thread-abc@mail.gmail.com>"
+    raw_per_account = {
+        "gmail-1": [
+            _gmail_raw_with_rfc822(
+                "m-1-acct-a",
+                "boss@example.com",
+                "Reply please",
+                "snippet",
+                rfc822_id=rfc822,
+            ),
+        ],
+        "gmail-2": [
+            _gmail_raw_with_rfc822(
+                "m-1-acct-b",  # different per-mailbox message_id
+                "boss@example.com",
+                "Reply please",
+                "snippet",
+                rfc822_id=rfc822,  # same RFC 822 Message-ID
+            ),
+        ],
+    }
+
+    def factory(entry: RegistryEntry, _s: SyncStateStore) -> Any:
+        return FakeClient(raw=raw_per_account[entry.account.account_id])
+
+    # One scripted classifier response per cycle (one batch per account).
+    scripted = json.dumps(
+        {
+            "results": [
+                {
+                    "bucket": "needs_reply",
+                    "confidence": "high",
+                    "rationale": "direct ask",
+                }
+            ]
+        }
+    )
+
+    # Two accounts share an underlying proposal_tool so the SQLite
+    # store is the same DB across both _triage_account calls.
+    proposal_tool = _proposal_tool(tmp_path)
+    sync_store = _store(tmp_path)
+    common_kwargs = {
+        "proposal_tool": proposal_tool,
+        "sync_store": sync_store,
+        "classifier_model": "model",
+        "profile_slug": "personal",
+        "run_id": "run-dedupe",
+        "client_factory": factory,
+        "batch_size": 10,
+    }
+
+    # First account: classifier returns needs_reply -> proposal inserted.
+    result_a = await _triage_account(
+        entry=_gmail_entry("gmail-1"),
+        adapter=ScriptedAdapter([scripted]),
+        **common_kwargs,
+    )
+    # Second account: same RFC 822 ID -> dedupe hit, no second insert.
+    result_b = await _triage_account(
+        entry=_gmail_entry("gmail-2"),
+        adapter=ScriptedAdapter([scripted]),
+        **common_kwargs,
+    )
+
+    assert result_a.proposed == 1
+    assert result_b.proposed == 0  # dedupe path skipped the insert
+
+    # The single surviving proposal has both account_ids on its trail.
+    proposals = proposal_tool.store.list(status="proposed")
+    assert len(proposals) == 1
+    found = proposal_tool.store.find_by_dedupe(f"rfc822:{rfc822}")
+    assert found is not None
+    assert set(found["also_seen_in"]) == {"gmail-1", "gmail-2"}
+    assert found["also_seen_count"] == 2
+
+
+@pytest.mark.asyncio
+async def test_dedupe_only_collapses_across_different_accounts(
+    tmp_path: Path,
+) -> None:
+    """If the same account legitimately re-classifies a message (e.g.
+    a re-run of a previous cycle), the dedupe check should NOT add the
+    account to its own also_seen_in trail — the early-skip only fires
+    when the existing row belongs to a *different* account."""
+    rfc822 = "<self-dup@example.com>"
+    raw = [
+        _gmail_raw_with_rfc822(
+            "m1",
+            "boss@example.com",
+            "Reply",
+            "snip",
+            rfc822_id=rfc822,
+        )
+    ]
+
+    def factory(_e: RegistryEntry, _s: SyncStateStore) -> Any:
+        return FakeClient(raw=raw)
+
+    scripted = json.dumps(
+        {
+            "results": [
+                {
+                    "bucket": "needs_reply",
+                    "confidence": "high",
+                    "rationale": "direct ask",
+                }
+            ]
+        }
+    )
+    proposal_tool = _proposal_tool(tmp_path)
+    sync_store = _store(tmp_path)
+
+    result_first = await _triage_account(
+        entry=_gmail_entry("gmail-1"),
+        adapter=ScriptedAdapter([scripted]),
+        proposal_tool=proposal_tool,
+        sync_store=sync_store,
+        classifier_model="model",
+        profile_slug="personal",
+        run_id="r-1",
+        client_factory=factory,
+        batch_size=10,
+    )
+    assert result_first.proposed == 1
+
+    # Same account, same message: a re-run should NOT collapse via the
+    # cross-account skip; the insert collision is handled separately by
+    # SQLite's primary-key constraint on action_id, not by this skip.
+    found = proposal_tool.store.find_by_dedupe(f"rfc822:{rfc822}")
+    assert found is not None
+    assert found["also_seen_in"] == ["gmail-1"]
+    assert found["also_seen_count"] == 1
+
+
+# ---------------------------------------------------------------------------
+# 8. Phase 5 — SCHEDULE-bucket calendar correlation
+# ---------------------------------------------------------------------------
+
+
+def _calendar_twin_entry(account_id: str = "gmail-1-calendar") -> RegistryEntry:
+    return RegistryEntry(
+        account=AccountConfig(
+            account_id=account_id,
+            provider=Provider.GOOGLE_CALENDAR,
+            address="alex@example.com",
+            scopes=("https://www.googleapis.com/auth/calendar.readonly",),
+            read_only=True,
+        ),
+        credentials_present=True,
+    )
+
+
+def _schedule_gmail_raw(body_snippet: str) -> dict[str, Any]:
+    """A Gmail payload whose snippet contains a meeting proposal."""
+    return {
+        "id": "m-sched-1",
+        "threadId": "thr-sched-1",
+        "snippet": body_snippet,
+        "payload": {
+            "headers": [
+                {"name": "From", "value": "client@example.com"},
+                {"name": "To", "value": "alex@example.com"},
+                {"name": "Subject", "value": "Quick sync?"},
+                {"name": "Date", "value": "Mon, 11 May 2026 15:00:00 +0000"},
+            ],
+            "parts": [],
+        },
+    }
+
+
+@pytest.mark.asyncio
+async def test_schedule_bucket_emits_calendar_metadata(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """SCHEDULE-classified message → emit_action body carries the meeting
+    time, conflict flag, and meeting URL in params_json."""
+    captured_actions: list[dict[str, Any]] = []
+
+    async def fake_emit_action(body: dict[str, Any], *, silo: str) -> bool:
+        captured_actions.append(body)
+        return True
+
+    monkeypatch.setattr(
+        "pf_runtime.communications.triage_skill.emit_action", fake_emit_action
+    )
+
+    # No conflict — calendar reports empty busy list.
+    class _CalendarStub:
+        def freebusy(self, _tmin: Any, _tmax: Any) -> list[Any]:
+            return []
+
+    monkeypatch.setattr(
+        "pf_runtime.communications.triage_skill._build_calendar_client",
+        lambda *_a, **_kw: _CalendarStub(),
+    )
+
+    raw = [
+        _schedule_gmail_raw(
+            "Can we meet Tuesday at 2pm? Zoom: https://zoom.us/j/12345"
+        )
+    ]
+
+    def factory(_e: RegistryEntry, _s: SyncStateStore) -> Any:
+        return FakeClient(raw=raw)
+
+    scripted = json.dumps(
+        {
+            "results": [
+                {
+                    "bucket": "schedule",
+                    "confidence": "high",
+                    "rationale": "proposes Tuesday 2pm sync",
+                }
+            ]
+        }
+    )
+
+    result = await _triage_account(
+        entry=_gmail_entry("gmail-1"),
+        adapter=ScriptedAdapter([scripted]),
+        proposal_tool=_proposal_tool(tmp_path),
+        sync_store=_store(tmp_path),
+        classifier_model="model",
+        profile_slug="personal",
+        run_id="run-cal-1",
+        client_factory=factory,
+        batch_size=10,
+    )
+    assert result.proposed == 1
+    assert len(captured_actions) == 1
+    params = captured_actions[0]["params_json"]
+    assert params["proposed_start_iso"]  # populated
+    assert "zoom.us/j/12345" in params["meeting_url"]
+    assert params["freebusy_conflict"] is False
+    # No conflict → priority is P2 per the SCHEDULE row of the protocol matrix.
+    assert params["priority"] == "P2"
+
+
+@pytest.mark.asyncio
+async def test_schedule_bucket_conflict_downgrades_to_p3(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """When freebusy reports overlap with the proposed start, set
+    `freebusy_conflict=true` AND downgrade priority to P3."""
+    from datetime import UTC, datetime
+
+    captured_actions: list[dict[str, Any]] = []
+
+    async def fake_emit_action(body: dict[str, Any], *, silo: str) -> bool:
+        captured_actions.append(body)
+        return True
+
+    monkeypatch.setattr(
+        "pf_runtime.communications.triage_skill.emit_action", fake_emit_action
+    )
+
+    class _BusyCalendarStub:
+        def freebusy(
+            self, _tmin: Any, _tmax: Any
+        ) -> list[tuple[datetime, datetime]]:
+            return [
+                (
+                    datetime(2026, 5, 12, 19, 0, tzinfo=UTC),  # 2pm CT
+                    datetime(2026, 5, 12, 20, 0, tzinfo=UTC),
+                )
+            ]
+
+    monkeypatch.setattr(
+        "pf_runtime.communications.triage_skill._build_calendar_client",
+        lambda *_a, **_kw: _BusyCalendarStub(),
+    )
+
+    raw = [_schedule_gmail_raw("Tuesday at 2pm CT works?")]
+
+    def factory(_e: RegistryEntry, _s: SyncStateStore) -> Any:
+        return FakeClient(raw=raw)
+
+    scripted = json.dumps(
+        {
+            "results": [
+                {
+                    "bucket": "schedule",
+                    "confidence": "high",
+                    "rationale": "proposes Tuesday 2pm",
+                }
+            ]
+        }
+    )
+
+    result = await _triage_account(
+        entry=_gmail_entry("gmail-1"),
+        adapter=ScriptedAdapter([scripted]),
+        proposal_tool=_proposal_tool(tmp_path),
+        sync_store=_store(tmp_path),
+        classifier_model="model",
+        profile_slug="personal",
+        run_id="run-cal-2",
+        client_factory=factory,
+        batch_size=10,
+    )
+    assert result.proposed == 1
+    params = captured_actions[0]["params_json"]
+    assert params["freebusy_conflict"] is True
+    assert params["priority"] == "P3"
+
+
+@pytest.mark.asyncio
+async def test_schedule_bucket_no_time_extracted_skips_freebusy(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """When extract_meeting_time returns None, we skip the calendar
+    lookup entirely (no `proposed_start_iso`, no `freebusy_conflict` key,
+    priority stays at the protocol default P2)."""
+    captured_actions: list[dict[str, Any]] = []
+
+    async def fake_emit_action(body: dict[str, Any], *, silo: str) -> bool:
+        captured_actions.append(body)
+        return True
+
+    monkeypatch.setattr(
+        "pf_runtime.communications.triage_skill.emit_action", fake_emit_action
+    )
+
+    calendar_called: list[bool] = []
+
+    class _AssertNotCalledStub:
+        def freebusy(self, *_a: Any, **_kw: Any) -> list[Any]:
+            calendar_called.append(True)
+            return []
+
+    monkeypatch.setattr(
+        "pf_runtime.communications.triage_skill._build_calendar_client",
+        lambda *_a, **_kw: _AssertNotCalledStub(),
+    )
+
+    # Body has no defensible time reference — ambiguous "by 2pm" deadline.
+    raw = [_schedule_gmail_raw("Need this back by 2pm please")]
+
+    def factory(_e: RegistryEntry, _s: SyncStateStore) -> Any:
+        return FakeClient(raw=raw)
+
+    scripted = json.dumps(
+        {
+            "results": [
+                {
+                    "bucket": "schedule",
+                    "confidence": "high",
+                    "rationale": "vague deadline",
+                }
+            ]
+        }
+    )
+
+    result = await _triage_account(
+        entry=_gmail_entry("gmail-1"),
+        adapter=ScriptedAdapter([scripted]),
+        proposal_tool=_proposal_tool(tmp_path),
+        sync_store=_store(tmp_path),
+        classifier_model="model",
+        profile_slug="personal",
+        run_id="run-cal-3",
+        client_factory=factory,
+        batch_size=10,
+    )
+    assert result.proposed == 1
+    assert calendar_called == []
+    params = captured_actions[0]["params_json"]
+    assert "proposed_start_iso" not in params
+    assert "freebusy_conflict" not in params
+    # Default SCHEDULE priority is P2 per protocol matrix.
+    assert params["priority"] == "P2"
+
+
+@pytest.mark.asyncio
+async def test_schedule_bucket_calendar_twin_missing_skips_gracefully(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """When the calendar twin account is missing (operator hasn't run the
+    OAuth provisioner for the calendar scope), still emit the action with
+    proposed_start_iso + meeting_url, but omit freebusy_conflict (we can't
+    check)."""
+    captured_actions: list[dict[str, Any]] = []
+
+    async def fake_emit_action(body: dict[str, Any], *, silo: str) -> bool:
+        captured_actions.append(body)
+        return True
+
+    monkeypatch.setattr(
+        "pf_runtime.communications.triage_skill.emit_action", fake_emit_action
+    )
+
+    # Return None to signal no twin available.
+    monkeypatch.setattr(
+        "pf_runtime.communications.triage_skill._build_calendar_client",
+        lambda *_a, **_kw: None,
+    )
+
+    raw = [
+        _schedule_gmail_raw(
+            "Can we meet Tuesday at 2pm? https://meet.google.com/abc-defg-hij"
+        )
+    ]
+
+    def factory(_e: RegistryEntry, _s: SyncStateStore) -> Any:
+        return FakeClient(raw=raw)
+
+    scripted = json.dumps(
+        {
+            "results": [
+                {
+                    "bucket": "schedule",
+                    "confidence": "high",
+                    "rationale": "proposes time",
+                }
+            ]
+        }
+    )
+
+    result = await _triage_account(
+        entry=_gmail_entry("gmail-1"),
+        adapter=ScriptedAdapter([scripted]),
+        proposal_tool=_proposal_tool(tmp_path),
+        sync_store=_store(tmp_path),
+        classifier_model="model",
+        profile_slug="personal",
+        run_id="run-cal-4",
+        client_factory=factory,
+        batch_size=10,
+    )
+    assert result.proposed == 1
+    params = captured_actions[0]["params_json"]
+    assert params["proposed_start_iso"]
+    assert "meet.google.com/abc-defg-hij" in params["meeting_url"]
+    # Without a twin, we can't compute conflict — omit the key.
+    assert "freebusy_conflict" not in params
+    # Priority falls back to default P2 (no conflict downgrade possible).
+    assert params["priority"] == "P2"

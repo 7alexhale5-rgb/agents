@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Any
+from typing import Any, cast
 
 from pf_runtime.config import Profile
 from pf_runtime.runtime.model_adapter import _load_dotenv
@@ -76,7 +76,7 @@ def init_sentry_from_profile(profile: Profile, *, component: str) -> None:
         release=release,
         traces_sample_rate=traces_sample_rate,
         send_default_pii=False,
-        before_send=_before_send,
+        before_send=cast(Any, _before_send),
     )
     sentry_sdk.set_tag("profile_slug", profile.slug)
     sentry_sdk.set_tag("pf_component", component)

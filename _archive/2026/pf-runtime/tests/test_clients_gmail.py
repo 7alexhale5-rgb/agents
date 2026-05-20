@@ -219,6 +219,86 @@ def test_history_404_triggers_full_resync(tmp_path: Path) -> None:
     assert state.history_id == "9000"
 
 
+def test_full_resync_skips_deleted_first_message(tmp_path: Path) -> None:
+    """If history.list returns 404 (expired) and the first message in the resync
+    listing has been deleted/archived between list and get (404 on
+    /messages/<id>), the anchor lookup must iterate to the next id rather than
+    fail the whole cycle. This is the gmail-1/gmail-4 production failure mode.
+    """
+    store = _store(tmp_path)
+    store.upsert(
+        SyncState(
+            account_id="gmail-1",
+            provider=Provider.GOOGLE_MAIL,
+            history_id="STALE_997480",
+            last_synced_at=__import__("datetime").datetime.now(__import__("datetime").UTC),
+        )
+    )
+    urlopen = make_urlopen(
+        [
+            # history.list returns 404 — history_id older than 7 days
+            (404, {"error": {"code": 404}}, "history?"),
+            # Full resync list returns 3 ids
+            (200, {"messages": [{"id": "m1"}, {"id": "m2"}, {"id": "m3"}]}, "messages?maxResults=50"),
+            # Anchor lookup: m1 was deleted between list and get (404)
+            (404, {"error": {"code": 404}}, "messages/m1"),
+            # Anchor lookup retries m2 — succeeds
+            (200, {"id": "m2", "historyId": "9100", "snippet": "x"}, "messages/m2"),
+            # Main fetch loop: m1 is still gone, m2 + m3 succeed
+            (404, {"error": {"code": 404}}, "messages/m1"),
+            (200, {"id": "m2", "historyId": "9100", "snippet": "x"}, "messages/m2"),
+            (200, {"id": "m3", "historyId": "9150", "snippet": "y"}, "messages/m3"),
+        ]
+    )
+    client = GmailClient(_entry(), store, access_token="tok", urlopen=urlopen)
+    msgs = client.fetch_new()
+
+    # m1 silently dropped (404); m2 + m3 fetched
+    assert [m["id"] for m in msgs] == ["m2", "m3"]
+    state = store.get("gmail-1")
+    assert state is not None
+    # Cursor anchored to m2's historyId (first non-404 in the listing)
+    assert state.history_id == "9100"
+    assert state.last_error is None
+
+
+def test_full_resync_all_first_5_deleted_falls_back_to_no_anchor(
+    tmp_path: Path,
+) -> None:
+    """If every one of the first 5 candidate anchors 404s, give up gracefully:
+    no anchor (history_id stays None) so the next cycle does another full
+    resync. The cycle does not error.
+    """
+    store = _store(tmp_path)
+    # Listing returns 6 ids; we should try the first 5 then stop trying.
+    listing = {"messages": [{"id": f"m{i}"} for i in range(1, 7)]}
+    responses: list[QueuedResponse] = [
+        (200, listing, "messages?maxResults=50"),
+        # Anchor lookup tries m1..m5, all 404
+        (404, {"error": {"code": 404}}, "messages/m1"),
+        (404, {"error": {"code": 404}}, "messages/m2"),
+        (404, {"error": {"code": 404}}, "messages/m3"),
+        (404, {"error": {"code": 404}}, "messages/m4"),
+        (404, {"error": {"code": 404}}, "messages/m5"),
+        # Main fetch loop tries all 6, all 404 — silently dropped
+        (404, {"error": {"code": 404}}, "messages/m1"),
+        (404, {"error": {"code": 404}}, "messages/m2"),
+        (404, {"error": {"code": 404}}, "messages/m3"),
+        (404, {"error": {"code": 404}}, "messages/m4"),
+        (404, {"error": {"code": 404}}, "messages/m5"),
+        (404, {"error": {"code": 404}}, "messages/m6"),
+    ]
+    urlopen = make_urlopen(responses)
+    client = GmailClient(_entry(), store, access_token="tok", urlopen=urlopen)
+    msgs = client.fetch_new()
+
+    assert msgs == []
+    state = store.get("gmail-1")
+    assert state is not None
+    assert state.history_id is None
+    assert state.last_error is None
+
+
 def test_401_raises_credential_expired(tmp_path: Path) -> None:
     store = _store(tmp_path)
     urlopen = make_urlopen([(401, {"error": "unauthorized"})])

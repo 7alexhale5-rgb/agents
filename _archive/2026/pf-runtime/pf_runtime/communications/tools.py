@@ -42,6 +42,19 @@ class CreateProposalTool(Tool):
     def __init__(self, db_path: Path) -> None:
         self._store = ProposalStore(db_path)
 
+    @property
+    def store(self) -> ProposalStore:
+        """Expose the underlying store for cross-account dedupe lookups.
+
+        Phase 3 triage paths need to read existing proposals (via
+        ``find_by_dedupe``) BEFORE deciding whether to call ``invoke``,
+        so the store is surfaced as a read-and-update handle. The tool
+        envelope remains the canonical write path; direct mutation of
+        the store outside the tool should stay limited to dedupe
+        bookkeeping (append_also_seen, mark_dirty).
+        """
+        return self._store
+
     async def invoke(self, args: dict[str, Any], context: ToolContext) -> ToolResult:
         action = ProposedAction(
             action_id=str(args["action_id"]),
@@ -51,7 +64,9 @@ class CreateProposalTool(Tool):
             rationale=str(args["rationale"]),
             payload=dict(args.get("payload") or {}),
         )
-        proposal_id = self._store.add(action)
+        dedupe_key = args.get("dedupe_key")
+        dedupe_key_str = str(dedupe_key) if dedupe_key else None
+        proposal_id = self._store.add(action, dedupe_key=dedupe_key_str)
 
         confidence_bucket = args.get("confidence_bucket")
         confidence_str = str(confidence_bucket) if confidence_bucket else None

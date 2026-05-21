@@ -67,12 +67,15 @@ Pre-launch pressure test of a whole campaign — distinct from `critique-campaig
 10. **Emit PFOS event**:
 
 ```bash
+source ~/.config/prettyfly-marketing/hermes-tokens.env
 python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
   --profile stet \
   --tool pressure_test.propose \
   --readout-path "_inbox/stet-critiques/<YYYY-MM-DD>-pressure-test-<slug>.md" \
   --extra-json '{"verdict":"<SHIP|REVISE|KILL>","critical":<N>,"warn":<N>,"info":<N>,"kill_triggers_hit":[<list>],"launch_scope":"<scope>","door":"<two-way|one-way>","kill_switch":"<condition or null>"}'
 ```
+
+Capture the row UUID printed to stdout and include it in your response. If the emit script errors, surface the error explicitly — do NOT claim an emit happened without the script's stdout confirming it.
 
 ## Anti-patterns
 

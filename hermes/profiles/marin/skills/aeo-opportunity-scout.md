@@ -78,6 +78,20 @@ Render an HTML companion next to it when the memo is intended as an operator art
 
 Do not write directly to active campaign folders, offer files, ICP files, runtime publishing folders, or Sentinel/Yehovah code.
 
+## Emit safe event summary
+
+After the memo + HTML companion are written, run the canonical emitter so PFOS records the inbox entry:
+
+```bash
+source ~/.config/prettyfly-marketing/hermes-tokens.env
+python3 ~/Projects/agents/scripts/emit-agent-event.py \
+  --profile marin \
+  --tool weekly_decision.propose \
+  --readout-path "_inbox/marin-readouts/<YYYY-MM-DD>-aeo-opportunity-<slug>.md"
+```
+
+The event lands with `type=marin.weekly_decision.proposed`, `cwd_project=marketing`. Slug attribution is currently `weekly-review` per the tool's contract — a documented follow-up to add a dedicated `marin.aeo_opportunity.propose` tool, not a blocker. Capture the row UUID printed to stdout and include it in your response.
+
 ## Output contract for evals
 
 Short-form eval output must follow this exact shape:

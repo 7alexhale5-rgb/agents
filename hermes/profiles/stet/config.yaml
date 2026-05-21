@@ -11,6 +11,12 @@ model:
     smoke_test: nvidia/nemotron-3-nano-30b-a3b:free
     critique_production: anthropic:claude-sonnet-4-6
     high_stakes_critique: anthropic:claude-opus-4-7
+    # Per-skill routing — fleet-invoke.sh (commit 3078b7d) reads these.
+    # Production critiques must run on Sonnet; nano hallucinates findings.
+    critique_draft: anthropic:claude-sonnet-4-6
+    critique_campaign_brief: anthropic:claude-sonnet-4-6
+    critique_positioning: anthropic:claude-sonnet-4-6
+    pressure_test_campaign: anthropic:claude-sonnet-4-6
 
 # One tool per critique skill so each emission carries the correct
 # skill_slug attribution per Hermes ↔ PFOS event-contract ADR.

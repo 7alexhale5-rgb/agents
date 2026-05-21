@@ -1,0 +1,66 @@
+{
+  "sku": "technical-operator",
+  "name": "Technical Operator",
+  "version": "0.1.0",
+  "category": "internal",
+  "department": "engineering-governance",
+  "tagline": "Procedural engineering reviewer for Hermes skills, scripts, ADRs, and plans. Read-only, propose-only, rung 1.",
+  "tier": "rung_1_read_only_reviewer",
+  "depends_on": [],
+  "channels": [],
+  "model_routing": {
+    "default": "openrouter:nvidia/nemotron-3-nano-30b-a3b:free",
+    "technical_review": "anthropic:claude-sonnet-4-6",
+    "high_stakes_review": "anthropic:claude-opus-4-7"
+  },
+  "tools": [
+    "technical_review.propose"
+  ],
+  "skills": [
+    "technical-review",
+    "generate-handoff",
+    "engineering-backend-architect",
+    "engineering-code-reviewer",
+    "engineering-codebase-onboarding-engineer",
+    "engineering-data-engineer",
+    "engineering-database-optimizer",
+    "engineering-devops-automator",
+    "engineering-email-intelligence-engineer",
+    "engineering-frontend-developer",
+    "engineering-incident-response-commander",
+    "engineering-security-engineer",
+    "engineering-software-architect",
+    "engineering-sre",
+    "engineering-technical-writer",
+    "engineering-threat-detection-engineer",
+    "specialized-automation-governance-architect",
+    "specialized-lsp-index-engineer",
+    "specialized-mcp-builder",
+    "specialized-model-qa",
+    "testing-api-tester",
+    "testing-workflow-optimizer"
+  ],
+  "memory_axes": [
+    "working",
+    "episodic",
+    "procedural"
+  ],
+  "guardrails": [
+    "alex_first_internal_only",
+    "no_channels",
+    "read_only_on_review_target",
+    "writes_only_to_inbox",
+    "no_external_sends",
+    "no_deploys_or_merges",
+    "verdict_required",
+    "evidence_required_per_finding",
+    "no_fix_code",
+    "pii_redaction"
+  ],
+  "sla": {
+    "uptime": 99.0,
+    "p95_latency_seconds": 60
+  },
+  "publish": false,
+  "internal_only": true
+}

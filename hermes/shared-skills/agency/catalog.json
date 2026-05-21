@@ -50,9 +50,7 @@
       "testing-reality-checker",
       "testing-test-results-analyzer",
       "testing-tool-evaluator"
-    ]
-  },
-  "parked_candidates": {
+    ],
     "technical-operator": [
       "engineering-backend-architect",
       "engineering-code-reviewer",
@@ -74,7 +72,9 @@
       "specialized-model-qa",
       "testing-api-tester",
       "testing-workflow-optimizer"
-    ],
+    ]
+  },
+  "parked_candidates": {
     "channel-triggered": [
       "marketing-reddit-community-builder",
       "marketing-social-media-strategist",
@@ -280,8 +280,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "engineering/engineering-cms-developer.md",
@@ -302,8 +302,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "engineering/engineering-codebase-onboarding-engineer.md",
@@ -313,8 +313,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "engineering/engineering-data-engineer.md",
@@ -324,8 +324,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "engineering/engineering-database-optimizer.md",
@@ -335,8 +335,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "engineering/engineering-devops-automator.md",
@@ -346,8 +346,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "engineering/engineering-email-intelligence-engineer.md",
@@ -357,8 +357,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "engineering/engineering-embedded-firmware-engineer.md",
@@ -401,8 +401,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "engineering/engineering-git-workflow-master.md",
@@ -423,8 +423,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "engineering/engineering-minimal-change-engineer.md",
@@ -467,8 +467,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "engineering/engineering-senior-developer.md",
@@ -489,8 +489,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "engineering/engineering-solidity-smart-contract-engineer.md",
@@ -511,8 +511,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "engineering/engineering-technical-writer.md",
@@ -522,8 +522,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "engineering/engineering-threat-detection-engineer.md",
@@ -533,8 +533,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "engineering/engineering-voice-ai-integration-engineer.md",
@@ -1556,8 +1556,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "specialized/blockchain-security-auditor.md",
@@ -1743,8 +1743,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "specialized/real-estate-buyer-seller.md",
@@ -1897,8 +1897,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "specialized/specialized-model-qa.md",
@@ -1908,8 +1908,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "specialized/specialized-salesforce-architect.md",
@@ -2051,8 +2051,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     },
     {
       "relpath": "testing/testing-evidence-collector.md",
@@ -2117,8 +2117,8 @@
       "bucket": "convert",
       "status": "converted",
       "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
-      "owner": "Parked for future technical-operator",
-      "fit": "future CTO / technical governance candidate; not active profile ownership"
+      "owner": "Technical Operator",
+      "fit": "Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans"
     }
   ]
 }

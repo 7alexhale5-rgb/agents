@@ -1,0 +1,46 @@
+{
+  "schema": "a2a/v1+ext",
+  "agent_id": "technical-operator",
+  "version": "0.1.0",
+  "description": "Procedural engineering reviewer for Hermes skills, scripts, ADRs, and plans. Read-only on the review target; propose-only writes to ~/Projects/agents/_inbox/technical-operator-reviews/. Rung 1 — no channels, no execution authority.",
+  "tier": "rung_1_read_only_reviewer",
+  "side_effects": ["read", "proposal_write_only"],
+  "eval_suite_uri": "eval/promptfoo.yaml",
+  "cost_envelope": {
+    "budget_usd_per_day": 0,
+    "alert_threshold_pct": 80,
+    "note": "Profile has no spend authority. Model API spend rolls up to the global fleet ledger."
+  },
+  "channels": ["pfos_evidence"],
+  "skills": ["technical-review", "generate-handoff"],
+  "tools": ["technical_review.propose"],
+  "authority": {
+    "mode": "read_only_plus_proposer",
+    "can_read": [
+      "agents_repo",
+      "hermes_profiles",
+      "agency_shared_skills",
+      "planning_docs",
+      "adrs"
+    ],
+    "can_write": [
+      "agents_inbox_technical_operator_reviews_only",
+      "pfos_agent_events_proposal_only"
+    ],
+    "cannot": [
+      "modify_review_target",
+      "git_mutation",
+      "deploy",
+      "merge_pr",
+      "force_push",
+      "ci_retrigger",
+      "send_external_messages",
+      "spend_money",
+      "modify_other_profiles",
+      "dispatch_agents",
+      "execute_actions",
+      "publish_client_facing_output"
+    ]
+  },
+  "stamped_at": "2026-05-20T00:00:00Z"
+}

@@ -148,9 +148,6 @@ PROFILE_ENABLEMENT = {
         "testing-test-results-analyzer",
         "testing-tool-evaluator",
     ],
-}
-
-PARKED_CANDIDATES = {
     "technical-operator": [
         "engineering-backend-architect",
         "engineering-code-reviewer",
@@ -173,6 +170,9 @@ PARKED_CANDIDATES = {
         "testing-api-tester",
         "testing-workflow-optimizer",
     ],
+}
+
+PARKED_CANDIDATES = {
     "channel-triggered": [
         "marketing-reddit-community-builder",
         "marketing-social-media-strategist",
@@ -199,6 +199,7 @@ PROFILE_LABELS = {
     "marin": "Marin",
     "quill": "Quill",
     "stet": "Stet",
+    "technical-operator": "Technical Operator",
 }
 
 PROFILE_FIT = {
@@ -206,16 +207,15 @@ PROFILE_FIT = {
     "marin": "marketing strategy, pipeline, and revenue-loop decisions",
     "quill": "drafting, brand, content, and creative production support",
     "stet": "pre-launch critique, verification, and risk review",
+    "technical-operator": "procedural engineering review of skills, scripts, ADRs, and plans",
 }
 
 PARKED_LABELS = {
-    "technical-operator": "Parked for future technical-operator",
     "channel-triggered": "Parked until channel/tool trigger",
     "artifact-triggered": "Parked until artifact trigger",
 }
 
 PARKED_FIT = {
-    "technical-operator": "future CTO / technical governance candidate; not active profile ownership",
     "channel-triggered": "valid workflow parked until the current revenue loop authorizes the channel or spend surface",
     "artifact-triggered": "valid creative/product workflow parked until a specific artifact needs it",
 }

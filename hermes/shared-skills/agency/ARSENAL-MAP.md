@@ -24,7 +24,7 @@ flowchart TB
 | --- | ---: |
 | agency-shared | 65 |
 | platform | 1 |
-| profile-local | 24 |
+| profile-local | 25 |
 | shared | 2 |
 
 | Owner | Count |
@@ -37,12 +37,12 @@ flowchart TB
 | Koho/Yeh future retainer profiles | 1 |
 | Marin | 17 |
 | Marin, Quill | 1 |
-| Parked for future technical-operator | 20 |
 | Parked until artifact trigger | 5 |
 | Parked until channel/tool trigger | 10 |
 | Quill | 9 |
 | Quill, Stet | 1 |
 | Stet | 11 |
+| Technical Operator | 21 |
 
 ## Every Active Skill
 
@@ -67,26 +67,6 @@ flowchart TB
 | `sales-outbound-strategist` | Marin | agency-shared | Agency-derived shared skill | Owned by Marin for marketing strategy, pipeline, and revenue-loop decisions | converted | `hermes/shared-skills/agency/sales-outbound-strategist/SKILL.md` |
 | `sales-proposal-strategist` | Marin | agency-shared | Agency-derived shared skill | Owned by Marin for marketing strategy, pipeline, and revenue-loop decisions | converted | `hermes/shared-skills/agency/sales-proposal-strategist/SKILL.md` |
 | `marketing-linkedin-content-creator` | Marin, Quill | agency-shared | Agency-derived shared skill | Owned by Marin, Quill for marketing strategy, pipeline, and revenue-loop decisions; drafting, brand, content, and creative production support | converted | `hermes/shared-skills/agency/marketing-linkedin-content-creator/SKILL.md` |
-| `engineering-backend-architect` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-backend-architect/SKILL.md` |
-| `engineering-code-reviewer` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-code-reviewer/SKILL.md` |
-| `engineering-codebase-onboarding-engineer` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-codebase-onboarding-engineer/SKILL.md` |
-| `engineering-data-engineer` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-data-engineer/SKILL.md` |
-| `engineering-database-optimizer` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-database-optimizer/SKILL.md` |
-| `engineering-devops-automator` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-devops-automator/SKILL.md` |
-| `engineering-email-intelligence-engineer` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-email-intelligence-engineer/SKILL.md` |
-| `engineering-frontend-developer` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-frontend-developer/SKILL.md` |
-| `engineering-incident-response-commander` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-incident-response-commander/SKILL.md` |
-| `engineering-security-engineer` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-security-engineer/SKILL.md` |
-| `engineering-software-architect` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-software-architect/SKILL.md` |
-| `engineering-sre` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-sre/SKILL.md` |
-| `engineering-technical-writer` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-technical-writer/SKILL.md` |
-| `engineering-threat-detection-engineer` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-threat-detection-engineer/SKILL.md` |
-| `specialized-automation-governance-architect` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/specialized-automation-governance-architect/SKILL.md` |
-| `specialized-lsp-index-engineer` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/specialized-lsp-index-engineer/SKILL.md` |
-| `specialized-mcp-builder` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/specialized-mcp-builder/SKILL.md` |
-| `specialized-model-qa` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/specialized-model-qa/SKILL.md` |
-| `testing-api-tester` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/testing-api-tester/SKILL.md` |
-| `testing-workflow-optimizer` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/testing-workflow-optimizer/SKILL.md` |
 | `design-ui-designer` | Parked until artifact trigger | agency-shared | Agency-derived shared skill | valid creative/product workflow parked until a specific artifact needs it | parked-candidate | `hermes/shared-skills/agency/design-ui-designer/SKILL.md` |
 | `design-ux-architect` | Parked until artifact trigger | agency-shared | Agency-derived shared skill | valid creative/product workflow parked until a specific artifact needs it | parked-candidate | `hermes/shared-skills/agency/design-ux-architect/SKILL.md` |
 | `design-ux-researcher` | Parked until artifact trigger | agency-shared | Agency-derived shared skill | valid creative/product workflow parked until a specific artifact needs it | parked-candidate | `hermes/shared-skills/agency/design-ux-researcher/SKILL.md` |
@@ -113,6 +93,26 @@ flowchart TB
 | `testing-reality-checker` | Stet | agency-shared | Agency-derived shared skill | Owned by Stet for pre-launch critique, verification, and risk review | converted | `hermes/shared-skills/agency/testing-reality-checker/SKILL.md` |
 | `testing-test-results-analyzer` | Stet | agency-shared | Agency-derived shared skill | Owned by Stet for pre-launch critique, verification, and risk review | converted | `hermes/shared-skills/agency/testing-test-results-analyzer/SKILL.md` |
 | `testing-tool-evaluator` | Stet | agency-shared | Agency-derived shared skill | Owned by Stet for pre-launch critique, verification, and risk review | converted | `hermes/shared-skills/agency/testing-tool-evaluator/SKILL.md` |
+| `engineering-backend-architect` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/engineering-backend-architect/SKILL.md` |
+| `engineering-code-reviewer` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/engineering-code-reviewer/SKILL.md` |
+| `engineering-codebase-onboarding-engineer` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/engineering-codebase-onboarding-engineer/SKILL.md` |
+| `engineering-data-engineer` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/engineering-data-engineer/SKILL.md` |
+| `engineering-database-optimizer` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/engineering-database-optimizer/SKILL.md` |
+| `engineering-devops-automator` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/engineering-devops-automator/SKILL.md` |
+| `engineering-email-intelligence-engineer` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/engineering-email-intelligence-engineer/SKILL.md` |
+| `engineering-frontend-developer` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/engineering-frontend-developer/SKILL.md` |
+| `engineering-incident-response-commander` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/engineering-incident-response-commander/SKILL.md` |
+| `engineering-security-engineer` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/engineering-security-engineer/SKILL.md` |
+| `engineering-software-architect` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/engineering-software-architect/SKILL.md` |
+| `engineering-sre` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/engineering-sre/SKILL.md` |
+| `engineering-technical-writer` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/engineering-technical-writer/SKILL.md` |
+| `engineering-threat-detection-engineer` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/engineering-threat-detection-engineer/SKILL.md` |
+| `specialized-automation-governance-architect` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/specialized-automation-governance-architect/SKILL.md` |
+| `specialized-lsp-index-engineer` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/specialized-lsp-index-engineer/SKILL.md` |
+| `specialized-mcp-builder` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/specialized-mcp-builder/SKILL.md` |
+| `specialized-model-qa` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/specialized-model-qa/SKILL.md` |
+| `testing-api-tester` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/testing-api-tester/SKILL.md` |
+| `testing-workflow-optimizer` | Technical Operator | agency-shared | Agency-derived shared skill | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | converted | `hermes/shared-skills/agency/testing-workflow-optimizer/SKILL.md` |
 | `profile-from-template` | Fleet builder | platform | Hermes platform skill | profile scaffolding and capability creation | active | `hermes/skills/profile-from-template/SKILL.md` |
 | `approval-proposal-draft` | Atlas CEO | profile-local | Hermes profile skill | executive decision support | active | `hermes/profiles/atlas-ceo/skills/approval-proposal-draft.md` |
 | `business-scorecard-brief` | Atlas CEO | profile-local | Hermes profile skill | executive decision support | active | `hermes/profiles/atlas-ceo/skills/business-scorecard-brief.md` |
@@ -138,6 +138,7 @@ flowchart TB
 | `critique-positioning` | Stet | profile-local | Hermes profile skill | pre-launch critique, verification, and risk review | active | `hermes/profiles/stet/skills/critique-positioning.md` |
 | `pressure-test-campaign` | Stet | profile-local | Hermes profile skill | pre-launch critique, verification, and risk review | active | `hermes/profiles/stet/skills/pressure-test-campaign.md` |
 | `self-audit` | Stet | profile-local | Hermes profile skill | pre-launch critique, verification, and risk review | active | `hermes/profiles/stet/skills/self-audit.md` |
+| `technical-review` | Technical Operator | profile-local | Hermes profile skill | procedural engineering review of skills, scripts, ADRs, and plans | active | `hermes/profiles/technical-operator/skills/technical-review.md` |
 | `generate-handoff` | All profiles | shared | Hermes shared skill | cross-session continuity | active | `hermes/shared-skills/generate-handoff/SKILL.md` |
 | `email-triage` | Koho/Yeh future retainer profiles | shared | Hermes shared skill | read-only communications triage and proposal store | active | `hermes/shared-skills/email-triage/SKILL.md` |
 
@@ -161,30 +162,30 @@ flowchart TB
 | `engineering/engineering-ai-data-remediation-engineer.md` | Future technical-operator candidate | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | cataloged | convert |
 | `engineering/engineering-ai-engineer.md` | Future technical-operator candidate | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | cataloged | convert |
 | `engineering/engineering-autonomous-optimization-architect.md` | Future technical-operator candidate | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | cataloged | convert |
-| `engineering/engineering-backend-architect.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
+| `engineering/engineering-backend-architect.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
 | `engineering/engineering-cms-developer.md` | Future technical-operator candidate | Convertible later as a shared workflow; not installed into profile manifests yet. | P4 | cataloged | convert |
-| `engineering/engineering-code-reviewer.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
-| `engineering/engineering-codebase-onboarding-engineer.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
-| `engineering/engineering-data-engineer.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
-| `engineering/engineering-database-optimizer.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
-| `engineering/engineering-devops-automator.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
-| `engineering/engineering-email-intelligence-engineer.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
+| `engineering/engineering-code-reviewer.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
+| `engineering/engineering-codebase-onboarding-engineer.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
+| `engineering/engineering-data-engineer.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
+| `engineering/engineering-database-optimizer.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
+| `engineering/engineering-devops-automator.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
+| `engineering/engineering-email-intelligence-engineer.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
 | `engineering/engineering-embedded-firmware-engineer.md` | Future technical-operator candidate | Reference-only until a live project or client workflow needs it. | P4 | deferred | defer |
 | `engineering/engineering-feishu-integration-developer.md` | Future technical-operator candidate | Reference-only until a live project or client workflow needs it. | P4 | deferred | defer |
 | `engineering/engineering-filament-optimization-specialist.md` | Future technical-operator candidate | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | cataloged | convert |
-| `engineering/engineering-frontend-developer.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
+| `engineering/engineering-frontend-developer.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
 | `engineering/engineering-git-workflow-master.md` | Future technical-operator candidate | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | cataloged | convert |
-| `engineering/engineering-incident-response-commander.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
+| `engineering/engineering-incident-response-commander.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
 | `engineering/engineering-minimal-change-engineer.md` | Future technical-operator candidate | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | cataloged | convert |
 | `engineering/engineering-mobile-app-builder.md` | Future technical-operator candidate | Reference-only until a live project or client workflow needs it. | P4 | deferred | defer |
 | `engineering/engineering-rapid-prototyper.md` | Future technical-operator candidate | Reference-only until a live project or client workflow needs it. | P4 | deferred | defer |
-| `engineering/engineering-security-engineer.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
+| `engineering/engineering-security-engineer.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
 | `engineering/engineering-senior-developer.md` | Future technical-operator candidate | Convertible later as a shared workflow; not installed into profile manifests yet. | P4 | cataloged | convert |
-| `engineering/engineering-software-architect.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
+| `engineering/engineering-software-architect.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
 | `engineering/engineering-solidity-smart-contract-engineer.md` | Future technical-operator candidate | Advisory/readiness skill with current-source gates and human review. | P3 | cataloged | curate |
-| `engineering/engineering-sre.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
-| `engineering/engineering-technical-writer.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
-| `engineering/engineering-threat-detection-engineer.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
+| `engineering/engineering-sre.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
+| `engineering/engineering-technical-writer.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
+| `engineering/engineering-threat-detection-engineer.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
 | `engineering/engineering-voice-ai-integration-engineer.md` | Future technical-operator candidate | Convertible later as a shared workflow; not installed into profile manifests yet. | P4 | cataloged | convert |
 | `engineering/engineering-wechat-mini-program-developer.md` | Future technical-operator candidate | Reference-only until a live project or client workflow needs it. | P4 | deferred | defer |
 | `finance/finance-bookkeeper-controller.md` | Atlas CEO | Advisory/readiness skill with current-source gates and human review. | P3 | cataloged | curate |
@@ -277,7 +278,7 @@ flowchart TB
 | `specialized/accounts-payable-agent.md` | Atlas CEO or future technical-operator by request | Advisory/readiness skill with current-source gates and human review. | P3 | cataloged | curate |
 | `specialized/agentic-identity-trust.md` | Atlas CEO or future technical-operator by request | Advisory/readiness skill with current-source gates and human review. | P3 | cataloged | curate |
 | `specialized/agents-orchestrator.md` | No owner - keep as profile/agent boundary reference | Do not convert; this is a coordinator or identity role, not procedural memory. | P5 | blocked-role-boundary | keep out of profiles |
-| `specialized/automation-governance-architect.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
+| `specialized/automation-governance-architect.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
 | `specialized/blockchain-security-auditor.md` | Atlas CEO or future technical-operator by request | Advisory/readiness skill with current-source gates and human review. | P3 | cataloged | curate |
 | `specialized/compliance-auditor.md` | Atlas CEO, Stet | Advisory/readiness skill with current-source gates and human review. | P3 | converted-curated | curate |
 | `specialized/corporate-training-designer.md` | Atlas CEO or future technical-operator by request | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | cataloged | convert |
@@ -294,7 +295,7 @@ flowchart TB
 | `specialized/legal-client-intake.md` | Atlas CEO or future technical-operator by request | Advisory/readiness skill with current-source gates and human review. | P3 | cataloged | curate |
 | `specialized/legal-document-review.md` | Atlas CEO or future technical-operator by request | Advisory/readiness skill with current-source gates and human review. | P3 | cataloged | curate |
 | `specialized/loan-officer-assistant.md` | Atlas CEO or future technical-operator by request | Convertible later as a shared workflow; not installed into profile manifests yet. | P3 | cataloged | convert |
-| `specialized/lsp-index-engineer.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
+| `specialized/lsp-index-engineer.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
 | `specialized/real-estate-buyer-seller.md` | Atlas CEO or future technical-operator by request | Advisory/readiness skill with current-source gates and human review. | P3 | cataloged | curate |
 | `specialized/recruitment-specialist.md` | Atlas CEO or future technical-operator by request | Reference-only until a live project or client workflow needs it. | P4 | deferred | defer |
 | `specialized/report-distribution-agent.md` | Atlas CEO or future technical-operator by request | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | cataloged | convert |
@@ -308,8 +309,8 @@ flowchart TB
 | `specialized/specialized-document-generator.md` | Atlas CEO or future technical-operator by request | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | cataloged | convert |
 | `specialized/specialized-french-consulting-market.md` | Atlas CEO or future technical-operator by request | Reference-only until a live project or client workflow needs it. | P4 | deferred | defer |
 | `specialized/specialized-korean-business-navigator.md` | Atlas CEO or future technical-operator by request | Reference-only until a live project or client workflow needs it. | P4 | deferred | defer |
-| `specialized/specialized-mcp-builder.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
-| `specialized/specialized-model-qa.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
+| `specialized/specialized-mcp-builder.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
+| `specialized/specialized-model-qa.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
 | `specialized/specialized-salesforce-architect.md` | Atlas CEO or future technical-operator by request | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | cataloged | convert |
 | `specialized/specialized-workflow-architect.md` | Atlas CEO or future technical-operator by request | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | cataloged | convert |
 | `specialized/study-abroad-advisor.md` | Atlas CEO or future technical-operator by request | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | cataloged | convert |
@@ -322,13 +323,13 @@ flowchart TB
 | `support/support-legal-compliance-checker.md` | Atlas CEO | Advisory/readiness skill with current-source gates and human review. | P3 | cataloged | curate |
 | `support/support-support-responder.md` | Atlas CEO | Advisory/readiness skill with current-source gates and human review. | P3 | cataloged | curate |
 | `testing/testing-accessibility-auditor.md` | Stet | Owned by Stet for pre-launch critique, verification, and risk review | P1 | converted | convert |
-| `testing/testing-api-tester.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
+| `testing/testing-api-tester.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
 | `testing/testing-evidence-collector.md` | Stet | Owned by Stet for pre-launch critique, verification, and risk review | P1 | converted | convert |
 | `testing/testing-performance-benchmarker.md` | Stet | Owned by Stet for pre-launch critique, verification, and risk review | P1 | converted | convert |
 | `testing/testing-reality-checker.md` | Stet | Owned by Stet for pre-launch critique, verification, and risk review | P1 | converted | convert |
 | `testing/testing-test-results-analyzer.md` | Stet | Owned by Stet for pre-launch critique, verification, and risk review | P1 | converted | convert |
 | `testing/testing-tool-evaluator.md` | Stet | Owned by Stet for pre-launch critique, verification, and risk review | P1 | converted | convert |
-| `testing/testing-workflow-optimizer.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
+| `testing/testing-workflow-optimizer.md` | Technical Operator | Owned by Technical Operator for procedural engineering review of skills, scripts, ADRs, and plans | P1 | converted | convert |
 
 ## Reading The Map
 

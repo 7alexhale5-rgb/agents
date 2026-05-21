@@ -1,0 +1,2 @@
+This is the kill-switch template. Rename to `PAUSED` (no extension) to halt this profile's runtime.
+`hermes` will refuse to invoke any skill on this profile while `PAUSED` exists.

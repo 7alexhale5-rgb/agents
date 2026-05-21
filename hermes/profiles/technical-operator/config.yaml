@@ -10,7 +10,7 @@ model:
   provider: openrouter
   routing:
     smoke_test: nvidia/nemotron-3-nano-30b-a3b:free
-    technical_review: anthropic:claude-sonnet-4-6
+    technical_review: openrouter:anthropic/claude-sonnet-4.6
     high_stakes_review: anthropic:claude-opus-4-7
 
 tools:

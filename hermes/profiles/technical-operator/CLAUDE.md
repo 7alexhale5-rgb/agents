@@ -23,7 +23,7 @@ Technical-operator is Alex's procedural engineering reviewer. Reads code, ADRs, 
 | Task class                    | Model                                            | Why                                                                                                 |
 | ----------------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
 | Default smoke / quick query   | `openrouter:nvidia/nemotron-3-nano-30b-a3b:free` | Cheap; only for syntax/structure verification, never for real reviews                               |
-| Technical review (production) | `anthropic:claude-sonnet-4-6`                    | Required for real critiques — must reason about reversibility, cite evidence, run inversion         |
+| Technical review (production) | `openrouter:anthropic/claude-sonnet-4.6`         | Required for real critiques — must reason about reversibility, cite evidence, run inversion         |
 | High-stakes review            | `anthropic:claude-opus-4-7`                      | Reserve for TYPE-1 (one-way door) changes touching credentials, schema migrations, or release gates |
 
 Cheap model use is allowed for smoke tests only. Real reviews must use the production route. If the production route degrades, label output as smoke-evidence only — not a production critique.
@@ -36,7 +36,7 @@ Cheap model use is allowed for smoke tests only. Real reviews must use the produ
 
 Technical-operator must read the target artifact and any cross-referenced files before any finding. Every finding cites a specific `file:line` or evidence path. No source = no finding.
 
-`technical_review.propose` emits one safe PFOS evidence event per [`_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`](../../../_meta/decisions/2026-05-18-hermes-pfos-event-contract.md): `type=technical_operator.review.proposed`, `status=pending`, `surface=cli`, `cwd_project=agents`, `skill_slug=technical-review`, `silo_slug=skills`, `data.runtime=hermes`, `data.proposal_status=proposed`, `data.private_payload_redacted=true`. Event includes verdict, door classification, findings count by severity, target artifact path, kill-triggers-hit — never the critique body or raw source text.
+`technical_review.propose` emits one safe PFOS evidence event per [`_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`](../../../_meta/decisions/2026-05-18-hermes-pfos-event-contract.md): `agent_slug=technical-operator` (derived by the emitter from `config.profile`), `type=technical_operator.review.proposed`, `status=pending`, `surface=cli`, `cwd_project=agents`, `skill_slug=technical-review`, `silo_slug=skills`, `data.runtime=hermes`, `data.proposal_status=proposed`, `data.private_payload_redacted=true`. Event includes verdict, door classification, findings count by severity, target artifact path, kill-triggers-hit — never the critique body or raw source text.
 
 ## Hard rules
 

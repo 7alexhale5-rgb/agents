@@ -8,7 +8,8 @@
 #
 # Routes model selection from the profile's config.yaml `model.routing` block:
 #   - Looks up routing[<skill_slug_underscored>]; falls back to `model.default`.
-#   - Translates `provider:model_id` (e.g. `anthropic:claude-sonnet-4-6`) to
+#   - Translates `provider:model_id` (e.g. `anthropic:claude-sonnet-4-6`,
+#     `openrouter:anthropic/claude-sonnet-4.6`) to
 #     `--provider <p> -m <model>` flags. Values containing `/` (e.g.
 #     `nvidia/nemotron-...:free`) pass through as bare `-m <value>`, which
 #     hermes routes via the profile's default provider (OpenRouter).
@@ -80,9 +81,14 @@ if not model:
 if not model:
     print("")
     sys.exit(0)
-# provider:model_id (e.g. anthropic:claude-sonnet-4-6) → --provider P -m M.
-# Values with `/` (e.g. nvidia/nemotron-...:free) keep their full path as -m.
-if ":" in model and "/" not in model:
+# provider:model_id (e.g. anthropic:claude-sonnet-4-6,
+# openrouter:anthropic/claude-sonnet-4.6) → --provider P -m M.
+# Values like nvidia/nemotron-...:free keep their full path as -m.
+known_providers = {
+    "anthropic", "openrouter", "openai", "gemini", "mistral", "nvidia",
+    "cerebras", "ollama", "bedrock", "xai", "deepseek", "gmi",
+}
+if ":" in model and model.split(":", 1)[0] in known_providers:
     provider, model_id = model.split(":", 1)
     print(f"--provider {provider} -m {model_id}")
 else:

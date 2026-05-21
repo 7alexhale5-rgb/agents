@@ -139,6 +139,10 @@ After the critique file is written, run the canonical emitter so PFOS records th
 
 ```bash
 source ~/.config/prettyfly-marketing/hermes-tokens.env
+test -f ~/Projects/agents/scripts/emit-agent-event.py || {
+  echo "blocked: emitter script missing at ~/Projects/agents/scripts/emit-agent-event.py" >&2
+  exit 1
+}
 python3 ~/Projects/agents/scripts/emit-agent-event.py \
   --profile technical-operator \
   --tool technical_review.propose \
@@ -147,7 +151,7 @@ python3 ~/Projects/agents/scripts/emit-agent-event.py \
   --extra-json '{"target_path":"<target>","door_classification":"<TYPE-1|TYPE-2>","findings_count_block":<N>,"findings_count_medium":<N>,"findings_count_low":<N>}'
 ```
 
-The event lands with `type=technical_operator.review.proposed`, `cwd_project=agents`, `skill_slug=technical-review`. Capture the row UUID printed to stdout and patch the critique file's frontmatter `pfos_event_id:` field before considering the invocation complete.
+The emitter derives `agent_slug=technical-operator` from `config.profile`. The event lands with `type=technical_operator.review.proposed`, `cwd_project=agents`, `skill_slug=technical-review`. Capture the row UUID printed to stdout and patch the critique file's frontmatter `pfos_event_id:` field before considering the invocation complete.
 
 ## Validation
 

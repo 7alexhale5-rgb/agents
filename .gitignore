@@ -61,8 +61,8 @@ marketplace/manifests/*/eval-suite/reports/
 # regenerated on demand, not source-of-truth.
 hermes/profiles/*-baseline/
 
-# Local Claude Code worktrees (per-session, never committed)
-.claude/worktrees/
+# Local Claude Code state (per-session settings, worktrees, plugin toggles)
+.claude/
 
 # Raw research artifact dumps (conclusions live in memory-vault decisions/)
 .research/

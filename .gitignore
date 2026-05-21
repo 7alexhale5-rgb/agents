@@ -9,6 +9,8 @@
 !hermes/profiles/quill/scratch/.gitkeep
 !hermes/profiles/stet/scratch/
 !hermes/profiles/stet/scratch/.gitkeep
+!hermes/profiles/technical-operator/scratch/
+!hermes/profiles/technical-operator/scratch/.gitkeep
 **/memory/state.db
 **/memory/trajectories/
 **/memory/*.sqlite*
@@ -17,6 +19,8 @@
 !hermes/profiles/quill/workspace/.gitkeep
 !hermes/profiles/stet/workspace/
 !hermes/profiles/stet/workspace/.gitkeep
+!hermes/profiles/technical-operator/workspace/
+!hermes/profiles/technical-operator/workspace/.gitkeep
 
 # Hermes runtime drop-ins (in case anyone runs hermes from inside a profile dir)
 **/.hermes/

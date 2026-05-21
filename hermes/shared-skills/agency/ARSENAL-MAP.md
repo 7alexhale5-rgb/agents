@@ -22,7 +22,7 @@ flowchart TB
 
 | Source | Count |
 | --- | ---: |
-| agency-shared | 64 |
+| agency-shared | 65 |
 | platform | 1 |
 | profile-local | 24 |
 | shared | 2 |
@@ -37,7 +37,7 @@ flowchart TB
 | Koho/Yeh future retainer profiles | 1 |
 | Marin | 17 |
 | Marin, Quill | 1 |
-| Parked for future technical-operator | 19 |
+| Parked for future technical-operator | 20 |
 | Parked until artifact trigger | 5 |
 | Parked until channel/tool trigger | 10 |
 | Quill | 9 |
@@ -74,6 +74,7 @@ flowchart TB
 | `engineering-database-optimizer` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-database-optimizer/SKILL.md` |
 | `engineering-devops-automator` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-devops-automator/SKILL.md` |
 | `engineering-email-intelligence-engineer` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-email-intelligence-engineer/SKILL.md` |
+| `engineering-frontend-developer` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-frontend-developer/SKILL.md` |
 | `engineering-incident-response-commander` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-incident-response-commander/SKILL.md` |
 | `engineering-security-engineer` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-security-engineer/SKILL.md` |
 | `engineering-software-architect` | Parked for future technical-operator | agency-shared | Agency-derived shared skill | future CTO / technical governance candidate; not active profile ownership | parked-candidate | `hermes/shared-skills/agency/engineering-software-architect/SKILL.md` |
@@ -171,7 +172,7 @@ flowchart TB
 | `engineering/engineering-embedded-firmware-engineer.md` | Future technical-operator candidate | Reference-only until a live project or client workflow needs it. | P4 | deferred | defer |
 | `engineering/engineering-feishu-integration-developer.md` | Future technical-operator candidate | Reference-only until a live project or client workflow needs it. | P4 | deferred | defer |
 | `engineering/engineering-filament-optimization-specialist.md` | Future technical-operator candidate | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | cataloged | convert |
-| `engineering/engineering-frontend-developer.md` | Future technical-operator candidate | Reference-only until a live project or client workflow needs it. | P4 | deferred | defer |
+| `engineering/engineering-frontend-developer.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
 | `engineering/engineering-git-workflow-master.md` | Future technical-operator candidate | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | cataloged | convert |
 | `engineering/engineering-incident-response-commander.md` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | converted | convert |
 | `engineering/engineering-minimal-change-engineer.md` | Future technical-operator candidate | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | cataloged | convert |

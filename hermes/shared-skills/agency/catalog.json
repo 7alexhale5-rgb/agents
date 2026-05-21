@@ -3,9 +3,9 @@
   "source_commit": "783f6a7",
   "counts": {
     "total": 184,
-    "converted": 62,
+    "converted": 63,
     "converted_curated": 2,
-    "deferred": 43,
+    "deferred": 42,
     "blocked": 2
   },
   "profile_enablement": {
@@ -61,6 +61,7 @@
       "engineering-database-optimizer",
       "engineering-devops-automator",
       "engineering-email-intelligence-engineer",
+      "engineering-frontend-developer",
       "engineering-incident-response-commander",
       "engineering-security-engineer",
       "engineering-software-architect",
@@ -395,13 +396,13 @@
     {
       "relpath": "engineering/engineering-frontend-developer.md",
       "division": "engineering",
-      "skill": null,
-      "priority": "P4",
-      "bucket": "defer",
-      "status": "deferred",
-      "reason": "execution-heavy role; defer until tied to a live project need; upstream 783f6a7",
-      "owner": "Future technical-operator candidate",
-      "fit": "Reference-only until a live project or client workflow needs it."
+      "skill": "engineering-frontend-developer",
+      "priority": "P1",
+      "bucket": "convert",
+      "status": "converted",
+      "reason": "P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7",
+      "owner": "Parked for future technical-operator",
+      "fit": "future CTO / technical governance candidate; not active profile ownership"
     },
     {
       "relpath": "engineering/engineering-git-workflow-master.md",

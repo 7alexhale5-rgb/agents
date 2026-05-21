@@ -7,9 +7,9 @@ This catalog converts Agency roles into Hermes shared skills. Profiles opt into 
 ## Counts
 
 - Total upstream agent files: 184
-- P1 converted skills: 62
+- P1 converted skills: 63
 - Curated high-stakes converted skills: 2
-- Deferred/reference-only: 43
+- Deferred/reference-only: 42
 - Blocked by skill-vs-agent boundary: 2
 
 ## Profile Enablement
@@ -21,7 +21,7 @@ This catalog converts Agency roles into Hermes shared skills. Profiles opt into 
 
 ## Parked Candidates
 
-- **Parked for future technical-operator**: `engineering-backend-architect`, `engineering-code-reviewer`, `engineering-codebase-onboarding-engineer`, `engineering-data-engineer`, `engineering-database-optimizer`, `engineering-devops-automator`, `engineering-email-intelligence-engineer`, `engineering-incident-response-commander`, `engineering-security-engineer`, `engineering-software-architect`, `engineering-sre`, `engineering-technical-writer`, `engineering-threat-detection-engineer`, `specialized-automation-governance-architect`, `specialized-lsp-index-engineer`, `specialized-mcp-builder`, `specialized-model-qa`, `testing-api-tester`, `testing-workflow-optimizer`
+- **Parked for future technical-operator**: `engineering-backend-architect`, `engineering-code-reviewer`, `engineering-codebase-onboarding-engineer`, `engineering-data-engineer`, `engineering-database-optimizer`, `engineering-devops-automator`, `engineering-email-intelligence-engineer`, `engineering-frontend-developer`, `engineering-incident-response-commander`, `engineering-security-engineer`, `engineering-software-architect`, `engineering-sre`, `engineering-technical-writer`, `engineering-threat-detection-engineer`, `specialized-automation-governance-architect`, `specialized-lsp-index-engineer`, `specialized-mcp-builder`, `specialized-model-qa`, `testing-api-tester`, `testing-workflow-optimizer`
 - **Parked until channel/tool trigger**: `marketing-reddit-community-builder`, `marketing-social-media-strategist`, `marketing-twitter-engager`, `paid-media-auditor`, `paid-media-creative-strategist`, `paid-media-paid-social-strategist`, `paid-media-ppc-strategist`, `paid-media-programmatic-buyer`, `paid-media-search-query-analyst`, `paid-media-tracking-specialist`
 - **Parked until artifact trigger**: `design-ui-designer`, `design-ux-architect`, `design-ux-researcher`, `design-whimsy-injector`, `marketing-podcast-strategist`
 
@@ -56,7 +56,7 @@ This catalog converts Agency roles into Hermes shared skills. Profiles opt into 
 | engineering | `engineering/engineering-embedded-firmware-engineer.md` | `` | Future technical-operator candidate | Reference-only until a live project or client workflow needs it. | P4 | defer | deferred | execution-heavy role; defer until tied to a live project need; upstream 783f6a7 |
 | engineering | `engineering/engineering-feishu-integration-developer.md` | `` | Future technical-operator candidate | Reference-only until a live project or client workflow needs it. | P4 | defer | deferred | execution-heavy role; defer until tied to a live project need; upstream 783f6a7 |
 | engineering | `engineering/engineering-filament-optimization-specialist.md` | `` | Future technical-operator candidate | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | convert | cataloged | procedural workflow can become a reusable skill; upstream 783f6a7 |
-| engineering | `engineering/engineering-frontend-developer.md` | `` | Future technical-operator candidate | Reference-only until a live project or client workflow needs it. | P4 | defer | deferred | execution-heavy role; defer until tied to a live project need; upstream 783f6a7 |
+| engineering | `engineering/engineering-frontend-developer.md` | `engineering-frontend-developer` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | convert | converted | P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7 |
 | engineering | `engineering/engineering-git-workflow-master.md` | `` | Future technical-operator candidate | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | convert | cataloged | procedural workflow can become a reusable skill; upstream 783f6a7 |
 | engineering | `engineering/engineering-incident-response-commander.md` | `engineering-incident-response-commander` | Parked for future technical-operator | future CTO / technical governance candidate; not active profile ownership | P1 | convert | converted | P1 revenue, review, testing, reliability, or technical governance workflow; upstream 783f6a7 |
 | engineering | `engineering/engineering-minimal-change-engineer.md` | `` | Future technical-operator candidate | Convertible later as a shared workflow; not installed into profile manifests yet. | P2 | convert | cataloged | procedural workflow can become a reusable skill; upstream 783f6a7 |

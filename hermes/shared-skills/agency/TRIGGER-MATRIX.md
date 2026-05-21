@@ -19,6 +19,7 @@ Static smoke-test prompts. Each converted skill has one prompt that should trigg
 | `engineering-database-optimizer` | `engineering/engineering-database-optimizer.md` | Use the database optimizer skill to assess this request and return the required artifact without adopting a persona. |
 | `engineering-devops-automator` | `engineering/engineering-devops-automator.md` | Use the devops automator skill to assess this request and return the required artifact without adopting a persona. |
 | `engineering-email-intelligence-engineer` | `engineering/engineering-email-intelligence-engineer.md` | Use the email intelligence engineer skill to assess this request and return the required artifact without adopting a persona. |
+| `engineering-frontend-developer` | `engineering/engineering-frontend-developer.md` | Use the frontend developer skill to assess this request and return the required artifact without adopting a persona. |
 | `engineering-incident-response-commander` | `engineering/engineering-incident-response-commander.md` | Use the incident response commander skill to assess this request and return the required artifact without adopting a persona. |
 | `engineering-security-engineer` | `engineering/engineering-security-engineer.md` | Use the security engineer skill to assess this request and return the required artifact without adopting a persona. |
 | `engineering-software-architect` | `engineering/engineering-software-architect.md` | Use the software architect skill to assess this request and return the required artifact without adopting a persona. |

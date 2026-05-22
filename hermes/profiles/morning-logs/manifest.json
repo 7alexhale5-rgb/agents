@@ -1,0 +1,41 @@
+{
+  "sku": "morning-logs",
+  "name": "Morning Logs",
+  "version": "0.1.0",
+  "category": "internal",
+  "department": "operations",
+  "tagline": "Read-only Hermes operations briefing: is it usable, what is broken, and what needs Alex next.",
+  "tier": "rung_1_read_only_operations_brief",
+  "depends_on": [
+    "hermes-dashboard",
+    "prettyfly-fleet",
+    "hermes-labyrinth"
+  ],
+  "channels": [],
+  "model_routing": {
+    "default": "openrouter:nvidia/nemotron-3-nano-30b-a3b:free",
+    "daily_brief": "openrouter:anthropic/claude-sonnet-4.6"
+  },
+  "tools": [
+    "hermes_dashboard.read",
+    "repo_status.read",
+    "morning_logs.report.propose"
+  ],
+  "skills": [
+    "daily-brief",
+    "generate-handoff"
+  ],
+  "memory_axes": [
+    "working",
+    "procedural"
+  ],
+  "guardrails": [
+    "read_only_collection",
+    "proposal_event_only",
+    "no_dangerous_controls",
+    "no_raw_logs_or_secrets_in_events",
+    "pfos_evidence_only"
+  ],
+  "publish": false,
+  "internal_only": true
+}

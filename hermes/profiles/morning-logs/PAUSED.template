@@ -1,0 +1,5 @@
+PAUSED placeholder per ADR 2026-05-18-agent-shape-11-file-contract.md.
+
+To pause Morning Logs runtime: `touch ~/.hermes/profiles/morning-logs/PAUSED`.
+
+To resume: `rm ~/.hermes/profiles/morning-logs/PAUSED`.

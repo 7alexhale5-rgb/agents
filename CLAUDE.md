@@ -19,6 +19,7 @@ You've opened the consolidated Hermes monorepo. This file is the Layer-1 router 
 | Koho retainer delivery (Marc routing, ConsultOps demos, Excerpa work)                               | `hermes/profiles/koho-ops/CLAUDE.md` (Phase 5) |
 | Yehovah retainer delivery (trial-to-GA monitoring, CTO duties)                                      | `hermes/profiles/yeh-ops/CLAUDE.md` (Phase 5)  |
 | Repo-wide refactor / multi-file coordination / PR drafts on revenue products                        | `hermes/profiles/codex/CLAUDE.md` (Phase 5.5)  |
+| Daily Hermes operations brief; gateway/Fleet/Labyrinth/repo health; propose-only next action        | `hermes/profiles/morning-logs/CLAUDE.md`       |
 
 Profiles in parentheses are scheduled for build per the plan; `atlas-ceo`, `codex`, `marin`, `quill`, and `stet` exist on disk as of 2026-05-20 (Phase 3 of $1M plan landed).
 

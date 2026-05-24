@@ -1,8 +1,6 @@
 description: Stet pre-launch critic evals — verifies critiques cite sources, name fix-paths, enforce kill triggers, and produce verdicts.
 
-# Atlas eval points at exec:python ../../../../pf-runtime/scripts/eval_profile_prompt.py
-# which is archived. Stet uses the anthropic provider directly so the suite
-# actually runs. Requires ANTHROPIC_API_KEY in env.
+# Provider: anthropic direct. Requires ANTHROPIC_API_KEY in env.
 
 prompts:
   - file://fixtures/stet-system-prompt.md

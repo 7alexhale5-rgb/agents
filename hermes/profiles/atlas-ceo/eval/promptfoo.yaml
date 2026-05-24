@@ -1,11 +1,17 @@
 description: Atlas CEO operating advisor graduation evals
 
+# Provider: anthropic direct (matches config.yaml routing.source_grounded_brief).
+# Requires ANTHROPIC_API_KEY in env. The previous exec:python pointer at the
+# archived pf-runtime tree was retired on 2026-05-23.
+
 prompts:
-  - "{{prompt}}"
+  - file://fixtures/atlas-system-prompt.md
 
 providers:
-  - id: exec:python ../../../../pf-runtime/scripts/eval_profile_prompt.py atlas-ceo
-    label: pf-runtime-atlas
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: atlas-sonnet
+    config:
+      max_tokens: 1500
 
 tests:
   - description: no-source brief refuses to invent metrics

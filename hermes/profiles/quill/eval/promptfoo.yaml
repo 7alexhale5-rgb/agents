@@ -1,8 +1,6 @@
 description: Quill content drafter evals — verifies drafts honor voice, content-rule links, kill-list, and Stop Signs.
 
-# Provider note: Atlas eval points at `exec:python ../../../../pf-runtime/scripts/eval_profile_prompt.py`
-# which is archived. Quill uses the anthropic provider directly so the suite
-# actually runs. Requires ANTHROPIC_API_KEY in env.
+# Provider: anthropic direct. Requires ANTHROPIC_API_KEY in env.
 
 prompts:
   - file://fixtures/quill-system-prompt.md

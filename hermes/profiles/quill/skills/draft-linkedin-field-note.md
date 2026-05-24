@@ -2,7 +2,7 @@
 name: draft-linkedin-field-note
 description: Produce one LinkedIn Field Note draft for the WORKS Review public signal sprint. Manual post from Alex's personal LinkedIn — no scheduling, no automation. Quill's first live skill.
 input: optional `topic` (defaults to "WORKS Review applied to a real workflow drag scenario")
-output: markdown to ~/Projects/marketing/_inbox/quill-drafts/{YYYY-MM-DD}-field-note-{slug}.md + paired quill.draft.proposed PFOS event
+output: markdown to ~/Projects/marketing/_inbox/quill-drafts/{YYYY-MM-DD}-field-note-{slug}.md + Hermes local receipt
 ---
 
 # Skill: draft-linkedin-field-note
@@ -53,17 +53,13 @@ Success metric per the sprint: qualified `2` and `3` signals (named workflow que
 
 11. **Write** to `~/Projects/marketing/_inbox/quill-drafts/{YYYY-MM-DD}-field-note-{slug}.md` using the frontmatter from `DOCTRINE.md § Output contract` with `type: quill-draft`, `pillar: <1-5>`, `campaign: prettyfly-ai-ops-audit-v0`, all `content_rule_links` filled, `sweeps_passed: [clarity, voice, so_what, proof, specificity, cta, compliance]`.
 
-12. **Emit safe PFOS event** by invoking:
+12. **Write safe Hermes local receipt** by invoking:
 
-```bash
-python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
-  --profile quill \
-  --tool draft_field_note.propose \
-  --readout-path "_inbox/quill-drafts/<YYYY-MM-DD>-field-note-<slug>.md" \
-  --extra-json '{"pillar":<1-5>,"sweeps_passed":true,"content_rule_complete":true,"campaign":"prettyfly-ai-ops-audit-v0"}'
+```text
+Write or verify the Hermes local receipt for the inbox artifact. Do not call the legacy PFOS emitter unless Alex explicitly reopens PFOS for this workflow.
 ```
 
-Confirm exit 0 and capture the returned row UUID into the draft's footer as `pfos_event_uuid: <uuid>`.
+Confirm the receipt exists and capture the receipt ID into the draft's footer as `receipt_id: <uuid>`.
 
 ## Output shape (body, not frontmatter)
 

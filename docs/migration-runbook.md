@@ -31,7 +31,7 @@ Hermes Agent v0.12.0 (2026.4.30) is the canonical runtime. Do not run `hermes up
 - $1M plan (drives this runbook): [`~/.claude/plans/here-is-what-we-joyful-torvalds.md`](../../.claude/plans/here-is-what-we-joyful-torvalds.md)
 - Profile shape contract: [`_meta/decisions/2026-05-18-agent-shape-11-file-contract.md`](../_meta/decisions/2026-05-18-agent-shape-11-file-contract.md)
 - Sub-project → profile trigger: [`_meta/decisions/2026-05-18-subproject-to-profile-trigger.md`](../_meta/decisions/2026-05-18-subproject-to-profile-trigger.md)
-- Hermes → PFOS event contract: [`_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`](../_meta/decisions/2026-05-18-hermes-pfos-event-contract.md)
+- Historical Hermes → PFOS event contract: [`_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`](../_meta/decisions/2026-05-18-hermes-pfos-event-contract.md)
 - Shared-handoff skill: [`_meta/decisions/2026-05-18-generate-handoff-shared-skill.md`](../_meta/decisions/2026-05-18-generate-handoff-shared-skill.md)
 - Historical ADRs (superseded): [`ADR-006 PF Runtime bare-metal`](../_meta/decisions/2026-05-06-prettyfly-runtime-bare-metal.md), [`ADR-007 hybrid runtime lanes`](../_meta/decisions/2026-05-16-agentic-os-hybrid-runtime-lanes.md)
 
@@ -73,7 +73,7 @@ Marin is the marketing operating agent. Reads the marketing vault, runs the week
 
 ## Phase 3 — build Quill + Stet (scaffolded 2026-05-20)
 
-- **Quill**: drafts content from approved marketing-vault positioning. Writes to `~/Projects/marketing/_inbox/quill-drafts/`. Never publishes. Five flat-MD skills: `draft-linkedin-field-note`, `draft-outreach-message`, `draft-campaign-asset`, `revise-from-critique`, plus shared `generate-handoff`. Four `draft_*.propose` tools in `config.yaml` so per-skill attribution is correct in PFOS events.
+- **Quill**: drafts content from approved marketing-vault positioning. Writes to `~/Projects/marketing/_inbox/quill-drafts/`. Never publishes. Five flat-MD skills: `draft-linkedin-field-note`, `draft-outreach-message`, `draft-campaign-asset`, `revise-from-critique`, plus shared `generate-handoff`. Four `draft_*.propose` tools in `config.yaml` so per-skill attribution is correct in legacy PFOS events.
 - **Stet**: pressure-tests drafts, campaign briefs, positioning, and campaigns before launch. Writes to `~/Projects/marketing/_inbox/stet-critiques/`. Never modifies any artifact. Five flat-MD skills: `critique-draft`, `critique-campaign-brief`, `critique-positioning`, `pressure-test-campaign`, plus shared `generate-handoff`. Verdict required on every critique: `SHIP` / `REVISE` / `KILL`. Four `<critique-name>.propose` tools so per-skill attribution stays clean.
 
 Both built from the Atlas template per the 11-file contract. Both inherit the patch #5 emitter pattern (`hermes/lib/agent_events.py` + `scripts/emit-agent-event.py`) — every drafting/critique skill ends with the explicit CLI emission.
@@ -125,7 +125,7 @@ Next: **2026-08-18**. Audit fleet health against revenue targets, demote unused 
 ## Operator notes
 
 - Profile additions go through `scripts/lint-profile.sh` before any commit (per the 11-file contract ADR).
-- Channel updates emit PFOS `agent_events` per the event-contract ADR. No raw vault text, no prompts, no secrets in payloads.
+- Channel updates emit legacy PFOS `agent_events` per the event-contract ADR. No raw vault text, no prompts, no secrets in payloads.
 - Shared skills live in `hermes/shared-skills/`; profile-specific skills in `hermes/profiles/<name>/skills/`.
 - Cross-session handoffs use the `generate-handoff` shared skill.
 

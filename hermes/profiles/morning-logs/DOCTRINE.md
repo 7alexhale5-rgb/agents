@@ -9,12 +9,13 @@ Create one safe daily operational briefing from Hermes runtime truth.
 1. Fleet ops status
 2. Fleet pending approvals
 3. Fleet recent events
-4. Labyrinth health and guideposts
-5. Sessions only when a guidepost points there
-6. Logs only after Fleet/Labyrinth indicate a runtime issue
-7. Cron for schedule/last-run confidence
-8. Profiles for identity/scope drift
-9. Docs for API mapping
+4. Knowledge Vault freshness, retrieval, and memory-health
+5. Labyrinth health and guideposts
+6. Sessions only when a guidepost points there
+7. Logs only after Fleet/Labyrinth indicate a runtime issue
+8. Cron for schedule/last-run confidence
+9. Profiles for identity/scope drift
+10. Docs for API mapping
 
 ## Safety doctrine
 
@@ -25,7 +26,10 @@ Create one safe daily operational briefing from Hermes runtime truth.
 - No deploys.
 - No spending.
 - No external sends.
-- No raw secret, token, prompt, private message, or log dump in PFOS events.
+- No vault reindex.
+- No memory repair execution.
+- No note edits.
+- No raw secret, token, prompt, private message, or log dump in Hermes receipts.
 
 ## Promotion doctrine
 

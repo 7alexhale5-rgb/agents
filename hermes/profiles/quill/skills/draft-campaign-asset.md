@@ -2,7 +2,7 @@
 name: draft-campaign-asset
 description: Draft a campaign asset (scorecard section / landing-page copy / offer one-pager) per an active campaign brief. Goes to _inbox/ for Alex review before any promotion.
 input: campaign slug + asset type ("scorecard-section" | "landing-copy" | "offer-one-pager") + asset focus
-output: markdown to ~/Projects/marketing/_inbox/quill-drafts/{YYYY-MM-DD}-{asset-type}-{slug}.md + paired quill.draft.proposed PFOS event
+output: markdown to ~/Projects/marketing/_inbox/quill-drafts/{YYYY-MM-DD}-{asset-type}-{slug}.md + Hermes local receipt
 ---
 
 # Skill: draft-campaign-asset
@@ -54,14 +54,10 @@ Draft ONE campaign asset that Alex can review, edit, and promote into the campai
 
 9. **Write** to `~/Projects/marketing/_inbox/quill-drafts/{YYYY-MM-DD}-{asset-type}-{slug}.md` with frontmatter per `DOCTRINE.md § Output contract`, `type: quill-draft`, `pillar: <1-5>`, `campaign: <campaign-slug>`, `asset_type: <scorecard-section|landing-copy|offer-one-pager>`, all content-rule links filled.
 
-10. **Emit PFOS event**:
+10. **Write Hermes local receipt**:
 
-```bash
-python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
-  --profile quill \
-  --tool draft_campaign_asset.propose \
-  --readout-path "_inbox/quill-drafts/<YYYY-MM-DD>-<asset-type>-<slug>.md" \
-  --extra-json '{"pillar":<1-5>,"campaign":"<campaign-slug>","asset_type":"<asset-type>","content_rule_complete":true}'
+```text
+Write or verify the Hermes local receipt for the inbox artifact. Do not call the legacy PFOS emitter unless Alex explicitly reopens PFOS for this workflow.
 ```
 
 ## Anti-patterns

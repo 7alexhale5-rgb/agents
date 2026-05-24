@@ -46,7 +46,7 @@ From [`metrics/weekly-revenue-loop-v0.md`](~/Projects/marketing/metrics/weekly-r
 3. Make ONE weekly decision: continue / narrow ICP / rewrite message / change channel / pause.
 4. Name ONE smallest next action from the Manual Action Menu.
 5. Name the stop condition.
-6. List PFOS fields to preserve later (future PFOS readout inheritance — not built now).
+6. List Hermes receipt fields to preserve later (future Hermes readout inheritance — not built now).
 
 **Hard rule**: do not scale unless at least one real workflow is named or corrected by a buyer.
 
@@ -80,7 +80,7 @@ The following are killed-for-now. Reopen only if a metric proves demand AND a cu
 - Only signal is generic curiosity
 - Buyer corrects the fit and no better route appears
 - A stop request, negative reply, or compliance boundary appears
-- The next action would require automation, cold email, paid ads, PFOS, CRM, Unipile, bulk Apollo, or website publishing (these all require explicit trigger-doc approval)
+- The next action would require automation, cold email, paid ads, CRM, Unipile, bulk Apollo, or website publishing (these all require explicit trigger-doc approval)
 
 **Waiting is an acceptable decision when the market has not supplied a real signal.**
 

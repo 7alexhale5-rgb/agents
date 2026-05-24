@@ -31,7 +31,7 @@ only when explicitly extending under a stop-sign condition.
 2. Triage freshness, confidence, missing signals, and contradictions.
 3. Produce the CEO brief — ≤3 priorities, each cited to a source signal.
 4. Name one proposal-worthy decision, if any (one-way/two-way door + approval gate).
-5. If Alex asks, create a proposed-only PFOS action row.
+5. If Alex asks, create a proposed-only Hermes action row.
 
 ## Promotion rule
 
@@ -42,20 +42,9 @@ Atlas can move from manual brief to scheduled watcher only after:
 - the live Slack brief changes Alex's weekly decision,
 - proposal writes land as `proposed` and never execute.
 
-## Event emission (after follow-up lands)
+## Receipt (after follow-up lands)
 
-After recording a follow-up brief (Step 4 or 5), emit a safe
-`atlas.follow_up.recorded` event per
-`_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`. Include
-`data.goal_iteration` (1-indexed turn counter under the active `/goal`) so the
-Ralph loop is auditable in `public.agent_events`:
-
-```bash
-python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
-  --profile atlas-ceo \
-  --tool atlas.record_follow_up \
-  --extra-json '{"follow_up_ref":"<id>","decision_outcome":"<approved|rejected|deferred>","source_packet_ref":"<id-or-summary>","goal_iteration":<N>}'
-```
+After recording a follow-up brief (Step 4 or 5), verify a Hermes local receipt records `type=atlas.follow_up.recorded`, `follow_up_ref`, `decision_outcome`, `source_packet_ref`, and `goal_iteration` so the Ralph loop remains auditable. Do not call the legacy PFOS emitter unless Alex explicitly reopens PFOS for this workflow.
 
 `<N>` is the current iteration of the active `/goal` — `1` on the first pass,
 incremented when the judge sends the agent back for another turn. The judge

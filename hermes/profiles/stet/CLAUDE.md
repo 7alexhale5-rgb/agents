@@ -1,7 +1,7 @@
 # CLAUDE.md — `stet` profile
 
 > **Profile:** stet · **Tier:** manual pre-launch critic pilot · **Channels:** none (writes to `_inbox/stet-critiques/` only)
-> **Phase:** Phase 3 of $1M-pivot — ship one critique end-to-end with paired PFOS event row
+> **Phase:** Phase 3 of $1M-pivot — ship one critique end-to-end with paired Hermes local receipt row
 
 You're inside the stet profile. Persona in `SOUL.md`, doctrine in `DOCTRINE.md`, user in `USER.md`, memory in `MEMORY.md`.
 
@@ -40,7 +40,7 @@ Cheap model use is allowed for smoke tests only. Real critiques must use the pro
 
 Stet must call `marketing_vault.read` before any source-grounded claim. Every flagged finding cites a specific vault file. No source = no finding.
 
-Each `*.propose` tool emits one safe PFOS evidence event per [`_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`](../../../_meta/decisions/2026-05-18-hermes-pfos-event-contract.md): `type=stet.critique.proposed`, `status=pending`, `surface=cli`, `cwd_project=marketing`, `skill_slug=<producing-skill>`, `silo_slug=skills`, `data.runtime=hermes`, `data.proposal_status=proposed`, `data.private_payload_redacted=true`. Event includes counts (critical/warn/info), verdict, target artifact path, kill-triggers-hit, sweeps-run — never the critique body or raw vault text.
+Each `*.propose` tool writes one safe Hermes local receipt per the Hermes-local proposal/receipt contract: `type=stet.critique.proposed`, `status=pending`, `surface=cli`, `cwd_project=marketing`, `skill_slug=<producing-skill>`, `silo_slug=skills`, `data.runtime=hermes`, `data.proposal_status=proposed`, `data.private_payload_redacted=true`. Event includes counts (critical/warn/info), verdict, target artifact path, kill-triggers-hit, sweeps-run — never the critique body or raw vault text.
 
 ## Hard rules
 
@@ -60,13 +60,13 @@ Each `*.propose` tool emits one safe PFOS evidence event per [`_meta/decisions/2
 
 Stet is ready for the next phase only after this single measurable holds:
 
-**One real critique (of a Quill draft, campaign brief, positioning claim, or pre-launch pressure-test) lands in `~/Projects/marketing/_inbox/stet-critiques/` AND PFOS `agent_events` has one matching row with `type=stet.critique.proposed`, `status=pending`, `cwd_project='marketing'`, `skill_slug` set to the producing skill, `surface='cli'`.**
+**One real critique (of a Quill draft, campaign brief, positioning claim, or pre-launch pressure-test) lands in `~/Projects/marketing/_inbox/stet-critiques/` AND Hermes local receipts have one matching receipt with `type=stet.critique.proposed`, `status=pending`, `cwd_project='marketing'`, `skill_slug` set to the producing skill, `surface='cli'`.**
 
-Falsifiable in one SQL query (~200ms):
+Falsifiable in one local receipt check (~200ms):
 
 ```sql
 SELECT id, type, cwd_project, skill_slug, surface, data->>'readout_path' AS path
-FROM public.agent_events
+Check the local Hermes receipt store or the receipt metadata in the inbox artifact.
 WHERE type = 'stet.critique.proposed'
   AND cwd_project = 'marketing'
   AND skill_slug IS NOT NULL

@@ -8,6 +8,12 @@
     "read",
     "proposal_write_only"
   ],
+  "eval_suite_uri": null,
+  "cost_envelope": {
+    "budget_usd_per_day": 0,
+    "alert_threshold_pct": 80,
+    "note": "Profile has no spend authority. Model API spend rolls up to the global fleet ledger."
+  },
   "channels": [
     "inbox_report_only"
   ],
@@ -30,7 +36,7 @@
     ],
     "can_write": [
       "agents_inbox_morning_logs_only",
-      "pfos_agent_events_proposal_only"
+      "hermes_local_receipts_proposal_only"
     ],
     "cannot": [
       "kill_processes",

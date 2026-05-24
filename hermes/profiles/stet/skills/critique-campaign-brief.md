@@ -2,7 +2,7 @@
 name: critique-campaign-brief
 description: Critique one campaign brief at ~/Projects/marketing/campaigns/<name>/campaign-brief.md. Apply kill-list, tool-trigger, do-not-scale, market-thesis tests. Verdict SHIP/REVISE/KILL.
 input: campaign slug (e.g. "prettyfly-ai-ops-audit-v0")
-output: markdown to ~/Projects/marketing/_inbox/stet-critiques/{YYYY-MM-DD}-critique-campaign-{slug}.md + paired stet.critique.proposed PFOS event
+output: markdown to ~/Projects/marketing/_inbox/stet-critiques/{YYYY-MM-DD}-critique-campaign-{slug}.md + Hermes local receipt
 ---
 
 # Skill: critique-campaign-brief
@@ -60,14 +60,10 @@ Read one campaign brief, apply campaign-level tests (kill-list, tool-trigger, do
 
 7. **Write critique** to `~/Projects/marketing/_inbox/stet-critiques/{YYYY-MM-DD}-critique-campaign-{slug}.md`. `target_artifact_type: campaign-brief`. Body MUST include `## Inversion` and `## Door classification` sections.
 
-8. **Emit PFOS event**:
+8. **Write Hermes local receipt**:
 
-```bash
-python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
-  --profile stet \
-  --tool critique_campaign.propose \
-  --readout-path "_inbox/stet-critiques/<YYYY-MM-DD>-critique-campaign-<slug>.md" \
-  --extra-json '{"verdict":"<SHIP|REVISE|KILL>","critical":<N>,"warn":<N>,"info":<N>,"kill_triggers_hit":[<list>],"door":"<two-way|one-way>","target_artifact_path":"campaigns/<slug>/campaign-brief.md"}'
+```text
+Write or verify the Hermes local receipt for the inbox artifact. Do not call the legacy PFOS emitter unless Alex explicitly reopens PFOS for this workflow.
 ```
 
 ## Anti-patterns

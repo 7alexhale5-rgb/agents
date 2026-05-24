@@ -1,6 +1,6 @@
 ---
 name: buyer-signal-router
-description: Route a buyer signal into the next allowed manual action without creating automation, CRM, PFOS, or outreach-volume work.
+description: Route a buyer signal into the next allowed manual action without creating automation, CRM, Hermes, or outreach-volume work.
 input: one buyer signal or ledger state from the active PrettyFly AI Ops Audit loop
 output: proposed next-action memo; inline by default, or markdown to ~/Projects/marketing/_inbox/marin-readouts/{YYYY-MM-DD}-buyer-signal-{slug}.md if requested
 ---
@@ -11,7 +11,7 @@ output: proposed next-action memo; inline by default, or markdown to ~/Projects/
 
 Turn a route opening, reply, correction, referral, rejection, or no-reply state into one allowed next action. This is Marin's intake nerve: it protects the loop from scaling before buyer workflow signal exists.
 
-This skill does not create a new profile, CRM, PFOS screen, outreach automation, cold email path, Unipile workflow, bulk Apollo run, Quill draft, or Stet critique. It classifies the signal and proposes the next manual move.
+This skill does not create a new profile, CRM, dashboard screen, outreach automation, cold email path, Unipile workflow, bulk Apollo run, Quill draft, or Stet critique. It classifies the signal and proposes the next manual move.
 
 ## Inputs (must read before routing)
 
@@ -68,7 +68,7 @@ Proposed reply: <one approved/manual-only reply, or none>
 Ledger update proposal: <fields Alex should update manually>
 Stop condition: <one condition>
 Client-health warning: <warning or no client-health conflict identified>
-Safety check: no automation, no external send, no PFOS/CRM/tooling work, no volume increase without human approval.
+Safety check: no automation, no external send, no CRM/tooling work, no volume increase without human approval.
 ```
 
 ## Dogfood baseline
@@ -87,7 +87,7 @@ For the current first three live connection notes, all still `not_connected` wit
 - Treating an approved DM, approved message reference, or workflow-question DM label as a named workflow
 - Treating generic curiosity, likes, or profile views as buyer workflow signal
 - Recommending follow-up when the route has not opened
-- Recommending automation, Unipile, cold email, paid ads, CRM, PFOS, bulk Apollo, website publishing, or more outreach volume
+- Recommending automation, Unipile, cold email, paid ads, CRM, Hermes, bulk Apollo, website publishing, or more outreach volume
 - Updating the message ledger directly
 - Collapsing referral, correction, negative reply, and stop request into the same "reply" bucket
 - Asking more than one next question in a proposed reply

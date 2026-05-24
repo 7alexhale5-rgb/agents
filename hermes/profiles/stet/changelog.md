@@ -2,7 +2,7 @@
 
 ## 2026-05-20 — Scaffold from Atlas template (Phase 3 of $1M plan)
 
-Initial profile. Built per the 11-file contract ADR + Hermes ↔ PFOS event
+Initial profile. Built per the 11-file contract ADR + Hermes ↔ Hermes local receipt
 contract ADR + sub-project trigger ADR (Phase 3 of `~/.claude/plans/here-is-what-we-joyful-torvalds.md`
 supersedes the 30-day trigger because Stet sits inside the same revenue
 motion as Marin + Quill).
@@ -24,7 +24,7 @@ motion as Marin + Quill).
 - Eval: promptfoo.yaml with anthropic provider direct (no exec proxy);
   6 tests
 - Acceptance gate: ONE measurable — first real critique + matching
-  agent_events row, falsifiable in 1 SQL query
+  Hermes local receipt, falsifiable in 1 local receipt check
 
 Lint: PASS (soft mode).
 Skills tested: scaffold-level (real eval runs after first invocation).

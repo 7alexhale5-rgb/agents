@@ -2,7 +2,7 @@
 name: revise-from-critique
 description: Read a Stet critique from _inbox/stet-critiques/ and produce a revised draft addressing each finding. Output is a new draft file, not an edit-in-place.
 input: critique file path under _inbox/stet-critiques/ + original draft file path
-output: revised markdown to ~/Projects/marketing/_inbox/quill-drafts/{YYYY-MM-DD}-{type}-{slug}-r{N}.md + paired quill.draft.proposed PFOS event
+output: revised markdown to ~/Projects/marketing/_inbox/quill-drafts/{YYYY-MM-DD}-{type}-{slug}-r{N}.md + Hermes local receipt
 ---
 
 # Skill: revise-from-critique
@@ -53,14 +53,10 @@ Read a Stet critique, produce a NEW draft file that addresses each finding witho
    - `findings_addressed: <list of finding IDs from the critique>`
    - `findings_not_addressed: <list + reason for each, if any>`
 
-8. **Emit PFOS event**:
+8. **Write Hermes local receipt**:
 
-```bash
-python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
-  --profile quill \
-  --tool draft_revision.propose \
-  --readout-path "_inbox/quill-drafts/<YYYY-MM-DD>-<original-type>-<original-slug>-r<N>.md" \
-  --extra-json '{"revision_of":"<original path>","addresses_critique":"<critique path>","findings_addressed_count":<N>,"verdict_after":"<self-assessment>"}'
+```text
+Write or verify the Hermes local receipt for the inbox artifact. Do not call the legacy PFOS emitter unless Alex explicitly reopens PFOS for this workflow.
 ```
 
 ## Anti-patterns

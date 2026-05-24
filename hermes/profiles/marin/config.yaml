@@ -143,7 +143,7 @@ guardrails:
   honor_marketing_vault_kill_list: true
   honor_tool_adoption_triggers: true
   do_not_scale_without_named_workflow: true
-  redact_raw_vault_text_from_pfos_events: true
+  redact_raw_vault_text_from_receipts: true
   forbid_external_sends: true
 
 logging:

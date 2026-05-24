@@ -2,7 +2,7 @@
 name: supervised-dispatch
 description: Prepare a live-supervised LinkedIn dispatch packet for up to five Alex-approved prospects without creating unattended automation.
 input: up to five approved prospect records with profile URL, route evidence, and connection-note copy
-output: markdown dispatch packet plus HTML companion; no background send, scraping, scheduling, or CRM/PFOS work
+output: markdown dispatch packet plus HTML companion; no background send, scraping, scheduling, or CRM work
 ---
 
 # Skill: supervised-dispatch
@@ -26,7 +26,7 @@ This skill does not replace `buyer-signal-router`. It only prepares the send/hol
 
 - Maximum five prospects per dispatch packet.
 - Maximum 15-16 sent LinkedIn connection notes in a week unless a route opens and Alex explicitly approves continuing.
-- No unattended daily run, cron, browser loop, sequencer, scraper, Unipile, Apollo bulk action, CRM write, PFOS build, cold email, paid ad, profile-like/comment behavior, or workaround DM.
+- No unattended daily run, cron, browser loop, sequencer, scraper, Unipile, Apollo bulk action, CRM write, dashboard build, cold email, paid ad, profile-like/comment behavior, or workaround DM.
 - Stop immediately on LinkedIn warning, CAPTCHA, 2FA, invitation limit, UI restriction, unusual login challenge, or route mismatch.
 - If note text exceeds 300 characters, mark the row `hold_rewrite`.
 - If current role/company cannot be verified in the live browser, mark the row `hold_route_unverified`.

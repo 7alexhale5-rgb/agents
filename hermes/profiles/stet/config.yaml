@@ -19,7 +19,7 @@ model:
     pressure_test_campaign: anthropic:claude-sonnet-4-6
 
 # One tool per critique skill so each emission carries the correct
-# skill_slug attribution per Hermes ↔ PFOS event-contract ADR.
+# skill_slug attribution per Hermes-local proposal/receipt contract.
 tools:
   builtin:
     - marketing_vault.read
@@ -122,7 +122,7 @@ guardrails:
   honor_marketing_vault_kill_list: true
   honor_tool_adoption_triggers: true
   do_not_scale_without_named_workflow: true
-  redact_raw_vault_text_from_pfos_events: true
+  redact_raw_vault_text_from_receipts: true
   forbid_external_sends: true
   forbid_artifact_modification: true
   forbid_rewrite_generation: true

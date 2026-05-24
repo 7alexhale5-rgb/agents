@@ -143,8 +143,8 @@ private_payload_redacted: true
 ```
 
 After write, emit a safe `quill.draft.proposed` event per
-`_meta/decisions/2026-05-18-hermes-pfos-event-contract.md` via
-`scripts/emit-agent-event.py`. No raw vault text, no draft body in the event
+`Hermes-local proposal/receipt contract` via
+`scripts/write-hermes-receipt.py (future) or the current local receipt writer`. No raw vault text, no draft body in the receipt
 payload — only counts, path, pillar, sweeps-passed status.
 
 ## Non-goals
@@ -166,4 +166,4 @@ payload — only counts, path, pillar, sweeps-passed status.
 - Tool adoption triggers: `~/Projects/marketing/decisions/2026-05-16-tool-adoption-triggers.md`
 - Content pillars: `~/Projects/marketing/content/content-pillars.md`
 - AI Ops Audit campaign: `~/Projects/marketing/campaigns/prettyfly-ai-ops-audit-v0/README.md`
-- Event contract: `/Users/alexhale/Projects/agents/_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`
+- Event contract: `Hermes-local proposal/receipt contract`

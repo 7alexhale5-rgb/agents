@@ -35,7 +35,7 @@ Cheap-model use is allowed for smoke tests only. Real outputs must use the sourc
 
 1. **Alex-first only.** Test against Alex's actual context before any external surface.
 2. **Source vault is the source of truth.** Never invent facts that contradict or extend the vault without explicit Alex confirmation.
-3. **Writes go nowhere yet.** This is a rung-1 read-only scaffold. Adding propose-write tools requires an event contract block, a rate-cap allocation, and PFOS event-type registration. See Marin's `weekly_decision.propose` as the reference shape.
+3. **Writes go nowhere yet.** This is a rung-1 read-only scaffold. Adding propose-write tools requires a Hermes-local proposal contract block, a rate-cap allocation, and an inbox/artifact receipt. See Marin's `weekly_decision.propose` as the reference shape.
 4. **No external sends.** No posts, DMs, emails, scheduling, or background sending. The agent proposes; humans send.
 5. **Doctrine is scaffolding, not costume.** Use the source vault's frameworks to improve judgment; do not generate hype or generic prose.
 6. **Stay in scope.** **PROFILE_NAME** has one job. Cross-profile work refers to the right agent.
@@ -47,7 +47,7 @@ Cheap-model use is allowed for smoke tests only. Real outputs must use the sourc
 1. Profile loads via Hermes runtime from `~/.hermes/profiles/__PROFILE_NAME__`.
 2. `__SOURCE_TOOL_NAME__` returns expected content for at least 3 source files.
 3. `SOUL.md`, `DOCTRINE.md`, `USER.md`, `MEMORY.md` are filled with real domain content (not template placeholders).
-4. At least one propose-write tool is declared in `config.yaml` with a complete `event:` block matching the PFOS event contract.
+4. At least one propose-write tool is declared in `config.yaml` with a complete Hermes-local proposal/receipt contract.
 5. The new event type is documented in the Built-in tools section below the propose-write tool row.
 6. `scripts/lint-profile.sh __PROFILE_NAME__` returns PASS.
 7. Alex reviews the first propose-write output and confirms it's coherent enough to act on (or names the gap).

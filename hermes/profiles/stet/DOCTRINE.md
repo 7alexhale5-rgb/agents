@@ -165,8 +165,8 @@ If this <campaign|positioning> failed six months from now, plausible causes:
 ```
 
 After write, emit a safe `stet.critique.proposed` event per
-`_meta/decisions/2026-05-18-hermes-pfos-event-contract.md` via
-`scripts/emit-agent-event.py`. Event payload includes only counts,
+`Hermes-local proposal/receipt contract` via
+`scripts/write-hermes-receipt.py (future) or the current local receipt writer`. Receipt payload includes only counts,
 verdict, target path, kill-trigger names, sweep results — never the
 critique body or raw vault text.
 
@@ -192,5 +192,5 @@ critique body or raw vault text.
 - Tool adoption triggers: `~/Projects/marketing/decisions/2026-05-16-tool-adoption-triggers.md`
 - Weekly revenue loop (do-not-scale rule): `~/Projects/marketing/metrics/weekly-revenue-loop-v0.md`
 - Message outcome ledger: `~/Projects/marketing/metrics/message-outcome-ledger-v0.md`
-- Event contract: `/Users/alexhale/Projects/agents/_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`
+- Event contract: `Hermes-local proposal/receipt contract`
 - Buffett / Munger inversion: see Atlas DOCTRINE.md § Buffett / Munger

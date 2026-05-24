@@ -5,7 +5,7 @@ agent:
   iteration_budget_tokens: 200000
 
 model:
-  # PF Runtime and Hermes loaders read `default` and `provider`.
+  # local runtime and Hermes loaders read `default` and `provider`.
   # Do not use stale `default_model` / `default_provider` keys.
   default: nvidia/nemotron-3-nano-30b-a3b:free
   provider: openrouter
@@ -23,13 +23,13 @@ tools:
   contracts:
     fleet.snapshot:
       authority: read_only
-      scope: pfos+pf_runtime+local_api_usage
+      scope: hermes+local_api_usage
     business.scorecard.snapshot:
       authority: read_only
-      scope: pfos_business_scorecard
+      scope: hermes_business_scorecard
     atlas.propose_action:
       authority: proposed_write_only
-      write_scope: pfos_agent_actions_proposed_only
+      write_scope: hermes_agent_actions_proposed_only
       event:
         type: atlas.action.proposed
         status: pending
@@ -42,7 +42,7 @@ tools:
         data_proposal_status: proposed
     atlas.record_follow_up:
       authority: evidence_write_only
-      write_scope: pfos_follow_up_evidence_only
+      write_scope: hermes_follow_up_evidence_only
       event:
         type: atlas.follow_up.recorded
         status: completed

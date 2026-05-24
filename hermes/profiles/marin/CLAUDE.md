@@ -46,11 +46,11 @@ Cheap model use is allowed for smoke tests only. Real weekly readouts and campai
 
 Marin must call `marketing_vault.read` and either `message_ledger.read` or `scoreboard.read` before any source-grounded claim. No claim about pipeline, buyer language, route quality, or signal strength without a cited vault file.
 
-`weekly_decision.propose` also emits one safe PFOS evidence event per `_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`: `type=marin.weekly_decision.proposed`, `status=pending`, `surface=cli`, `cwd_project=marketing`, `skill_slug=weekly-review`, `data.runtime=hermes`, `data.proposal_status=proposed`, and `private_payload_redacted=true`. The event may include counts, decision, source file names, confidence, and the vault-relative readout path; it must not include the full readout body or raw private source text.
+`weekly_decision.propose` also writes one safe Hermes local receipt per the Hermes-local proposal/receipt contract: `type=marin.weekly_decision.proposed`, `status=pending`, `surface=cli`, `cwd_project=marketing`, `skill_slug=weekly-review`, `data.runtime=hermes`, `data.proposal_status=proposed`, and `private_payload_redacted=true`. The event may include counts, decision, source file names, confidence, and the vault-relative readout path; it must not include the full readout body or raw private source text.
 
 `marin.apollo_enrich_list` and `marin.apollo_discover_prospects` both emit `type=marin.apollo_query.proposed`, `status=pending`, `cwd_project=marketing`, `skill_slug=buyer-signal-router`, `data.search_provider=apollo`, `data.proposal_status=proposed`, `private_payload_redacted=true`. The event also carries `data.results_count`, `data.query_hash` (sha256 prefix, never raw query), `data.vertical` (optional human label), and `data.apollo_endpoint` (one of `people/bulk_match`, `organizations/bulk_enrich`, `mixed_people/search`, `mixed_companies/search`). Raw lead data — emails, phone numbers, LinkedIn URLs — stays local in the `_inbox/marin-readouts/` draft and is never put on the wire.
 
-`marin.exa_search` emits `type=marin.exa_query.proposed`, `cwd_project=marketing`, `skill_slug=buyer-signal-router`, `data.search_provider=exa`. The event carries `data.results_count`, `data.query_hash`, `data.vertical`, `data.exa_endpoint` (always `search` for now), `data.exa_mode` (one of `auto`, `fast`, `instant`, `deep-lite`, `deep`, `deep-reasoning`), and `data.domains_filter` (sha256 prefix of the joined domain list — buyer-research domain choices are not readable in PFOS logs). Raw URLs, snippets, and full text stay local; PFOS sees only the structured ledger.
+`marin.exa_search` emits `type=marin.exa_query.proposed`, `cwd_project=marketing`, `skill_slug=buyer-signal-router`, `data.search_provider=exa`. The event carries `data.results_count`, `data.query_hash`, `data.vertical`, `data.exa_endpoint` (always `search` for now), `data.exa_mode` (one of `auto`, `fast`, `instant`, `deep-lite`, `deep`, `deep-reasoning`), and `data.domains_filter` (sha256 prefix of the joined domain list — buyer-research domain choices are not written into receipts). Raw URLs, snippets, and full text stay local; Hermes receipts include only the structured ledger.
 
 `marin.gmail_create_draft` emits `type=marin.gmail_draft.proposed`, `cwd_project=marketing`, `skill_slug=buyer-signal-router`, `data.transport=google_workspace`, and `data.gmail_endpoint=users.drafts.create`. The event may carry Gmail draft/message/thread IDs plus hashed recipient/account identifiers. It must never include the raw subject, body, recipient address, or target Gmail account. Alex reviews and sends manually from Gmail.
 
@@ -78,7 +78,7 @@ Marin is ready for the next phase only after all of these hold:
    - Proposes ONE decision from the allowed set (continue / narrow ICP / rewrite message / change channel / pause)
    - Names the next smallest action from the Manual Action Menu
    - Names the stop condition
-   - Lists PFOS fields to preserve later
+   - Lists Hermes receipt fields to preserve later
 5. The Weekly Readout passes the kill-list check (does not propose any killed item).
 6. Alex reviews the readout and confirms it's coherent enough that he would have made the same decision (or names the gap if not).
 7. Eval suite: 4 fixtures (continue / narrow / rewrite / pause routing) passes ≥80% on both Haiku and Sonnet.

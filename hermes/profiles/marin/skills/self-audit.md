@@ -2,7 +2,7 @@
 name: self-audit
 description: Run Marin's own promptfoo eval suite, write evidence to eval/, emit marin.eval.completed event. Catches profile drift without manual eval runs. Scheduled Sundays 6am.
 input: none
-output: markdown to hermes/profiles/marin/eval/{YYYY-MM-DD}-self-audit.md + paired marin.eval.completed PFOS event
+output: markdown to hermes/profiles/marin/eval/{YYYY-MM-DD}-self-audit.md + paired marin.eval.completed Hermes event
 ---
 
 # Skill: self-audit
@@ -25,7 +25,7 @@ graduate to auto-approve.
    test descriptions, capture token cost.
 3. Sample the last 7 days of readouts from
    `~/Projects/marketing/_inbox/marin-readouts/` — list filenames, ages, and
-   whether each has a matching `agent_events` row.
+   whether each has a matching Hermes local receipt.
 4. Write evidence to
    `hermes/profiles/marin/eval/{YYYY-MM-DD}-self-audit.md` with frontmatter:
    ```yaml
@@ -41,14 +41,10 @@ graduate to auto-approve.
    token_cost_usd: { N.NN }
    ---
    ```
-5. Emit the event:
-   ```bash
-   python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
-     --profile marin \
-     --tool weekly_decision.propose \
-     --readout-path "hermes/profiles/marin/eval/<YYYY-MM-DD>-self-audit.md" \
-     --extra-json '{"audit_type":"self","pass_rate":<N>,"tests_run":<N>,"tests_failed":<N>}'
-   ```
+5. Write the receipt:
+   ```text
+Write or verify the Hermes local receipt for the inbox artifact. Do not call the legacy PFOS emitter unless Alex explicitly reopens PFOS for this workflow.
+```
    (Reusing the existing `weekly_decision.propose` tool because it carries
    the correct `marin.weekly_decision.proposed` event type; the `audit_type`
    field in data distinguishes self-audits from production readouts. Future

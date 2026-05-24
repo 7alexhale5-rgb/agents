@@ -2,7 +2,7 @@
 name: critique-positioning
 description: Critique a positioning claim against market thesis, buyer belief ladder, and channel positioning map. For new About copy, taglines, offer descriptions before they hit public surfaces.
 input: positioning claim (text) + intended surface (e.g. "LinkedIn personal headline", "PrettyFly company page About", "@alexdoesai bio", "offer one-pager hero")
-output: markdown to ~/Projects/marketing/_inbox/stet-critiques/{YYYY-MM-DD}-critique-positioning-{slug}.md + paired stet.critique.proposed PFOS event
+output: markdown to ~/Projects/marketing/_inbox/stet-critiques/{YYYY-MM-DD}-critique-positioning-{slug}.md + Hermes local receipt
 ---
 
 # Skill: critique-positioning
@@ -45,14 +45,10 @@ Pressure-test a positioning claim BEFORE it goes onto a public surface. Distinct
 
 7. **Write critique** to `~/Projects/marketing/_inbox/stet-critiques/{YYYY-MM-DD}-critique-positioning-{slug}.md`. `target_artifact_type: positioning-claim`. Body MUST include the quoted claim, the intended surface, and the channel-fit + buyer-belief alignment finding for that specific surface.
 
-8. **Emit PFOS event**:
+8. **Write Hermes local receipt**:
 
-```bash
-python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
-  --profile stet \
-  --tool critique_positioning.propose \
-  --readout-path "_inbox/stet-critiques/<YYYY-MM-DD>-critique-positioning-<slug>.md" \
-  --extra-json '{"verdict":"<SHIP|REVISE|KILL>","critical":<N>,"warn":<N>,"info":<N>,"kill_triggers_hit":[<list>],"target_surface":"<surface>"}'
+```text
+Write or verify the Hermes local receipt for the inbox artifact. Do not call the legacy PFOS emitter unless Alex explicitly reopens PFOS for this workflow.
 ```
 
 ## Anti-patterns

@@ -74,7 +74,7 @@ guardrails:
   forbid_profile_mutation: true
   forbid_approval_execution: true
   redact_raw_logs_from_events: true
-  keep_pfos_evidence_only: true
+  keep_hermes_receipts_only: true
 
 logging:
   trajectory_jsonl: true

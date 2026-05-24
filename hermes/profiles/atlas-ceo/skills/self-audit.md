@@ -2,7 +2,7 @@
 name: self-audit
 description: Run Atlas's own eval suite + sample recent CEO briefs, write evidence, emit atlas.action.proposed event (audit_type=self). Catches advisor drift. Scheduled Sundays 6am.
 input: none
-output: markdown to hermes/profiles/atlas-ceo/eval/{YYYY-MM-DD}-self-audit.md + paired atlas.action.proposed PFOS event (audit_type=self)
+output: markdown to hermes/profiles/atlas-ceo/eval/{YYYY-MM-DD}-self-audit.md + paired atlas.action.proposed Hermes event (audit_type=self)
 ---
 
 # Skill: self-audit
@@ -30,19 +30,16 @@ runbook.
 2. Sample the last 7 days of CEO briefs from Atlas's workspace +
    `cron/output/` if scheduled briefs landed there. Capture: brief
    filename, age, decision named, source signals cited, whether a
-   matching `agent_events` row exists.
+   matching Hermes local receipt exists.
 3. Write evidence to
    `hermes/profiles/atlas-ceo/eval/{YYYY-MM-DD}-self-audit.md` with
    frontmatter matching the fleet self-audit shape, plus
    `eval_blocked_by:` if the eval invocation itself failed (so the gate
    watcher sees the blocker explicitly).
-4. Emit the event:
-   ```bash
-   python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
-     --profile atlas-ceo \
-     --tool atlas.propose_action \
-     --extra-json '{"audit_type":"self","pass_rate":<N or null>,"tests_run":<N or 0>,"eval_blocked_by":"<reason or null>"}'
-   ```
+4. Write the receipt:
+   ```text
+Write or verify the Hermes local receipt for the inbox artifact. Do not call the legacy PFOS emitter unless Alex explicitly reopens PFOS for this workflow.
+```
 
 ## Anti-patterns
 

@@ -31,7 +31,7 @@
     "can_read": ["marketing_vault_all", "quill_drafts_inbox"],
     "can_write": [
       "marketing_inbox_stet_critiques_only",
-      "pfos_agent_events_proposal_only"
+      "hermes_local_receipts_proposal_only"
     ],
     "cannot": [
       "modify_artifact_being_critiqued",

@@ -30,7 +30,7 @@
     "can_read": ["marketing_vault_all", "stet_critiques_inbox"],
     "can_write": [
       "marketing_inbox_quill_drafts_only",
-      "pfos_agent_events_proposal_only"
+      "hermes_local_receipts_proposal_only"
     ],
     "cannot": [
       "publish_external",

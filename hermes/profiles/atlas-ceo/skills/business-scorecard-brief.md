@@ -1,7 +1,7 @@
 # business-scorecard-brief
 
 Use when Alex asks what the business needs, what the scorecard says, or what
-Atlas would prioritize from PFOS signals.
+Atlas would prioritize from Hermes signals.
 
 ## Required input
 

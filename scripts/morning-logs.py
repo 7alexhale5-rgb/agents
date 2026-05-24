@@ -32,11 +32,13 @@ HERMES_PROFILE_HOME = Path(
 OUTBOX = ROOT / "_inbox" / "morning-logs"
 PROFILE_DIR = ROOT / "hermes" / "profiles" / "morning-logs"
 TOKEN_ENV = Path("~/.config/prettyfly-marketing/hermes-tokens.env").expanduser()
+API_USAGE_LATEST = Path("~/.api-usage/latest.json").expanduser()
 
 SECRET_PATTERNS = (
     re.compile(r"sk-[A-Za-z0-9_\-]{12,}"),
     re.compile(r"xox[abprs]-[A-Za-z0-9\-]{12,}"),
     re.compile(r"(?i)(token|secret|api[_-]?key|authorization)(=|:)\s*[^,\s]+"),
+    re.compile(r"(?i)(credentials|secrets|memory-vault-private)/[^,\s)]+"),
 )
 
 
@@ -79,15 +81,18 @@ def safe_get(path: str, *, protected: bool = False) -> dict[str, Any]:
 
 
 def run_git(repo: Path, args: list[str]) -> str:
-    result = subprocess.run(
-        ["git", *args],
-        cwd=str(repo),
-        check=False,
-        capture_output=True,
-        text=True,
-        timeout=8,
-    )
-    return redact((result.stdout or result.stderr).strip())
+    try:
+        result = subprocess.run(
+            ["git", *args],
+            cwd=str(repo),
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=8,
+        )
+        return redact((result.stdout or result.stderr).strip())
+    except subprocess.TimeoutExpired:
+        return "git command timed out"
 
 
 def repo_signal() -> list[dict[str, Any]]:
@@ -135,6 +140,47 @@ def log_signal() -> dict[str, Any]:
     return summary
 
 
+def api_usage_signal() -> dict[str, Any]:
+    if not API_USAGE_LATEST.exists():
+        return {
+            "available": False,
+            "error": f"missing {API_USAGE_LATEST}",
+        }
+    try:
+        data = json.loads(API_USAGE_LATEST.read_text())
+    except Exception as exc:
+        return {"available": False, "error": redact(str(exc))}
+
+    totals = data.get("totals") if isinstance(data.get("totals"), dict) else {}
+    providers = data.get("providers") if isinstance(data.get("providers"), list) else []
+    degraded = [
+        str(provider.get("provider"))
+        for provider in providers
+        if isinstance(provider, dict)
+        and provider.get("status") in {"degraded", "failed", "error", "low-balance"}
+        and provider.get("provider")
+    ]
+    low_balance = [
+        str(provider.get("provider"))
+        for provider in providers
+        if isinstance(provider, dict)
+        and provider.get("status") == "low-balance"
+        and provider.get("provider")
+    ]
+
+    return {
+        "available": True,
+        "generated_at": data.get("generated_at"),
+        "today_usd": float(totals.get("today_usd") or 0),
+        "mtd_usd": float(totals.get("mtd_usd") or 0),
+        "warning_count": as_int(data.get("warning_count")),
+        "manual_review_overdue_count": as_int(data.get("manual_review_overdue_count")),
+        "degraded_providers": degraded[:8],
+        "low_balance_providers": low_balance[:8],
+        "artifact_path": data.get("artifact_path"),
+    }
+
+
 def collect() -> dict[str, Any]:
     return {
         "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
@@ -153,10 +199,16 @@ def collect() -> dict[str, Any]:
             "health": safe_get("/api/plugins/hermes-labyrinth/health"),
             "guideposts": safe_get("/api/plugins/hermes-labyrinth/guideposts"),
         },
+        "knowledge_vault": {
+            "status": safe_get("/api/plugins/knowledge-vault/status"),
+            "retrieval": safe_get("/api/plugins/knowledge-vault/retrieval"),
+            "memory_health": safe_get("/api/plugins/knowledge-vault/memory-health"),
+        },
         "runtime": {
             "gateway_state_file_exists": (HERMES_PROFILE_HOME / "gateway_state.json").exists(),
             "logs": log_signal(),
         },
+        "api_usage": api_usage_signal(),
         "repos": repo_signal(),
     }
 
@@ -170,6 +222,68 @@ def val(snapshot: dict[str, Any], *keys: str, default: Any = None) -> Any:
     return cur if cur is not None else default
 
 
+def as_int(value: Any, default: int = 0) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def summarize_knowledge(snapshot: dict[str, Any]) -> dict[str, Any]:
+    status = val(snapshot, "knowledge_vault", "status", default={})
+    retrieval = val(snapshot, "knowledge_vault", "retrieval", default={})
+    memory_health = val(snapshot, "knowledge_vault", "memory_health", default={})
+
+    status_value = status.get("value") if status.get("ok") else {}
+    retrieval_value = retrieval.get("value") if retrieval.get("ok") else {}
+    memory_health_value = memory_health.get("value") if memory_health.get("ok") else {}
+    freshness = status_value.get("freshness") if isinstance(status_value, dict) else {}
+    health_snapshot = (
+        memory_health_value.get("snapshot") if isinstance(memory_health_value, dict) else {}
+    ) or {}
+
+    blockers_count = as_int(health_snapshot.get("blockers_count"))
+    warnings_count = as_int(health_snapshot.get("warnings_count"))
+    strict_wiki_blockers = [
+        redact(item)
+        for item in (health_snapshot.get("strict_wiki_blockers") or [])[:3]
+        if isinstance(item, str)
+    ]
+    freshness_failures = freshness.get("failures") or [] if isinstance(freshness, dict) else []
+    freshness_warnings = freshness.get("warnings") or [] if isinstance(freshness, dict) else []
+
+    out = {
+        "status_available": bool(status.get("ok")),
+        "retrieval_available": bool(retrieval.get("ok")),
+        "memory_health_available": bool(memory_health.get("ok")),
+        "status_error": status.get("error"),
+        "retrieval_error": retrieval.get("error"),
+        "memory_health_error": memory_health.get("error"),
+        "freshness_ok": bool(freshness.get("ok")) if isinstance(freshness, dict) else False,
+        "freshness_failure_count": len(freshness_failures),
+        "freshness_warning_count": len(freshness_warnings),
+        "freshness_warnings": [redact(str(item)) for item in freshness_warnings[:3]],
+        "retrieval_ok": bool(retrieval_value.get("ok")) if isinstance(retrieval_value, dict) else False,
+        "retrieval_passed": retrieval_value.get("passed") if isinstance(retrieval_value, dict) else None,
+        "retrieval_total": retrieval_value.get("total") if isinstance(retrieval_value, dict) else None,
+        "retrieval_failed": retrieval_value.get("failed") if isinstance(retrieval_value, dict) else None,
+        "memory_health_verdict": health_snapshot.get("verdict") or "unavailable",
+        "memory_blockers_count": blockers_count,
+        "memory_warnings_count": warnings_count,
+        "strict_wiki_blocker_count": len(strict_wiki_blockers),
+        "strict_wiki_blockers": strict_wiki_blockers,
+    }
+    out["memory_trustworthy"] = (
+        out["status_available"]
+        and out["retrieval_available"]
+        and out["memory_health_available"]
+        and out["freshness_ok"]
+        and out["retrieval_ok"]
+        and blockers_count == 0
+    )
+    return out
+
+
 def summarize(snapshot: dict[str, Any]) -> dict[str, Any]:
     status = val(snapshot, "dashboard", "status", "value", default={})
     ops = val(snapshot, "fleet", "ops", "value", default={})
@@ -179,6 +293,8 @@ def summarize(snapshot: dict[str, Any]) -> dict[str, Any]:
     lab_health = val(snapshot, "labyrinth", "health", "value", default={})
     repos = snapshot.get("repos") or []
     log_summary = val(snapshot, "runtime", "logs", default={})
+    api_usage = val(snapshot, "api_usage", default={})
+    knowledge = summarize_knowledge(snapshot)
 
     platform_errors = []
     for name, platform in (ops.get("platforms") or {}).items():
@@ -197,6 +313,21 @@ def summarize(snapshot: dict[str, Any]) -> dict[str, Any]:
         next_action = "Gateway is not running; open Fleet, then Logs, before any workflow work."
     elif platform_errors:
         next_action = "Resolve the platform failure shown in Fleet before approving work."
+    elif not knowledge["status_available"]:
+        next_action = f"Open Knowledge Vault; status route is unavailable ({knowledge['status_error']})."
+    elif not knowledge["freshness_ok"]:
+        next_action = "Open Knowledge Vault freshness and inspect failed index signals."
+    elif not knowledge["retrieval_available"]:
+        next_action = f"Open Knowledge Vault; retrieval route is unavailable ({knowledge['retrieval_error']})."
+    elif not knowledge["retrieval_ok"]:
+        next_action = "Open Knowledge Vault retrieval; golden-query regression is present."
+    elif not knowledge["memory_health_available"]:
+        next_action = (
+            f"Open Knowledge Vault; memory-health route is unavailable "
+            f"({knowledge['memory_health_error']})."
+        )
+    elif knowledge["memory_blockers_count"]:
+        next_action = "Open Knowledge Vault memory health and review blockers before trusting memory."
     elif approvals:
         oldest = max(approvals, key=lambda item: float(item.get("age_hours", 0)))
         next_action = (
@@ -207,6 +338,10 @@ def summarize(snapshot: dict[str, Any]) -> dict[str, Any]:
         next_action = "Open Labyrinth guideposts and inspect the warning journey."
     elif log_error_count:
         next_action = "Open Logs after Labyrinth; recent runtime errors are present."
+    elif api_usage.get("available") and api_usage.get("manual_review_overdue_count", 0):
+        next_action = "Open the API usage dashboard and clear overdue manual provider reviews."
+    elif api_usage.get("available") and api_usage.get("warning_count", 0):
+        next_action = "Open the API usage dashboard before running expensive research paths."
     else:
         next_action = ops.get("recommended_next_action") or "Hermes is usable; continue with the morning operating loop."
 
@@ -214,10 +349,33 @@ def summarize(snapshot: dict[str, Any]) -> dict[str, Any]:
     if not gateway_running:
         broken.append("gateway not running")
     broken.extend(platform_errors)
+    if not knowledge["status_available"]:
+        broken.append(f"Knowledge Vault status unavailable: {knowledge['status_error']}")
+    elif not knowledge["freshness_ok"]:
+        broken.append(f"Knowledge Vault freshness has {knowledge['freshness_failure_count']} failure(s)")
+    if not knowledge["retrieval_available"]:
+        broken.append(f"Knowledge Vault retrieval unavailable: {knowledge['retrieval_error']}")
+    elif not knowledge["retrieval_ok"]:
+        broken.append(
+            f"Knowledge Vault retrieval failed "
+            f"({knowledge['retrieval_passed']}/{knowledge['retrieval_total']})"
+        )
+    if not knowledge["memory_health_available"]:
+        broken.append(f"Knowledge Vault memory health unavailable: {knowledge['memory_health_error']}")
+    elif knowledge["memory_blockers_count"]:
+        broken.append(f"Memory health has {knowledge['memory_blockers_count']} blocker(s)")
     if warnings:
         broken.append(f"{len(warnings)} Labyrinth warning/error guidepost(s)")
     if log_error_count:
         broken.append(f"{log_error_count} recent runtime error marker(s)")
+    if not api_usage.get("available"):
+        broken.append(f"API usage status unavailable: {api_usage.get('error', 'unknown')}")
+    elif api_usage.get("warning_count", 0):
+        broken.append(f"API usage has {api_usage.get('warning_count')} warning(s)")
+    elif api_usage.get("manual_review_overdue_count", 0):
+        broken.append(
+            f"API usage has {api_usage.get('manual_review_overdue_count')} manual review(s) overdue"
+        )
 
     return {
         "usable": usable,
@@ -231,6 +389,15 @@ def summarize(snapshot: dict[str, Any]) -> dict[str, Any]:
         "guidepost_warning_count": len(warnings),
         "dirty_repo_count": len(dirty_repos),
         "log_error_count": log_error_count,
+        "api_usage_available": bool(api_usage.get("available")),
+        "api_usage_today_usd": float(api_usage.get("today_usd") or 0),
+        "api_usage_mtd_usd": float(api_usage.get("mtd_usd") or 0),
+        "api_usage_warning_count": as_int(api_usage.get("warning_count")),
+        "api_usage_manual_review_overdue_count": as_int(api_usage.get("manual_review_overdue_count")),
+        "api_usage_degraded_providers": api_usage.get("degraded_providers") or [],
+        "api_usage_low_balance_providers": api_usage.get("low_balance_providers") or [],
+        "api_usage_artifact_path": api_usage.get("artifact_path"),
+        **knowledge,
         "broken": broken,
         "recommended_next_action": next_action,
     }
@@ -257,6 +424,7 @@ def render_report(snapshot: dict[str, Any], summary: dict[str, Any], report_path
         "## Operator Answer",
         "",
         f"- Hermes usable right now: {'yes' if summary['usable'] else 'no'}",
+        f"- Memory trustworthy today: {'yes' if summary['memory_trustworthy'] else 'no'}",
         f"- Gateway: {summary['gateway_state']} (running: {str(summary['gateway_running']).lower()})",
         f"- Broken: {', '.join(summary['broken']) if summary['broken'] else 'nothing blocking in the collected signals'}",
         f"- Needs Alex: {summary['approval_count']} pending approval(s)",
@@ -265,13 +433,14 @@ def render_report(snapshot: dict[str, Any], summary: dict[str, Any], report_path
         "## Dashboard Loop",
         "",
         "1. Fleet — confirm gateway, approvals, profile roster, and next action.",
-        "2. Labyrinth — inspect warning guideposts and failed/long journeys.",
-        "3. Sessions — open the run transcript only when Labyrinth points there.",
-        "4. Logs — inspect raw runtime failures only after Fleet/Labyrinth point there.",
-        "5. Cron — confirm Morning Logs schedule and last run.",
-        "6. Profiles — verify the responsible profile identity and scope.",
-        "7. Config / Keys — use only for setup or broken credentials.",
-        "8. Docs — map the API surface for the next narrow slice.",
+        "2. Knowledge Vault — confirm memory freshness, retrieval, and memory-health blockers.",
+        "3. Labyrinth — inspect warning guideposts and failed/long journeys.",
+        "4. Sessions — open the run transcript only when Labyrinth points there.",
+        "5. Logs — inspect raw runtime failures only after Fleet/Labyrinth point there.",
+        "6. Cron — confirm Morning Logs schedule and last run.",
+        "7. Profiles — verify the responsible profile identity and scope.",
+        "8. Config / Keys — use only for setup or broken credentials.",
+        "9. Docs — map the API surface for the next narrow slice.",
         "",
         "## Fleet",
         "",
@@ -287,6 +456,45 @@ def render_report(snapshot: dict[str, Any], summary: dict[str, Any], report_path
             f"{oldest.get('agent_slug')} / {oldest.get('skill_slug')} "
             f"({oldest.get('age_hours')}h, {oldest.get('type')})"
         )
+
+    lines.extend(["", "## Knowledge Vault", ""])
+    retrieval_result = "unknown"
+    if summary["retrieval_passed"] is not None and summary["retrieval_total"] is not None:
+        retrieval_result = f"{summary['retrieval_passed']}/{summary['retrieval_total']}"
+    lines.extend(
+        [
+            f"- Freshness ok: {str(summary['freshness_ok']).lower()} "
+            f"({summary['freshness_warning_count']} warning(s), "
+            f"{summary['freshness_failure_count']} failure(s))",
+            f"- Retrieval eval: {retrieval_result} "
+            f"({summary['retrieval_failed'] if summary['retrieval_failed'] is not None else 'unknown'} failed)",
+            f"- Memory health: {summary['memory_health_verdict']} "
+            f"({summary['memory_blockers_count']} blocker(s), "
+            f"{summary['memory_warnings_count']} warning(s))",
+            "- Guardrails: read-only; no reindex, repair, note edit, private vault access, or profile memory-provider mutation.",
+        ]
+    )
+    for warning in summary["freshness_warnings"]:
+        lines.append(f"- Freshness warning: {warning}")
+    for blocker in summary["strict_wiki_blockers"]:
+        lines.append(f"- Strict-wiki blocker: {blocker}")
+
+    lines.extend(["", "## API Usage", ""])
+    lines.extend(
+        [
+            f"- Status available: {str(summary['api_usage_available']).lower()}",
+            f"- API-billed today: ${summary['api_usage_today_usd']:.2f}",
+            f"- API-billed MTD: ${summary['api_usage_mtd_usd']:.2f}",
+            f"- Warnings: {summary['api_usage_warning_count']}",
+            f"- Manual reviews overdue: {summary['api_usage_manual_review_overdue_count']}",
+            "- Degraded providers: "
+            f"{', '.join(summary['api_usage_degraded_providers']) if summary['api_usage_degraded_providers'] else 'none'}",
+            "- Low-balance providers: "
+            f"{', '.join(summary['api_usage_low_balance_providers']) if summary['api_usage_low_balance_providers'] else 'none'}",
+        ]
+    )
+    if summary["api_usage_artifact_path"]:
+        lines.append(f"- Operator dashboard: {summary['api_usage_artifact_path']}")
 
     lines.extend(["", "## Labyrinth", ""])
     lines.append(f"- Guideposts: {summary['guidepost_count']}")
@@ -310,7 +518,7 @@ def render_report(snapshot: dict[str, Any], summary: dict[str, Any], report_path
             "## Safety",
             "",
             "- This run did not kill processes, edit tokens, execute approvals, deploy, purchase, or modify repo files.",
-            "- PFOS receives only a redacted evidence event with counts and this report path.",
+            "- PFOS event emission uses only a redacted evidence payload with counts and this report path.",
         ]
     )
     return "\n".join(lines) + "\n"
@@ -355,6 +563,21 @@ def emit_summary(summary: dict[str, Any], report_path: Path, *, dry_run: bool) -
                 "guidepost_warning_count": summary["guidepost_warning_count"],
                 "dirty_repo_count": summary["dirty_repo_count"],
                 "log_error_count": summary["log_error_count"],
+                "memory_trustworthy": summary["memory_trustworthy"],
+                "knowledge_freshness_ok": summary["freshness_ok"],
+                "knowledge_retrieval_ok": summary["retrieval_ok"],
+                "knowledge_retrieval_passed": summary["retrieval_passed"],
+                "knowledge_retrieval_total": summary["retrieval_total"],
+                "memory_health_verdict": summary["memory_health_verdict"],
+                "memory_blockers_count": summary["memory_blockers_count"],
+                "memory_warnings_count": summary["memory_warnings_count"],
+                "api_usage_available": summary["api_usage_available"],
+                "api_usage_today_usd": summary["api_usage_today_usd"],
+                "api_usage_mtd_usd": summary["api_usage_mtd_usd"],
+                "api_usage_warning_count": summary["api_usage_warning_count"],
+                "api_usage_manual_review_overdue_count": summary[
+                    "api_usage_manual_review_overdue_count"
+                ],
                 "recommended_next_action": summary["recommended_next_action"],
             },
         },

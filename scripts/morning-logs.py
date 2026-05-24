@@ -33,6 +33,7 @@ OUTBOX = ROOT / "_inbox" / "morning-logs"
 PROFILE_DIR = ROOT / "hermes" / "profiles" / "morning-logs"
 TOKEN_ENV = Path("~/.config/prettyfly-marketing/hermes-tokens.env").expanduser()
 API_USAGE_LATEST = Path("~/.api-usage/latest.json").expanduser()
+MORNING_LOGS_CRON_ID = "25b6aa2097cf"
 
 SECRET_PATTERNS = (
     re.compile(r"sk-[A-Za-z0-9_\-]{12,}"),
@@ -56,7 +57,7 @@ def dashboard_token() -> str | None:
         html = urllib.request.urlopen(f"{HERMES_BASE_URL}/", timeout=5).read().decode("utf-8")
     except Exception:
         return None
-    match = re.search(r'__HERMES_SESSION_TOKEN__="([^"]+)"', html)
+    match = re.search(r'__HERMES_SESSION_TOKEN__\s*=\s*["\']([^"\']+)["\']', html)
     return match.group(1) if match else None
 
 
@@ -66,6 +67,7 @@ def get_json(path: str, *, protected: bool = False) -> Any:
         token = dashboard_token()
         if token:
             headers["X-Hermes-Session-Token"] = token
+            headers["Authorization"] = f"Bearer {token}"
     req = urllib.request.Request(f"{HERMES_BASE_URL}{path}", headers=headers)
     with urllib.request.urlopen(req, timeout=10) as resp:
         return json.loads(resp.read().decode("utf-8"))
@@ -189,20 +191,20 @@ def collect() -> dict[str, Any]:
             "status": safe_get("/api/status"),
         },
         "fleet": {
-            "ops": safe_get("/api/plugins/prettyfly-fleet/ops/status"),
-            "profiles": safe_get("/api/plugins/prettyfly-fleet/profiles"),
-            "approvals": safe_get("/api/plugins/prettyfly-fleet/approvals/pending"),
-            "events": safe_get("/api/plugins/prettyfly-fleet/events/recent?limit=10"),
-            "crons": safe_get("/api/plugins/prettyfly-fleet/crons"),
+            "ops": safe_get("/api/plugins/prettyfly-fleet/ops/status", protected=True),
+            "profiles": safe_get("/api/plugins/prettyfly-fleet/profiles", protected=True),
+            "approvals": safe_get("/api/plugins/prettyfly-fleet/approvals/pending", protected=True),
+            "events": safe_get("/api/plugins/prettyfly-fleet/events/recent?limit=10", protected=True),
+            "crons": safe_get("/api/plugins/prettyfly-fleet/crons", protected=True),
         },
         "labyrinth": {
-            "health": safe_get("/api/plugins/hermes-labyrinth/health"),
-            "guideposts": safe_get("/api/plugins/hermes-labyrinth/guideposts"),
+            "health": safe_get("/api/plugins/hermes-labyrinth/health", protected=True),
+            "guideposts": safe_get("/api/plugins/hermes-labyrinth/guideposts", protected=True),
         },
         "knowledge_vault": {
-            "status": safe_get("/api/plugins/knowledge-vault/status"),
-            "retrieval": safe_get("/api/plugins/knowledge-vault/retrieval"),
-            "memory_health": safe_get("/api/plugins/knowledge-vault/memory-health"),
+            "status": safe_get("/api/plugins/knowledge-vault/status", protected=True),
+            "retrieval": safe_get("/api/plugins/knowledge-vault/retrieval", protected=True),
+            "memory_health": safe_get("/api/plugins/knowledge-vault/memory-health", protected=True),
         },
         "runtime": {
             "gateway_state_file_exists": (HERMES_PROFILE_HOME / "gateway_state.json").exists(),
@@ -227,6 +229,79 @@ def as_int(value: Any, default: int = 0) -> int:
         return int(value)
     except (TypeError, ValueError):
         return default
+
+
+def parse_timestamp(value: Any) -> dt.datetime | None:
+    if not isinstance(value, str) or not value:
+        return None
+    try:
+        return dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def guidepost_timestamp(guidepost: dict[str, Any]) -> dt.datetime | None:
+    journey_id = str(guidepost.get("journey_id") or "")
+    match = re.search(r"(20\d{6})_(\d{6})", journey_id)
+    if not match:
+        return None
+    try:
+        return dt.datetime.strptime("".join(match.groups()), "%Y%m%d%H%M%S").replace(
+            tzinfo=dt.timezone.utc
+        )
+    except ValueError:
+        return None
+
+
+def morning_logs_cron_is_remediated() -> bool:
+    jobs_path = HERMES_PROFILE_HOME / "cron" / "jobs.json"
+    try:
+        data = json.loads(jobs_path.read_text())
+    except Exception:
+        return False
+
+    jobs = data.get("jobs") if isinstance(data, dict) else data
+    if not isinstance(jobs, list):
+        return False
+    for job in jobs:
+        if not isinstance(job, dict) or job.get("id") != MORNING_LOGS_CRON_ID:
+            continue
+        return (
+            job.get("no_agent") is True
+            and job.get("script") == "morning-logs.sh"
+            and job.get("last_status") == "ok"
+        )
+    return False
+
+
+def remediated_morning_logs_guidepost(guidepost: dict[str, Any], remediated: bool) -> bool:
+    if not remediated:
+        return False
+    journey_id = str(guidepost.get("journey_id") or "")
+    if not journey_id.startswith(f"cron_{MORNING_LOGS_CRON_ID}_"):
+        return False
+    return guidepost.get("kind") in {"failure", "loop"}
+
+
+def actionable_guideposts(
+    guideposts: list[dict[str, Any]], generated_at: Any
+) -> list[dict[str, Any]]:
+    now = parse_timestamp(generated_at) or dt.datetime.now(dt.timezone.utc)
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=dt.timezone.utc)
+    remediated = morning_logs_cron_is_remediated()
+
+    actionable: list[dict[str, Any]] = []
+    for guidepost in guideposts:
+        if guidepost.get("severity") not in {"warning", "error", "critical"}:
+            continue
+        if remediated_morning_logs_guidepost(guidepost, remediated):
+            continue
+        gp_time = guidepost_timestamp(guidepost)
+        if gp_time and now - gp_time > dt.timedelta(days=3):
+            continue
+        actionable.append(guidepost)
+    return actionable
 
 
 def summarize_knowledge(snapshot: dict[str, Any]) -> dict[str, Any]:
@@ -301,9 +376,7 @@ def summarize(snapshot: dict[str, Any]) -> dict[str, Any]:
         if platform.get("error_message") or platform.get("state") not in (None, "connected", "running"):
             platform_errors.append(f"{name}: {platform.get('error_message') or platform.get('state')}")
 
-    warnings = [
-        gp for gp in guideposts if gp.get("severity") in {"warning", "error", "critical"}
-    ]
+    warnings = actionable_guideposts(guideposts, snapshot.get("generated_at"))
     log_error_count = sum(int(v.get("error_count", 0)) for v in log_summary.values() if isinstance(v, dict))
     dirty_repos = [repo for repo in repos if repo.get("dirty_count", 0) > 0]
     gateway_running = bool(ops.get("gateway_running") or status.get("gateway_running"))
@@ -407,6 +480,7 @@ def render_report(snapshot: dict[str, Any], summary: dict[str, Any], report_path
     repos = snapshot.get("repos") or []
     approvals = val(snapshot, "fleet", "approvals", "value", "approvals", default=[])
     guideposts = val(snapshot, "labyrinth", "guideposts", "value", "guideposts", default=[])
+    active_guideposts = actionable_guideposts(guideposts, snapshot.get("generated_at"))
     openapi = val(snapshot, "dashboard", "docs", "value", default={})
     path_count = len(openapi.get("paths", {})) if isinstance(openapi, dict) else 0
 
@@ -497,9 +571,11 @@ def render_report(snapshot: dict[str, Any], summary: dict[str, Any], report_path
         lines.append(f"- Operator dashboard: {summary['api_usage_artifact_path']}")
 
     lines.extend(["", "## Labyrinth", ""])
-    lines.append(f"- Guideposts: {summary['guidepost_count']}")
-    lines.append(f"- Warning/error guideposts: {summary['guidepost_warning_count']}")
-    for gp in guideposts[:5]:
+    lines.append(f"- Raw guideposts visible: {summary['guidepost_count']}")
+    lines.append(f"- Actionable warning/error guideposts: {summary['guidepost_warning_count']}")
+    if not active_guideposts and guideposts:
+        lines.append("- Historical/remediated guideposts remain visible in Labyrinth but are not Morning Logs blockers.")
+    for gp in active_guideposts[:5]:
         lines.append(
             f"- {gp.get('severity', 'info')}: {gp.get('title', 'untitled')} "
             f"({gp.get('kind', 'unknown')})"

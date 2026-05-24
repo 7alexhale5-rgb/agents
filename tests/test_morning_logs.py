@@ -121,6 +121,99 @@ class TestMorningLogsSummary(unittest.TestCase):
         self.assertEqual(summary["freshness_warning_count"], 1)
         self.assertEqual(summary["recommended_next_action"], "Hermes is usable; continue with the morning operating loop.")
 
+    def test_summarize_ignores_remediated_morning_logs_guideposts(self) -> None:
+        snapshot = {
+            "generated_at": "2026-05-24T15:00:00+00:00",
+            "dashboard": {"status": {"value": {"gateway_running": True}}},
+            "fleet": {
+                "ops": {"value": {"gateway_state": "running", "gateway_running": True, "platforms": {}}},
+                "approvals": {"value": {"approvals": []}},
+                "events": {"value": {"events": []}},
+            },
+            "labyrinth": {
+                "health": {"value": {"ok": True}},
+                "guideposts": {
+                    "value": {
+                        "guideposts": [
+                            {
+                                "severity": "warning",
+                                "kind": "failure",
+                                "journey_id": "cron_25b6aa2097cf_20260524_080043",
+                                "title": "6 failed crossing(s)",
+                            },
+                            {
+                                "severity": "warning",
+                                "kind": "loop",
+                                "journey_id": "cron_25b6aa2097cf_20260523_080000",
+                                "title": "Repeated failing tool: agent",
+                            },
+                            {
+                                "severity": "warning",
+                                "kind": "failure",
+                                "journey_id": "20260507_122502_2fcbc5c8",
+                                "title": "15 failed crossing(s)",
+                            },
+                        ]
+                    }
+                },
+            },
+            "knowledge_vault": healthy_knowledge_vault(),
+            "runtime": {"logs": {"agent": {"error_count": 0}, "gateway": {"error_count": 0}}},
+            "repos": [],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            jobs = Path(tmp) / "cron" / "jobs.json"
+            jobs.parent.mkdir(parents=True)
+            jobs.write_text(
+                '{"jobs":[{"id":"25b6aa2097cf","no_agent":true,'
+                '"script":"morning-logs.sh","last_status":"ok"}]}'
+            )
+            with patch.object(morning_logs, "HERMES_PROFILE_HOME", Path(tmp)):
+                summary = morning_logs.summarize(snapshot)
+
+        self.assertEqual(summary["guidepost_warning_count"], 0)
+        self.assertNotIn("Labyrinth warning/error", " ".join(summary["broken"]))
+        self.assertEqual(
+            summary["recommended_next_action"],
+            "Hermes is usable; continue with the morning operating loop.",
+        )
+
+    def test_summarize_keeps_current_unremediated_guideposts_actionable(self) -> None:
+        snapshot = {
+            "generated_at": "2026-05-24T15:00:00+00:00",
+            "dashboard": {"status": {"value": {"gateway_running": True}}},
+            "fleet": {
+                "ops": {"value": {"gateway_state": "running", "gateway_running": True, "platforms": {}}},
+                "approvals": {"value": {"approvals": []}},
+                "events": {"value": {"events": []}},
+            },
+            "labyrinth": {
+                "health": {"value": {"ok": True}},
+                "guideposts": {
+                    "value": {
+                        "guideposts": [
+                            {
+                                "severity": "warning",
+                                "kind": "failure",
+                                "journey_id": "20260524_122502_2fcbc5c8",
+                                "title": "2 failed crossing(s)",
+                            }
+                        ]
+                    }
+                },
+            },
+            "knowledge_vault": healthy_knowledge_vault(),
+            "runtime": {"logs": {"agent": {"error_count": 0}, "gateway": {"error_count": 0}}},
+            "repos": [],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.object(morning_logs, "HERMES_PROFILE_HOME", Path(tmp)):
+                summary = morning_logs.summarize(snapshot)
+
+        self.assertEqual(summary["guidepost_warning_count"], 1)
+        self.assertIn("1 Labyrinth warning/error guidepost(s)", summary["broken"])
+        self.assertEqual(summary["recommended_next_action"], "Open Labyrinth guideposts and inspect the warning journey.")
+
     def test_summarize_memory_health_blockers_break_memory_trust(self) -> None:
         knowledge = healthy_knowledge_vault()
         knowledge["memory_health"]["value"]["snapshot"] = {

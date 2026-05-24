@@ -27,6 +27,7 @@
 set -euo pipefail
 
 PROFILES_DIR="${HERMES_PROFILES_DIR:-$HOME/Projects/agents/hermes/profiles}"
+ROOT_DIR="${AGENTS_ROOT:-$(cd "$PROFILES_DIR/../.." && pwd)}"
 
 REQUIRED_FILES=(SOUL.md USER.md MEMORY.md CLAUDE.md manifest.json config.yaml a2a-card.json)
 REQUIRED_DIRS=(rooms skills workspace scratch memory eval)
@@ -76,11 +77,32 @@ validate_one () {
   fi
 }
 
+is_ignored_only_remnant () {
+  local dir="$1"
+
+  if ! git -C "$ROOT_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    return 1
+  fi
+
+  local tracked
+  tracked=$(git -C "$ROOT_DIR" ls-files -- "$dir" 2>/dev/null)
+  [ -z "$tracked" ] || return 1
+
+  local visible
+  visible=$(git -C "$ROOT_DIR" status --porcelain --untracked-files=all -- "$dir" 2>/dev/null)
+  [ -z "$visible" ]
+}
+
 if [ "${1:-}" = "--all" ]; then
-  total=0; passed=0; failed=0
+  total=0; passed=0; failed=0; skipped=0
   for d in "$PROFILES_DIR"/*/; do
     [ -d "$d" ] || continue
     n=$(basename "$d")
+    if is_ignored_only_remnant "$d"; then
+      echo "SKIP $n: ignored-only local remnant"
+      skipped=$((skipped + 1))
+      continue
+    fi
     total=$((total + 1))
     if validate_one "$n"; then
       passed=$((passed + 1))
@@ -89,7 +111,7 @@ if [ "${1:-}" = "--all" ]; then
     fi
   done
   echo "----"
-  echo "Total: $total · Passed: $passed · Failed: $failed"
+  echo "Total: $total · Passed: $passed · Failed: $failed · Skipped: $skipped"
   [ "$failed" -eq 0 ]
 elif [ -n "${1:-}" ]; then
   validate_one "$1"

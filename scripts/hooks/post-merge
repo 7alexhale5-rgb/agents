@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# post-merge — Hermes profile sync hook (source of truth).
+#
+# Pushes any changed hermes/profiles/<name>/ from versioned tree → ~/.hermes/runtime
+# after every merge / pull / fast-forward. Closes the doctrine-claims-this-exists gap
+# at CLAUDE.md line 71. Per-clone install:
+#
+#   cp scripts/hooks/post-merge .git/hooks/post-merge && chmod +x .git/hooks/post-merge
+#
+# Reversibility: TYPE-2 — rm .git/hooks/post-merge undoes.
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+# Detect which profile directories changed in this merge. ORIG_HEAD points at the
+# pre-merge tip; HEAD is post-merge. awk pulls the profile name out of paths like
+# hermes/profiles/atlas-ceo/CLAUDE.md.
+CHANGED_PROFILES=$(git diff ORIG_HEAD HEAD --name-only -- 'hermes/profiles/*/' 2>/dev/null \
+  | awk -F/ '{print $3}' | sort -u | grep -v '^$' || true)
+
+if [ -z "$CHANGED_PROFILES" ]; then
+  exit 0
+fi
+
+echo "post-merge: syncing changed profiles → ~/.hermes/runtime" >&2
+while IFS= read -r profile; do
+  bash scripts/sync-profile.sh push "$profile" || {
+    echo "post-merge: sync failed for $profile (continuing)" >&2
+  }
+done <<< "$CHANGED_PROFILES"

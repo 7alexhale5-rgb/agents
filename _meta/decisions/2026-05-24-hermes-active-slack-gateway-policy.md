@@ -2,7 +2,7 @@
 date: 2026-05-24
 type: decision
 project: agents
-tags: [adr, hermes, slack, gateway, authority, atlas-ceo, personal]
+tags: [adr, hermes, slack, gateway, authority, atlas-ceo, personal, comms-triage, composio]
 status: accepted
 related_adrs:
   - 2026-05-05-slack-ecosystem-pivot.md
@@ -47,12 +47,29 @@ and ADR approve it:
    that names the profile, allowed Slack surface, approval boundary, rollback,
    and verification evidence.
 
+## Comms Triage / Composio Slack Scope
+
+The `personal` Comms Triage dashboard plugin may remain enabled while its
+runtime access is constrained to the exact 26 allowlisted read-only Composio MCP
+tools verified in the May 24 repair receipt. This plugin has no posting,
+workflow, public-channel, Atlas, or higher-trust authority.
+
+The underlying Composio-managed Slack OAuth grant still advertises broad
+write-capable Slack scopes. That is accepted only as a residual risk at the
+current read-only runtime boundary, not as precedent for expanding trust.
+
+Before Comms Triage receives any higher authority, the Slack side must move to a
+truly least-privilege OAuth app or an equivalent Composio configuration that can
+prove strict Slack scope control.
+
 ## Verification
 
 The current allowed live state is:
 
 - `ai.hermes.gateway-personal` running with Slack connected.
 - `ai.hermes.gateway-atlas-ceo` running with Slack connected.
+- Comms Triage re-enabled in the `personal` dashboard with exactly 26
+  allowlisted read-only MCP tools exposed.
 
 This policy intentionally does not expand authority. It records the current
 allowed state so future dashboard, launchd, or Slack-token drift is visible.
@@ -65,4 +82,3 @@ If either allowed gateway behaves outside its boundary:
 2. Remove or rotate the affected Slack token from the profile runtime env.
 3. Record the incident in the operator artifact or relevant profile changelog.
 4. Require fresh smoke evidence before reconnecting Slack.
-

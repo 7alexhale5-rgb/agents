@@ -588,7 +588,12 @@ def emit_summary(summary: dict[str, Any], report_path: Path, *, dry_run: bool) -
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run Morning Logs v0.1.")
     parser.add_argument("--date", help="YYYY-MM-DD report date; defaults to today local time")
-    parser.add_argument("--no-emit", action="store_true", help="Write report without PFOS event")
+    parser.add_argument(
+        "--emit",
+        action="store_true",
+        help="Opt-in: also emit the legacy PFOS event. Default is local receipt only "
+        "(per 2026-05-23-deprecate-pfos-emitter-from-profile-doctrine.md).",
+    )
     parser.add_argument("--emit-dry-run", action="store_true", help="Build event payload without POSTing")
     return parser.parse_args()
 
@@ -603,7 +608,7 @@ def main() -> int:
     write_outputs(snapshot, report, report_path)
 
     result: dict[str, Any] | None = None
-    if not args.no_emit:
+    if args.emit:
         try:
             result = emit_summary(summary, report_path, dry_run=args.emit_dry_run)
         except EmitError as exc:

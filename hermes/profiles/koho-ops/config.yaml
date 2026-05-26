@@ -40,12 +40,9 @@ channels:
     enabled: false
 
 approval:
-  mode: propose_only
+  mode: read_only
   outbound_channels: []
   pii_redaction: true
-  proposals:
-    enabled: false
-    execute: false
 
 guardrails:
   spend_cap_per_day_usd: 5

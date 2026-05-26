@@ -1,17 +1,17 @@
 ---
 name: consultops-pulse
-description: Produce a source-grounded Rung 1 ConsultOps Pulse for the Koho-Ops profile.
+description: Produce a source-grounded Rung 1 ConsultOps awareness pulse for the Koho-Ops profile.
 input: optional report date and explicit source packet override
-output: markdown ConsultOps Pulse shaped for future _inbox/koho-ops/ use
+output: markdown ConsultOps awareness note for manual _inbox/koho-ops/ use
 ---
 
 # Skill: consultops-pulse
 
 ## Purpose
 
-Create a read-only ConsultOps Pulse for Koho retainer delivery. The Pulse answers what is true now, what proof exists, what still needs approval, what must not be enabled, and the next safest 1% Hermes move.
+Create a read-only ConsultOps awareness pulse for the Koho-Ops ear-to-the-ground profile. The Pulse answers where the project stands, what source updates exist, what context is stale or missing, and what the next safe check should be.
 
-This is a Rung 1 profile-local skill. It reads approved source packets and current repo status only. It does not create runtime authority, send messages, mutate repositories, probe production, deploy, or write databases.
+This is a Rung 1 profile-local skill. It reads approved source packets and current repo status only. It does not operate ConsultOps, Koho, Excerpa, or any client workflow. It does not create runtime authority, send messages, mutate repositories, probe production, deploy, or write databases.
 
 ## Required Reads
 
@@ -35,15 +35,15 @@ If a required source path or repo is unavailable, state that as missing source e
 
 Use these headings in this order:
 
-1. `Current Answer`
-2. `Ready Proof`
-3. `Approval Needed`
-4. `Do Not Enable Yet`
-5. `Repo And Source State`
-6. `Next 1% Move`
+1. `Current State`
+2. `Source Updates`
+3. `Repo And Source State`
+4. `Stale Or Missing Context`
+5. `Boundaries`
+6. `Next Check`
 7. `Source Basis`
 
-Keep the Pulse concise. Every operational claim must trace to ConsultOps Pulse v0, current wiki context, current repo status, or a clearly named missing source. Separate ConsultOps from Excerpa; do not collapse both into generic Koho work.
+Keep the Pulse concise. Every status claim must trace to ConsultOps Pulse v0, current wiki context, current repo status, or a clearly named missing source. Separate ConsultOps from Excerpa; do not collapse both into generic Koho work. Do not turn source awareness into workflow instructions.
 
 ## Hard Boundaries
 
@@ -56,16 +56,17 @@ Keep the Pulse concise. Every operational claim must trace to ConsultOps Pulse v
 - No workbook routing or workbook writeback.
 - No proposal job starts.
 - No Koho repo mutations.
-- No `koho_ops.report.propose` or other propose-write contract in Rung 1.
+- No workflow instructions.
+- No action-authority promotion.
 
-`_inbox/koho-ops/` is the future local output surface only. This skill may describe the manual Pulse shape, but it does not grant write authority or runtime output authority by itself.
+`_inbox/koho-ops/` is a manual local receipt surface only. This skill does not grant write authority or runtime output authority.
 
 ## Verification Checklist
 
 Before considering a Pulse complete:
 
-- Confirm `ConsultOps Pulse v0` is cited as a source packet.
+- Confirm `ConsultOps Pulse v0` is cited as historical source context, not an action plan.
 - Confirm current repo state is labeled as observed, missing, or unavailable.
-- Confirm `Do Not Enable Yet` explicitly blocks production probes, sends, runtime sync, deploys, database writes, and Koho repo mutations.
-- Confirm the next move is one Hermes 1% move, not a broad ConsultOps delivery plan.
+- Confirm `Boundaries` explicitly blocks production probes, sends, runtime sync, deploys, database writes, and Koho repo mutations.
+- Confirm the next move is a check or source-freshness improvement, not a ConsultOps workflow plan.
 - Confirm no secrets, tokens, raw credentials, private messages, or client-facing sends appear in the output.

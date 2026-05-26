@@ -16,7 +16,7 @@ You've opened the consolidated Hermes monorepo. This file is the Layer-1 router 
 | Weekly campaign decision + ICP + content direction + revenue-loop review                            | `hermes/profiles/marin/CLAUDE.md` (Phase 2)      |
 | Content drafting from approved positioning (drafts to `_inbox/quill-drafts/`, never publishes)      | `hermes/profiles/quill/CLAUDE.md`              |
 | Pre-launch pressure-test on campaigns, claims, positioning (critiques to `_inbox/stet-critiques/`) | `hermes/profiles/stet/CLAUDE.md`              |
-| Koho retainer delivery (Marc routing, ConsultOps demos, Excerpa work)                               | `hermes/profiles/koho-ops/CLAUDE.md` (Phase 5) |
+| Koho / ConsultOps project awareness; read-only ear-to-ground status, no delivery or actions         | `hermes/profiles/koho-ops/CLAUDE.md` (Phase 5) |
 | Yehovah retainer delivery (trial-to-GA monitoring, CTO duties)                                      | `hermes/profiles/yeh-ops/CLAUDE.md` (Phase 5)  |
 | Repo-wide refactor / multi-file coordination / PR drafts on revenue products                        | `hermes/profiles/codex/CLAUDE.md` (Phase 5.5)  |
 | Daily Hermes operations brief; gateway/Fleet/Labyrinth/repo health; propose-only next action        | `hermes/profiles/morning-logs/CLAUDE.md`       |
@@ -84,7 +84,7 @@ Per `~/.claude/plans/here-is-what-we-joyful-torvalds.md`:
 - Phase 2: build Marin profile from Atlas template (1 week)
 - Phase 3: build Quill + Stet from Atlas template (1 week)
 - Phase 4: extend Atlas with marketing-vault read path (2-3 hours)
-- Phase 5: build koho-ops + yeh-ops retainer-delivery profiles (2 weeks)
+- Phase 5: build read-only project-awareness profiles for Koho and Yehovah; no delivery automation (2 weeks)
 - Phase 5.5: rebuild codex profile from Atlas template (3-5 hours)
 - Phase 6: wake one dormant Hermes capability (trigger-gated)
 - Phase 7: quarterly compound review (every 90 days starting 2026-08-18)

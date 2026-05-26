@@ -1,10 +1,10 @@
 {
   "sku": "koho-ops",
   "name": "koho-ops",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "category": "internal",
   "department": "koho",
-  "tagline": "Koho retainer delivery pulse profile for ConsultOps and Excerpa. Read-only, source-grounded, approval-first.",
+  "tagline": "Koho-related project awareness profile. Read-only, source-grounded, no workflow actions.",
   "tier": "rung_1_read_only_scaffold",
   "depends_on": [],
   "channels": [],
@@ -13,7 +13,7 @@
     "escalate": "anthropic:claude-sonnet-4-6"
   },
   "tools": ["koho_context.read"],
-  "skills": [],
+  "skills": ["consultops-pulse"],
   "memory_axes": ["working", "episodic", "procedural"],
   "guardrails": [
     "alex_first_internal_only",

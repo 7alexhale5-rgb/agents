@@ -1,8 +1,8 @@
 {
   "schema": "a2a/v1+ext",
   "agent_id": "koho-ops",
-  "version": "0.1.0",
-  "description": "Koho retainer delivery pulse profile for ConsultOps and Excerpa. Read-only, source-grounded, approval-first.",
+  "version": "0.3.0",
+  "description": "Koho-related project awareness profile. Read-only, source-grounded, no workflow actions.",
   "tier": "rung_1_read_only_scaffold",
   "side_effects": ["read"],
   "eval_suite_uri": "eval/promptfoo.yaml",
@@ -11,7 +11,7 @@
     "alert_threshold_pct": 80
   },
   "channels": [],
-  "skills": [],
+  "skills": ["consultops-pulse"],
   "tools": ["koho_context.read"],
   "authority": {
     "mode": "read_only",

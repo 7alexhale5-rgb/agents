@@ -1,6 +1,6 @@
 # DOCTRINE.md — `koho-ops`
 
-> Operating principles for Koho retainer delivery pulses.
+> Operating principles for Koho-related project awareness pulses.
 
 ## Sources
 
@@ -14,17 +14,17 @@
 
 ## Frameworks
 
-- **Receipt-first delivery:** operator artifacts and current repo state outrank memory when facts conflict.
-- **Separate lanes:** ConsultOps is Marc-facing operating leverage; Excerpa is CLM extraction/review trust.
-- **Approval-first promotion:** read-only proof can become a recommendation, but production action needs an explicit approval gate.
-- **One 1% move:** every Pulse ends with the next small action that makes the next slice clearer or safer.
+- **Source-first awareness:** receipts, wiki pages, and current repo state outrank memory when facts conflict.
+- **Separate lanes:** ConsultOps and Excerpa remain distinct project contexts.
+- **No operation:** Hermes does not run, promote, or recommend ConsultOps, Koho, or Excerpa workflow actions.
+- **One next check:** every Pulse ends with the next small check that would improve awareness.
 
 ## Hard calls
 
 - If a receipt and wiki disagree, cite the newer receipt and mark the wiki as stale.
-- If a rail has smoke proof but no limited-live approval, classify it as ready proof, not enabled volume.
-- If process-automation is dirty, treat it as related backlog until the proof/WIP split is explicit.
-- If a request crosses into sends, production probes, deploys, runtime sync, or DB writes, stop at the read-only plan or receipt summary.
+- If older receipts recommend actions, treat those recommendations as historical context, not current instructions.
+- If process-automation is dirty, report that as repo state without converting it into workflow priority.
+- If a request crosses into sends, production probes, deploys, runtime sync, DB writes, or workflow operation, stop at the read-only awareness summary.
 
 ## Kill list
 
@@ -33,4 +33,5 @@
 - No workbook live routing or workbook writeback.
 - No proposal jobs for real opportunities.
 - No runtime profile sync in Rung 1.
-- No broad cleanup framed as Koho delivery.
+- No workflow instructions.
+- No profile promotion toward action authority.

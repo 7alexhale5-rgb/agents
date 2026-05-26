@@ -4,7 +4,7 @@
 > **Mission:** Internal agent fleet driving PrettyFly CTO Advisory revenue to $1M ARR in 24 months. No marketplace.
 > **Plan:** `~/.claude/plans/here-is-what-we-joyful-torvalds.md`
 > **Strategy source:** `~/Projects/marketing/` (marketing vault)
-> **Runtime:** Hermes Agent v0.12.0 (Nous Research, MIT). PF Runtime archived. See `~/Projects/memory-vault/decisions/2026-05-18-archive-pf-runtime.md`.
+> **Runtime:** Hermes Agent v0.14.0 observed in the local dashboard on 2026-05-26. PF Runtime archived. See `~/Projects/memory-vault/decisions/2026-05-18-archive-pf-runtime.md`.
 
 You've opened the consolidated Hermes monorepo. This file is the Layer-1 router (per JEVanClief's folder-as-workspace pattern). Use it to decide which profile to descend into.
 
@@ -17,11 +17,10 @@ You've opened the consolidated Hermes monorepo. This file is the Layer-1 router 
 | Content drafting from approved positioning (drafts to `_inbox/quill-drafts/`, never publishes)      | `hermes/profiles/quill/CLAUDE.md`              |
 | Pre-launch pressure-test on campaigns, claims, positioning (critiques to `_inbox/stet-critiques/`) | `hermes/profiles/stet/CLAUDE.md`              |
 | Koho / ConsultOps project awareness; read-only ear-to-ground status, no delivery or actions         | `hermes/profiles/koho-ops/CLAUDE.md` (Phase 5) |
-| Yehovah retainer delivery (trial-to-GA monitoring, CTO duties)                                      | `hermes/profiles/yeh-ops/CLAUDE.md` (Phase 5)  |
-| Repo-wide refactor / multi-file coordination / PR drafts on revenue products                        | `hermes/profiles/codex/CLAUDE.md` (Phase 5.5)  |
+| Technical governance, review, and release-risk notes; propose-only, no deploy/merge authority       | `hermes/profiles/technical-operator/CLAUDE.md` |
 | Daily Hermes operations brief; gateway/Fleet/Labyrinth/repo health; propose-only next action        | `hermes/profiles/morning-logs/CLAUDE.md`       |
 
-Profiles in parentheses are scheduled for build per the plan; `koho-ops` now exists as a Rung 1 read-only scaffold as of 2026-05-25. `yeh-ops` remains a Phase 5 rebuild target, and `codex` remains a Phase 5.5 rebuild target.
+Profiles in parentheses are scheduled or scaffolded per the plan; `koho-ops` exists as a Rung 1 awareness-only scaffold as of 2026-05-25. `codex` is a placeholder/tool-lane boundary, not an active Hermes profile. Runtime Profiles may still show archived or drifted identities; Fleet is the curated operating roster.
 
 ### Karpathy ladder per profile
 
@@ -34,7 +33,7 @@ Atlas is at rung 3 — use it as the reference shape. Every new profile starts a
 
 ### Archived (do not descend) — see `hermes/_archive/2026/`
 
-`atelier` (kept as OSS, not as profile), `consultops` (old), `forge-audit`, `lawdbot` (mike-lawdbot fully sunsetting), `mobile`, `ops`, `personal`, `personal-baseline`, `quill-content` (old), `sportsbook`, `vanclief`, `stet-outreach` (old), `yeh-ops` (old; rebuild in Phase 5).
+`atelier` (kept as OSS, not as profile), `consultops` (old), `forge-audit`, `lawdbot` (mike-lawdbot fully sunsetting), `mobile`, `ops`, `personal`, `personal-baseline`, `quill-content` (old), `sportsbook`, `vanclief`, `stet-outreach` (old), `yeh-ops` (old; future rebuild only if the profile trigger earns it).
 
 ## Conventions
 
@@ -84,8 +83,8 @@ Per `~/.claude/plans/here-is-what-we-joyful-torvalds.md`:
 - Phase 2: build Marin profile from Atlas template (1 week)
 - Phase 3: build Quill + Stet from Atlas template (1 week)
 - Phase 4: extend Atlas with marketing-vault read path (2-3 hours)
-- Phase 5: build read-only project-awareness profiles for Koho and Yehovah; no delivery automation (2 weeks)
-- Phase 5.5: rebuild codex profile from Atlas template (3-5 hours)
+- Phase 5: build read-only project-awareness profiles only when they clarify source freshness; no delivery automation
+- Phase 5.5: keep Codex as an operator tool lane; use `technical-operator` for any future Hermes engineering-governance profile work
 - Phase 6: wake one dormant Hermes capability (trigger-gated)
 - Phase 7: quarterly compound review (every 90 days starting 2026-08-18)
 

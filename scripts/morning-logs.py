@@ -32,7 +32,9 @@ HERMES_PROFILE_HOME = Path(
 OUTBOX = ROOT / "_inbox" / "morning-logs"
 PROFILE_DIR = ROOT / "hermes" / "profiles" / "morning-logs"
 TOKEN_ENV = Path("~/.config/prettyfly-marketing/hermes-tokens.env").expanduser()
-API_USAGE_LATEST = Path("~/.api-usage/latest.json").expanduser()
+API_USAGE_LATEST = Path(
+    os.environ.get("API_USAGE_LATEST", "/Users/alexhale/.api-usage/latest.json")
+).expanduser()
 MORNING_LOGS_CRON_ID = "25b6aa2097cf"
 
 SECRET_PATTERNS = (

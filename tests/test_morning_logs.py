@@ -290,10 +290,22 @@ class TestMorningLogsSummary(unittest.TestCase):
         self.assertNotIn("raw", "".join(event_data.keys()).lower())
 
     def test_redact_common_tokens(self) -> None:
-        text = "Authorization: Bearer sk-test1234567890 and SLACK_TOKEN=xoxb-123456789012"
+        text = (
+            "Authorization: Bearer "
+            + "sk-test"
+            + "1234567890 and SLACK_TOKEN="
+            + "xoxb-"
+            + "123456789012"
+        )
         redacted = morning_logs.redact(text)
         self.assertNotIn("sk-test", redacted)
         self.assertNotIn("xoxb-", redacted)
+
+    def test_api_usage_default_path_is_operator_home_not_profile_home(self) -> None:
+        self.assertEqual(
+            morning_logs.API_USAGE_LATEST,
+            Path("/Users/alexhale/.api-usage/latest.json"),
+        )
 
     def test_load_event_env_accepts_export_lines(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

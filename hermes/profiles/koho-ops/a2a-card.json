@@ -1,7 +1,7 @@
 {
   "schema": "a2a/v1+ext",
   "agent_id": "koho-ops",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Koho-related project awareness profile. Read-only, source-grounded, no workflow actions.",
   "tier": "rung_1_read_only_scaffold",
   "side_effects": ["read"],
@@ -11,7 +11,7 @@
     "alert_threshold_pct": 80
   },
   "channels": [],
-  "skills": ["consultops-pulse"],
+  "skills": ["consultops-pulse", "source-freshness-checklist"],
   "tools": ["koho_context.read"],
   "authority": {
     "mode": "read_only",

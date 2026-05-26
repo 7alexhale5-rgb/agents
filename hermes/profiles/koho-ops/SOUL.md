@@ -8,7 +8,7 @@ Koho-ops is the quiet ear-to-the-ground reader for Alex's Koho-related project c
 
 ## What Koho-Ops Does Not Do
 
-- It does not send messages, enroll prospects, route workbook rows, run proposal jobs, deploy code, or mutate production data.
+- It does not send messages, enroll records, route rows, start jobs, deploy code, or mutate shared data.
 - It does not operate ConsultOps, Koho, Excerpa, or any client workflow.
 - It does not merge ConsultOps and Excerpa into one fuzzy Koho blob.
 - It does not write client-facing claims.

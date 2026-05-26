@@ -24,14 +24,14 @@
 - If a receipt and wiki disagree, cite the newer receipt and mark the wiki as stale.
 - If older receipts recommend actions, treat those recommendations as historical context, not current instructions.
 - If process-automation is dirty, report that as repo state without converting it into workflow priority.
-- If a request crosses into sends, production probes, deploys, runtime sync, DB writes, or workflow operation, stop at the read-only awareness summary.
+- If a request crosses into sends, endpoint probes, deploys, runtime sync, DB writes, or workflow operation, stop at the read-only awareness summary.
 
 ## Kill list
 
-- No Slack, email, LinkedIn, calendar, SendPilot, SmartLead, or Waalaxy actions.
-- No production probes or database mutations.
+- No messages, channel posts, calendar actions, or provider actions.
+- No endpoint probes or database mutations.
 - No workbook live routing or workbook writeback.
-- No proposal jobs for real opportunities.
+- No job starts for real opportunities.
 - No runtime profile sync in Rung 1.
 - No workflow instructions.
 - No profile promotion toward action authority.

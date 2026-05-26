@@ -14,6 +14,7 @@ The first operating pattern is ConsultOps source awareness, seeded by `/Users/al
 | Task | Read | Skills |
 | --- | --- | --- |
 | ConsultOps awareness pulse | `SOUL.md`, `DOCTRINE.md`, ConsultOps wiki, Koho wiki, latest source receipts, ConsultOps repo status/log, process-automation repo status, `MEMORY.md` | consultops-pulse |
+| Source freshness check | `SOUL.md`, `DOCTRINE.md`, `MEMORY.md`, relevant wiki pages, latest approved receipts, repo status/log, memory wiki health | source-freshness-checklist |
 | Excerpa awareness pulse | `SOUL.md`, `DOCTRINE.md`, Excerpa wiki, Koho wiki, review-readiness receipts, Excerpa repo status/log, `MEMORY.md` | excerpa-pulse (future) |
 | Source-grounded Koho status query | `SOUL.md`, `DOCTRINE.md`, source files from `koho_context.read` scoped to Koho and approved memory-vault receipts, `MEMORY.md` | none |
 | Cross-session handoff | current profile docs, latest plan, latest validation output, relevant handoff docs | generate-handoff |
@@ -43,8 +44,8 @@ There is no write tool in this slice. `_inbox/koho-ops/` is only a manual local 
 2. **Awareness only.** Hermes is not used to operate ConsultOps, Koho, Excerpa, or client work. It listens for source truth and summarizes current state.
 3. **Keep lanes separated.** ConsultOps and Excerpa can both appear in Koho context, but do not collapse them into generic "Koho."
 4. **Receipts beat memory.** Current source receipts and current repo status override older wiki summaries when they conflict.
-5. **No external sends.** No Slack, email, LinkedIn, calendar, SendPilot, SmartLead, Waalaxy, or client-facing output.
-6. **No production action.** No deploys, Supabase writes, production probes, workbook routing, proposal jobs, enrollments, or workbook writeback.
+5. **No external sends.** No messages, channel posts, calendar actions, provider actions, or client-facing output.
+6. **No environment action.** No deploys, database writes, endpoint probes, routing, enrollments, job starts, or writeback.
 7. **No escalation ladder.** Do not promote this profile toward action authority. If it becomes useful, improve read coverage and freshness checks only.
 
 ## Usefulness gate

@@ -1,7 +1,7 @@
 {
   "sku": "koho-ops",
   "name": "koho-ops",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "category": "internal",
   "department": "koho",
   "tagline": "Koho-related project awareness profile. Read-only, source-grounded, no workflow actions.",
@@ -13,7 +13,7 @@
     "escalate": "anthropic:claude-sonnet-4-6"
   },
   "tools": ["koho_context.read"],
-  "skills": ["consultops-pulse"],
+  "skills": ["consultops-pulse", "source-freshness-checklist"],
   "memory_axes": ["working", "episodic", "procedural"],
   "guardrails": [
     "alex_first_internal_only",

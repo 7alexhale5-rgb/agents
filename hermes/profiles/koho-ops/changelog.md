@@ -1,5 +1,11 @@
 # changelog — `koho-ops`
 
+## 0.3.1
+
+- Added `source-freshness-checklist` as a read-only awareness skill.
+- The checklist only names sources to read, observed freshness, repo state, stale or missing context, and the next source to inspect.
+- Kept Koho-Ops on awareness-only footing: no write tools, event contracts, runtime sync, or workflow path.
+
 ## 0.3.0
 
 - Corrected Koho-Ops from the old operating-agent framing to read-only project awareness.

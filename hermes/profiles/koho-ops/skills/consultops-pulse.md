@@ -47,14 +47,14 @@ Keep the Pulse concise. Every status claim must trace to ConsultOps Pulse v0, cu
 
 ## Hard Boundaries
 
-- No production probes.
+- No endpoint probes.
 - No sends or external-send preparation.
-- No Slack, email, LinkedIn, calendar, SendPilot, SmartLead, or Waalaxy actions.
+- No messages, channel posts, calendar actions, or provider actions.
 - No runtime sync.
 - No deploys.
 - No database writes.
 - No workbook routing or workbook writeback.
-- No proposal job starts.
+- No job starts.
 - No Koho repo mutations.
 - No workflow instructions.
 - No action-authority promotion.
@@ -67,6 +67,6 @@ Before considering a Pulse complete:
 
 - Confirm `ConsultOps Pulse v0` is cited as historical source context, not an action plan.
 - Confirm current repo state is labeled as observed, missing, or unavailable.
-- Confirm `Boundaries` explicitly blocks production probes, sends, runtime sync, deploys, database writes, and Koho repo mutations.
+- Confirm `Boundaries` explicitly blocks endpoint probes, sends, runtime sync, deploys, database writes, and Koho repo mutations.
 - Confirm the next move is a check or source-freshness improvement, not a ConsultOps workflow plan.
 - Confirm no secrets, tokens, raw credentials, private messages, or client-facing sends appear in the output.

@@ -21,7 +21,7 @@ You've opened the consolidated Hermes monorepo. This file is the Layer-1 router 
 | Repo-wide refactor / multi-file coordination / PR drafts on revenue products                        | `hermes/profiles/codex/CLAUDE.md` (Phase 5.5)  |
 | Daily Hermes operations brief; gateway/Fleet/Labyrinth/repo health; propose-only next action        | `hermes/profiles/morning-logs/CLAUDE.md`       |
 
-Profiles in parentheses are scheduled for build per the plan; `atlas-ceo`, `codex`, `marin`, `quill`, and `stet` exist on disk as of 2026-05-20 (Phase 3 of $1M plan landed).
+Profiles in parentheses are scheduled for build per the plan; `koho-ops` now exists as a Rung 1 read-only scaffold as of 2026-05-25. `yeh-ops` remains a Phase 5 rebuild target, and `codex` remains a Phase 5.5 rebuild target.
 
 ### Karpathy ladder per profile
 

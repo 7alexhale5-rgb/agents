@@ -1,6 +1,6 @@
 # Migration runbook — $1M ARR agent fleet (post-pivot)
 
-> **Status pointer:** $1M-pivot Phase 3 (Quill + Stet scaffolded) — landed 2026-05-20. PF Runtime archived; Hermes Agent v0.12.0 is the canonical runtime.
+> **Status pointer:** $1M-pivot Phase 5 has started: `koho-ops` is scaffolded as a Rung 1 read-only profile. PF Runtime archived; Hermes Agent v0.12.0 is the canonical runtime.
 
 ## Context
 
@@ -17,7 +17,7 @@ The earlier multi-phase Hermes-consolidation runbook is preserved at [`_archive/
 | 2     | Build Marin profile from Atlas template                                                        | ✅ Landed (commit `776d981` + iterations)          |
 | 3     | Build Quill + Stet profiles from Atlas template                                              | 🟡 Scaffolded 2026-05-20; awaiting first event row |
 | 4     | Extend Atlas with marketing-vault read path                                                  | ⬜ Not started                                     |
-| 5     | Build koho-ops + yeh-ops retainer-delivery profiles                                          | ⬜ Not started                                     |
+| 5     | Build koho-ops + yeh-ops retainer-delivery profiles                                          | 🟡 `koho-ops` scaffolded Rung 1; `yeh-ops` not started |
 | 5.5   | Rebuild codex profile from Atlas template                                                    | ⬜ Not started                                     |
 | 6     | Wake one dormant Hermes capability (trigger-gated per the sub-project → profile trigger ADR) | ⬜ Not started                                     |
 | 7     | Quarterly compound review                                                                    | Next: 2026-08-18                                   |
@@ -43,7 +43,7 @@ Hermes Agent v0.12.0 (2026.4.30) is the canonical runtime. Do not run `hermes up
 | `marin`       | Live (scaffolded 2026-05-18; emitter pattern wired via patch #5)                | 2     |
 | `quill`     | Live (scaffolded 2026-05-20, lint PASS, awaiting first draft + paired event)    | 3     |
 | `stet`      | Live (scaffolded 2026-05-20, lint PASS, awaiting first critique + paired event) | 3     |
-| `koho-ops`  | Not built                                                                       | 5     |
+| `koho-ops`  | Scaffolded Rung 1 read-only profile; ConsultOps Pulse first, Excerpa Pulse later | 5     |
 | `yeh-ops`   | Not built (rebuild clean; old version archived)                                 | 5     |
 | `codex`     | Live (rebuild from Atlas template pending)                                      | 5.5   |
 
@@ -103,9 +103,9 @@ WHERE type IN ('quill.draft.proposed', 'stet.critique.proposed')
 
 Wire Atlas to read `~/Projects/marketing/` directly (currently advisor-only against the repo). **Acceptance**: Atlas's weekly brief references named items from the marketing vault by relative path.
 
-## Phase 5 — build koho-ops + yeh-ops (not started)
+## Phase 5 — build koho-ops + yeh-ops (started)
 
-- **koho-ops**: Koho retainer delivery — Marc routing, ConsultOps demos, Excerpa work.
+- **koho-ops**: Scaffolded in `hermes/profiles/koho-ops/` as Rung 1 read-only retainer pulse profile. ConsultOps Pulse is the first operating pattern; Excerpa Pulse is reserved as the second pattern after ConsultOps proves useful. No runtime sync, external send, production probe, or propose-write tool is enabled in this slice.
 - **yeh-ops**: Yehovah retainer delivery — trial-to-GA monitoring, CTO duties.
 
 Both consume the [`email-triage`](../hermes/shared-skills/email-triage/SKILL.md) shared skill salvaged in this same pivot cleanup.

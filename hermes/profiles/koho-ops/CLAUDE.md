@@ -11,7 +11,7 @@ Koho-ops is Alex's read-only Koho retainer delivery pulse profile. It keeps Cons
 
 | Task | Read | Skills |
 | --- | --- | --- |
-| ConsultOps Pulse | `SOUL.md`, `DOCTRINE.md`, ConsultOps wiki, Koho wiki, latest ConsultOps operator receipts, ConsultOps repo status/log, process-automation repo status, `MEMORY.md` | consultops-pulse (future) |
+| ConsultOps Pulse | `SOUL.md`, `DOCTRINE.md`, ConsultOps wiki, Koho wiki, latest ConsultOps operator receipts, ConsultOps repo status/log, process-automation repo status, `MEMORY.md` | consultops-pulse |
 | Excerpa Pulse | `SOUL.md`, `DOCTRINE.md`, Excerpa wiki, Koho wiki, review-readiness receipts, Excerpa repo status/log, `MEMORY.md` | excerpa-pulse (future) |
 | Source-grounded Koho query | `SOUL.md`, `DOCTRINE.md`, source files from `koho_context.read` scoped to Koho and approved memory-vault receipts, `MEMORY.md` | none |
 | Cross-session handoff | current profile docs, latest plan, latest validation output, relevant handoff docs | generate-handoff |

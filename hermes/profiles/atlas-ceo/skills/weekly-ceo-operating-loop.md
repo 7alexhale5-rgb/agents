@@ -25,6 +25,14 @@ self-audit.
 Default turn budget (20) is sufficient. Override with `/goal --max-turns N`
 only when explicitly extending under a stop-sign condition.
 
+## Pre-pitch step — absorb operator rejections
+
+Before fetching the source packet, run the shared `review-rejections` skill (at `hermes/shared-skills/review-rejections/SKILL.md`). It prints a Markdown block titled "Rejected pitches still worth absorbing" listing every cockpit-operator rejection of an Atlas-authored pitch from the last 30 days, with verbatim reasons.
+
+Treat the block as prior-art constraint for this session: if the brief you're about to draft would repeat a recently rejected idea, either name the rejection and explain how this version addresses it, or pick a different priority. If the block says "None in the last 30 days," continue normally.
+
+Executable form: `HERMES_PROFILE_NAME=atlas-ceo bash hermes/shared-skills/review-rejections/rehearsal.sh --read-only`.
+
 ## Loop
 
 1. Get a fresh source packet (`fleet.snapshot` or `business.scorecard.snapshot`).

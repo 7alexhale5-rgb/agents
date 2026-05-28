@@ -1,0 +1,53 @@
+profile: koho-ops
+
+agent:
+  max_iterations: 32
+  iteration_budget_tokens: 200000
+
+model:
+  default: openrouter:nvidia/nemotron-3-nano-30b-a3b:free
+  provider: openrouter
+  routing:
+    smoke_test: openrouter:nvidia/nemotron-3-nano-30b-a3b:free
+    escalate: anthropic:claude-sonnet-4-6
+
+tools:
+  builtin:
+    - koho_context.read
+  contracts:
+    koho_context.read:
+      authority: read_only
+      scope: ~/Projects/koho/
+
+memory:
+  built_in:
+    enabled: true
+    fts5_enabled: true
+  honcho:
+    enabled: false
+
+mcp_servers: {}
+skills:
+  install: []
+  global:
+    - cost-watch
+    - daily-digest
+  shared:
+    - generate-handoff
+
+channels:
+  slack:
+    enabled: false
+
+approval:
+  mode: read_only
+  outbound_channels: []
+  pii_redaction: true
+
+guardrails:
+  spend_cap_per_day_usd: 5
+  alert_threshold_pct: 80
+
+logging:
+  trajectory_jsonl: true
+  langfuse_project: hermes-koho-ops

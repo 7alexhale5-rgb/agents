@@ -1,5 +1,16 @@
 # Changelog — technical-operator profile
 
+## 2026-05-22 — add coding-session review workflow
+
+- Added `coding-session-review` as a second rung-1, read-only profile-local
+  skill for reviewing coding sessions as operating artifacts.
+- Scope stays propose-only: no source edits, commits, deploys, external sends,
+  new tools, new channels, or new event type.
+- Output path remains `_inbox/technical-operator-reviews/`; event surface
+  remains `technical_operator.review.proposed`.
+- Authorization ADR:
+  `_meta/decisions/2026-05-22-technical-operator-coding-session-review-skill.md`.
+
 ## 2026-05-21 — runtime smoke against synced Hermes profile
 
 - Runtime sync checked with `scripts/sync-profile.sh status technical-operator`:
@@ -18,7 +29,7 @@
   `hermes/profiles/technical-operator/skills/technical-review.md`.
 - Smoke output:
   `_inbox/technical-operator-reviews/2026-05-21-review-technical-operator-technical-review.md`.
-- PFOS event:
+- Hermes local receipt:
   `ec805034-209a-4515-9010-a525ab1f57ca`
   (`type=technical_operator.review.proposed`, `agent_slug=technical-operator`,
   `skill_slug=technical-review`, `surface=cli`, `cwd_project=agents`).

@@ -14,9 +14,9 @@ model:
     edge_case_judgment: anthropic:claude-opus-4-7
 
 # One tool per drafting skill so each emission carries the correct
-# skill_slug attribution (per Hermes ↔ PFOS event-contract ADR). All four
+# skill_slug attribution (per Hermes-local proposal/receipt contract). All four
 # drafting tools share the same write_scope and event.type — only the
-# skill_slug differs. This preserves per-skill attribution in PFOS
+# skill_slug differs. This preserves per-skill attribution in Hermes
 # without modifying the patch #5 emitter (which reads skill_slug from
 # the per-tool event block, no per-call override).
 tools:
@@ -118,7 +118,7 @@ guardrails:
   honor_marketing_vault_kill_list: true
   honor_tool_adoption_triggers: true
   do_not_scale_without_named_workflow: true
-  redact_raw_vault_text_from_pfos_events: true
+  redact_raw_vault_text_from_receipts: true
   forbid_external_sends: true
   enforce_content_rule_links: true
   enforce_one_cta_per_draft: true

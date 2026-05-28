@@ -1,7 +1,7 @@
 # CLAUDE.md — `quill` profile
 
 > **Profile:** quill · **Tier:** manual content drafter pilot · **Channels:** none (writes to `_inbox/quill-drafts/` only)
-> **Phase:** Phase 3 of $1M-pivot — build foundation, ship one draft + paired PFOS event against the AI Ops Audit campaign
+> **Phase:** Phase 3 of $1M-pivot — build foundation, ship one draft + Hermes local receipt against the AI Ops Audit campaign
 
 You're inside the quill profile. Persona in `SOUL.md`, doctrine in `DOCTRINE.md`, user in `USER.md`, memory in `MEMORY.md`.
 
@@ -39,7 +39,7 @@ Cheap model use is allowed for smoke tests only. Real drafts must use the produc
 
 Quill must call `marketing_vault.read` before any source-grounded claim. No claim about brand, offer, ICP, content pillar, campaign, buyer language, or proof point without a cited vault file.
 
-Each `draft_*.propose` tool emits one safe PFOS evidence event per [`_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`](../../../_meta/decisions/2026-05-18-hermes-pfos-event-contract.md): `type=quill.draft.proposed`, `status=pending`, `surface=cli`, `cwd_project=marketing`, `skill_slug=<active-skill>`, `silo_slug=skills`, `data.runtime=hermes`, `data.proposal_status=proposed`, `data.private_payload_redacted=true`. The event may include draft type, pillar, sweeps-passed status, content-rule-link completeness, confidence, source file names, and the vault-relative draft path. It must not include the full draft body or raw private source text.
+Each `draft_*.propose` tool writes one safe Hermes local receipt per the Hermes-local proposal/receipt contract: `type=quill.draft.proposed`, `status=pending`, `surface=cli`, `cwd_project=marketing`, `skill_slug=<active-skill>`, `silo_slug=skills`, `data.runtime=hermes`, `data.proposal_status=proposed`, `data.private_payload_redacted=true`. The event may include draft type, pillar, sweeps-passed status, content-rule-link completeness, confidence, source file names, and the vault-relative draft path. It must not include the full draft body or raw private source text.
 
 ## Hard rules
 
@@ -59,13 +59,13 @@ Each `draft_*.propose` tool emits one safe PFOS evidence event per [`_meta/decis
 
 Quill is ready for the next phase only after this single measurable holds:
 
-**One real LinkedIn Field Note draft (or post-acceptance DM, or campaign asset) lands in `~/Projects/marketing/_inbox/quill-drafts/` AND PFOS `agent_events` has one matching row with `type=quill.draft.proposed`, `status=pending`, `cwd_project='marketing'`, `skill_slug` set to the producing skill, `surface='cli'`.**
+**One real LinkedIn Field Note draft (or post-acceptance DM, or campaign asset) lands in `~/Projects/marketing/_inbox/quill-drafts/` AND Hermes local receipts have one matching receipt with `type=quill.draft.proposed`, `status=pending`, `cwd_project='marketing'`, `skill_slug` set to the producing skill, `surface='cli'`.**
 
-Falsifiable in one SQL query (~200ms):
+Falsifiable in one local receipt check (~200ms):
 
 ```sql
 SELECT id, type, cwd_project, skill_slug, surface, data->>'readout_path' AS path
-FROM public.agent_events
+Check the local Hermes receipt store or the receipt metadata in the inbox artifact.
 WHERE type = 'quill.draft.proposed'
   AND cwd_project = 'marketing'
   AND skill_slug IS NOT NULL

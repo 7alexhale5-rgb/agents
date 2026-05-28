@@ -2,7 +2,7 @@
 name: self-audit
 description: Run Quill's own promptfoo eval suite, write evidence to eval/, emit quill.eval.completed event. Catches profile drift without manual eval runs. Scheduled Sundays 6am.
 input: none
-output: markdown to hermes/profiles/quill/eval/{YYYY-MM-DD}-self-audit.md + paired quill.draft.proposed PFOS event (audit_type=self)
+output: markdown to hermes/profiles/quill/eval/{YYYY-MM-DD}-self-audit.md + Hermes local receipt (audit_type=self)
 ---
 
 # Skill: self-audit
@@ -26,19 +26,15 @@ auto-emission for the campaign-authorized next move.
 3. Sample the last 7 days of drafts from
    `~/Projects/marketing/_inbox/quill-drafts/` — list filename, age,
    pillar, sweeps_passed status, content_rule_links completeness, whether
-   each has a matching `agent_events` row.
+   each has a matching Hermes local receipt.
 4. Write evidence to
    `hermes/profiles/quill/eval/{YYYY-MM-DD}-self-audit.md` with frontmatter
    matching the Marin self-audit shape, plus `recent_drafts:` array of the
    draft summary list.
-5. Emit the event:
-   ```bash
-   python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
-     --profile quill \
-     --tool draft_field_note.propose \
-     --readout-path "hermes/profiles/quill/eval/<YYYY-MM-DD>-self-audit.md" \
-     --extra-json '{"audit_type":"self","pass_rate":<N>,"tests_run":<N>,"tests_failed":<N>}'
-   ```
+5. Write the receipt:
+   ```text
+Write or verify the Hermes local receipt for the inbox artifact. Do not call the legacy PFOS emitter unless Alex explicitly reopens PFOS for this workflow.
+```
    (Reuses `draft_field_note.propose` for now; same rationale as Marin's
    self-audit. `audit_type=self` in data distinguishes from production
    drafts.)

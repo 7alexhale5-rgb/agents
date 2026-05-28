@@ -1,0 +1,53 @@
+{
+  "schema": "a2a/v1+ext",
+  "agent_id": "morning-logs",
+  "version": "0.1.0",
+  "description": "Read-only Hermes operations briefer. Writes one daily report and emits one safe evidence event; never executes actions.",
+  "tier": "rung_1_read_only_operations_brief",
+  "side_effects": [
+    "read",
+    "proposal_write_only"
+  ],
+  "eval_suite_uri": null,
+  "cost_envelope": {
+    "budget_usd_per_day": 0,
+    "alert_threshold_pct": 80,
+    "note": "Profile has no spend authority. Model API spend rolls up to the global fleet ledger."
+  },
+  "channels": [
+    "inbox_report_only"
+  ],
+  "skills": [
+    "daily-brief",
+    "generate-handoff"
+  ],
+  "tools": [
+    "hermes_dashboard.read",
+    "repo_status.read",
+    "morning_logs.report.propose"
+  ],
+  "authority": {
+    "mode": "propose_only",
+    "can_read": [
+      "hermes_dashboard",
+      "fleet",
+      "labyrinth",
+      "local_git_status"
+    ],
+    "can_write": [
+      "agents_inbox_morning_logs_only",
+      "hermes_local_receipts_proposal_only"
+    ],
+    "cannot": [
+      "kill_processes",
+      "restart_gateway",
+      "edit_tokens",
+      "mutate_profiles",
+      "execute_approvals",
+      "deploy",
+      "purchase",
+      "send_external_messages"
+    ]
+  },
+  "stamped_at": "2026-05-22T00:00:00Z"
+}

@@ -2,7 +2,7 @@
 name: draft-outreach-message
 description: Draft a post-acceptance workflow-question DM for the AI Ops Audit campaign. Never cold outreach. Only the campaign-authorized next-move format.
 input: target prospect (handle + 1-3 lines of public signal) + acceptance context
-output: markdown to ~/Projects/marketing/_inbox/quill-drafts/{YYYY-MM-DD}-dm-{prospect-slug}.md + paired quill.draft.proposed PFOS event
+output: markdown to ~/Projects/marketing/_inbox/quill-drafts/{YYYY-MM-DD}-dm-{prospect-slug}.md + Hermes local receipt
 ---
 
 # Skill: draft-outreach-message
@@ -63,14 +63,10 @@ Draft ONE post-acceptance workflow-question DM that Alex can review and manually
 
 13. **Write** to `~/Projects/marketing/_inbox/quill-drafts/{YYYY-MM-DD}-dm-{prospect-slug}.md` with frontmatter per `DOCTRINE.md § Output contract`, `type: quill-draft`, `pillar: outreach`, `campaign: prettyfly-ai-ops-audit-v0`, `content_rule_links` filled. Include the public signal source (URL or vault path) in the frontmatter.
 
-14. **Emit PFOS event**:
+14. **Write Hermes local receipt**:
 
-```bash
-python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
-  --profile quill \
-  --tool draft_outreach.propose \
-  --readout-path "_inbox/quill-drafts/<YYYY-MM-DD>-dm-<prospect-slug>.md" \
-  --extra-json '{"pillar":"outreach","campaign":"prettyfly-ai-ops-audit-v0","prospect":"<slug>","content_rule_complete":true}'
+```text
+Write or verify the Hermes local receipt for the inbox artifact. Do not call the legacy PFOS emitter unless Alex explicitly reopens PFOS for this workflow.
 ```
 
 ## Output shape (body)

@@ -17,9 +17,12 @@ Acknowledge uncertainty explicitly when a claim is unverifiable from the input.
   config files (`config.yaml`, `manifest.json`, `a2a-card.json`), PR diffs
   scoped to revenue products, and proposed engineering changes in `.planning/`
   or `~/.claude/plans/`.
+- Read-only coding-session receipts that classify the session, inspect repo
+  state/diff/validation evidence, name memory capture, and choose the next 1%
+  developer move.
 - One critique per invocation, written to
   `~/Projects/agents/_inbox/technical-operator-reviews/`.
-- One PFOS event emit per critique
+- One Hermes local receipt emit per critique
   (`technical_operator.review.proposed`).
 - Findings tagged with severity (`BLOCK` / `SHIP-RISK-MEDIUM` /
   `SHIP-RISK-LOW`), reversibility (TYPE-1 / TYPE-2), and a citable source
@@ -44,7 +47,7 @@ Every critique has:
 
 1. **Frontmatter**: `verdict:` (one of `SHIP-RISK-LOW` / `SHIP-RISK-MEDIUM` /
    `BLOCK`), `target:` (path being reviewed), `door_classification:` (one-way
-   / two-way), `pfos_event_id:` (filled after emit).
+   / two-way), `receipt_id:` (filled after emit).
 2. **Summary** (≤ 3 sentences): what the change does, what could go wrong, what
    the verdict turns on.
 3. **Findings** (numbered `F1`, `F2`, ...): each with severity, file:line,
@@ -63,5 +66,5 @@ output — apply it. Doctrine is scaffolding, not costume.
 
 Markdown file in `_inbox/technical-operator-reviews/` is the default and only
 form. No Slack, no email, no in-conversation summary unless the invoking
-operator asks for one. The PFOS row is the wire-format record; the inbox file
+operator asks for one. The Hermes local receipt is the wire-format record; the inbox file
 is the operator-readable record.

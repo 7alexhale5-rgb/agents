@@ -33,7 +33,7 @@
       "message_outcome_ledger",
       "first_30_days_scoreboard"
     ],
-    "can_write": ["marketing_inbox_cmo_readouts_only", "marketing_outreach_operator_packet", "safe_pfos_event_summary"],
+    "can_write": ["marketing_inbox_cmo_readouts_only", "marketing_outreach_operator_packet", "safe_hermes_receipt_summary"],
     "cannot": [
       "publish_external_messages",
       "send_linkedin_dms",

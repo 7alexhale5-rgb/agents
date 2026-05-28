@@ -2,7 +2,7 @@
 name: self-audit
 description: Run Stet's own promptfoo eval suite, write evidence to eval/, emit stet.critique.proposed event (audit_type=self). Catches critic drift without manual eval runs. Scheduled Sundays 6am.
 input: none
-output: markdown to hermes/profiles/stet/eval/{YYYY-MM-DD}-self-audit.md + paired stet.critique.proposed PFOS event (audit_type=self)
+output: markdown to hermes/profiles/stet/eval/{YYYY-MM-DD}-self-audit.md + Hermes local receipt (audit_type=self)
 ---
 
 # Skill: self-audit
@@ -26,20 +26,16 @@ gating each one.
 3. Sample the last 7 days of critiques from
    `~/Projects/marketing/_inbox/stet-critiques/` — list filename, verdict
    (SHIP/REVISE/KILL), kill_triggers_hit count, target_artifact_path,
-   matching `agent_events` row presence.
+   matching Hermes local receipt presence.
 4. Compute verdict distribution: `{ship: N, revise: N, kill: N}`.
 5. Write evidence to
    `hermes/profiles/stet/eval/{YYYY-MM-DD}-self-audit.md` with frontmatter
    matching Marin/Quill shape, plus `recent_critiques:` array and
    `verdict_distribution:` object.
-6. Emit the event:
-   ```bash
-   python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
-     --profile stet \
-     --tool critique_draft.propose \
-     --readout-path "hermes/profiles/stet/eval/<YYYY-MM-DD>-self-audit.md" \
-     --extra-json '{"audit_type":"self","pass_rate":<N>,"tests_run":<N>,"tests_failed":<N>,"verdict_distribution":{"ship":<N>,"revise":<N>,"kill":<N>}}'
-   ```
+6. Write the receipt:
+   ```text
+Write or verify the Hermes local receipt for the inbox artifact. Do not call the legacy PFOS emitter unless Alex explicitly reopens PFOS for this workflow.
+```
 
 ## Anti-patterns
 

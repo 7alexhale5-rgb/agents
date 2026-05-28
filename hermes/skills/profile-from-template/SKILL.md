@@ -29,14 +29,14 @@ Ask the user these in order. Build the answers into a JSON config (shape below).
 
 1. **Profile name** (kebab-case, must match `^[a-z][a-z0-9_-]{1,30}$`). No default.
 2. **One-line description** for the manifest tagline. No default.
-3. **Domain / cwd_project**. The marketing vault key, repo slug, or PFOS silo this profile reports under. Examples: `marketing`, `agents`, `koho`, `yeh`. No default.
+3. **Domain / cwd_project**. The marketing vault key, repo slug, client slug, or Hermes domain this profile reports under. Examples: `marketing`, `agents`, `koho`, `yeh`. No default.
 4. **Channels.** One of `none` (writes to inbox only), `slack_dm`, `telegram`. Default `none`.
 5. **Daily cap.** Integer per `fleet/limits.json`. Default `1` (rung-1 is read-only so this is the cap for whenever they add a propose tool later).
 6. **Default model.** Default `openrouter:nvidia/nemotron-3-nano-30b-a3b:free`.
 7. **Escalation model.** Default `anthropic:claude-sonnet-4-6`.
 8. **Source read tool name** in `<domain>.<verb>` form. Default `<domain>_vault.read`. This is the only tool the scaffolded profile ships with — the agent later adds propose tools manually.
 
-If the user wants a propose-write tool baked in from day one, decline politely and explain: scaffolds are rung 1 by design (read-only). Adding propose tools requires an event contract, a rate-cap allocation, and PFOS event-type registration — those are intentional steps, not auto-generated. Point them at Marin's `weekly_decision.propose` as the reference pattern.
+If the user wants a propose-write tool baked in from day one, decline politely and explain: scaffolds are rung 1 by design (read-only). Adding propose tools requires a Hermes-local proposal contract, a rate-cap allocation, and an inbox/artifact receipt — those are intentional steps, not auto-generated. Point them at Marin's `weekly_decision.propose` as the reference pattern.
 
 ## How to scaffold
 
@@ -78,8 +78,8 @@ Templates use `__KEY__` for substitution (not `{{KEY}}` — curly braces clash w
 Read the new profile's CLAUDE.md and tell the user the three things they still need to do before the profile is useful:
 
 1. Fill in `SOUL.md` (persona), `DOCTRINE.md` (operating principles), `USER.md` (what the agent knows about Alex), `MEMORY.md` (environment facts).
-2. Add at least one proposed-write tool with a full `event:` contract block (use Marin's `weekly_decision.propose` as the template — copy the shape, change the type/skill*slug/data*\* keys).
-3. Cross-link the event type into CLAUDE.md (the lint cross-check requires it).
+2. Add at least one proposed-write tool with a full Hermes-local proposal/receipt contract (use Marin's `weekly_decision.propose` as the template — copy the shape, change the type/skill*slug/data*\* keys).
+3. Cross-link the proposal/receipt type into CLAUDE.md (the lint cross-check requires it).
 
 Stop there. Don't auto-fill the persona files — those are domain-specific and need the user's voice and context, not a generic template.
 

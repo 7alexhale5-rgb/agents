@@ -2,7 +2,7 @@
 name: pressure-test-campaign
 description: Pre-launch pressure test of a whole campaign. Inversion + door classification + adversarial sweeps across the entire campaign dir. Strongest pre-launch gate before any campaign goes live.
 input: campaign slug (e.g. "prettyfly-ai-ops-audit-v0") + launch scope ("public-content" | "outreach" | "paid" | "full-launch")
-output: markdown to ~/Projects/marketing/_inbox/stet-critiques/{YYYY-MM-DD}-pressure-test-{slug}.md + paired stet.critique.proposed PFOS event
+output: markdown to ~/Projects/marketing/_inbox/stet-critiques/{YYYY-MM-DD}-pressure-test-{slug}.md + Hermes local receipt
 ---
 
 # Skill: pressure-test-campaign
@@ -64,18 +64,13 @@ Pre-launch pressure test of a whole campaign — distinct from `critique-campaig
 
 9. **Write pressure-test** to `~/Projects/marketing/_inbox/stet-critiques/{YYYY-MM-DD}-pressure-test-{slug}.md`. `target_artifact_type: pre-launch-pressure-test`. Body MUST include: `## Verdict`, `## Findings` (numbered, severity-graded), `## Inversion`, `## Door classification` (with approval gate if one-way), `## Kill-switch condition` (if one-way and verdict SHIP), `## Sweeps run` (per artifact).
 
-10. **Emit PFOS event**:
+10. **Write Hermes local receipt**:
 
-```bash
-source ~/.config/prettyfly-marketing/hermes-tokens.env
-python3 /Users/alexhale/Projects/agents/scripts/emit-agent-event.py \
-  --profile stet \
-  --tool pressure_test.propose \
-  --readout-path "_inbox/stet-critiques/<YYYY-MM-DD>-pressure-test-<slug>.md" \
-  --extra-json '{"verdict":"<SHIP|REVISE|KILL>","critical":<N>,"warn":<N>,"info":<N>,"kill_triggers_hit":[<list>],"launch_scope":"<scope>","door":"<two-way|one-way>","kill_switch":"<condition or null>"}'
+```text
+Write or verify the Hermes local receipt for the inbox artifact. Do not call the legacy PFOS emitter unless Alex explicitly reopens PFOS for this workflow.
 ```
 
-Capture the row UUID printed to stdout and include it in your response. If the emit script errors, surface the error explicitly — do NOT claim an emit happened without the script's stdout confirming it.
+Capture the receipt ID printed to stdout and include it in your response. If the emit script errors, surface the error explicitly — do NOT claim an emit happened without the script's stdout confirming it.
 
 ## Anti-patterns
 

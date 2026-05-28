@@ -1,0 +1,27 @@
+{
+  "sku": "koho-ops",
+  "name": "koho-ops",
+  "version": "0.3.1",
+  "category": "internal",
+  "department": "koho",
+  "tagline": "Koho-related project awareness profile. Read-only, source-grounded, no workflow actions.",
+  "tier": "rung_1_read_only_scaffold",
+  "depends_on": [],
+  "channels": [],
+  "model_routing": {
+    "default": "openrouter:nvidia/nemotron-3-nano-30b-a3b:free",
+    "escalate": "anthropic:claude-sonnet-4-6"
+  },
+  "tools": ["koho_context.read"],
+  "skills": ["consultops-pulse", "source-freshness-checklist"],
+  "memory_axes": ["working", "episodic", "procedural"],
+  "guardrails": [
+    "alex_first_internal_only",
+    "source_grounded_metrics_only",
+    "no_external_sends",
+    "pii_redaction"
+  ],
+  "sla": { "uptime": 99.0, "p95_latency_seconds": 30 },
+  "publish": false,
+  "internal_only": true
+}

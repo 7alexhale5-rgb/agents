@@ -2,7 +2,7 @@
   "schema": "a2a/v1+ext",
   "agent_id": "atlas-ceo",
   "version": "0.1.0",
-  "description": "Alex-first CEO operating advisor. Atlas turns verified PFOS and PF Runtime source packets into CEO briefs, decision memos, and approval-needed action proposals.",
+  "description": "Alex-first CEO operating advisor. Atlas turns verified Hermes and local runtime source packets into CEO briefs, decision memos, and approval-needed action proposals.",
   "tier": "manual_weekly_ceo_brief_pilot",
   "side_effects": ["read", "proposal_write_only"],
   "eval_suite_uri": "eval/promptfoo.yaml",
@@ -10,7 +10,7 @@
     "budget_usd_per_day": 5,
     "alert_threshold_pct": 80
   },
-  "channels": ["slack_dm", "pfos_evidence"],
+  "channels": ["slack_dm", "hermes_receipts"],
   "skills": [
     "source-packet-triage",
     "weekly-ceo-brief",
@@ -28,8 +28,8 @@
   ],
   "authority": {
     "mode": "advisor_plus_proposer",
-    "can_read": ["pfos_source_packet", "pf_runtime_local_fallback"],
-    "can_write": ["pfos_agent_actions_proposed_only", "pfos_follow_up_evidence_only"],
+    "can_read": ["hermes_source_packet", "local_fallback_packet"],
+    "can_write": ["hermes_agent_actions_proposed_only", "hermes_follow_up_evidence_only"],
     "cannot": [
       "dispatch_agents",
       "execute_actions",

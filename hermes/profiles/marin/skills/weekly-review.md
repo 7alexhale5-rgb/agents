@@ -40,25 +40,19 @@ Turn the marketing vault into ONE weekly decision and ONE smallest next action, 
 
 5. **Stop condition** — name the specific condition that would cause the next readout to flip the decision.
 
-6. **PFOS fields to preserve later** — list which scorecard values were most informative this week (future PFOS readout will inherit these).
+6. **Hermes receipt fields to preserve later** — list which scorecard values were most informative this week (future Hermes readout will inherit these).
 
 7. **Kill-list check** — confirm no part of the readout proposes a killed item per `decisions/2026-05-16-marketing-engine-kill-list.md`. If a killed item is being considered, drop it and note the kill-rule violation.
 
 8. **Write** — output to `~/Projects/marketing/_inbox/marin-readouts/{YYYY-MM-DD}-week-of-{YYYY-MM-DD}.md` using the Weekly Review Template structure.
 
-9. **Emit safe event summary** — after the readout is written, run the canonical emitter:
+9. **Write safe receipt summary** — after the readout is written, write or verify the local Hermes receipt:
 
-   ```bash
-   source ~/.config/prettyfly-marketing/hermes-tokens.env
-   python3 ~/Projects/agents/scripts/emit-agent-event.py \
-     --profile marin \
-     --tool weekly_decision.propose \
-     --readout-path "_inbox/marin-readouts/<YYYY-MM-DD>-week-of-<YYYY-MM-DD>.md" \
-     --decision <continue|narrow|rewrite|change-channel|pause> \
-     --confidence <0.0-1.0>
-   ```
+   ```text
+Write or verify the Hermes local receipt for the inbox artifact. Do not call the legacy PFOS emitter unless Alex explicitly reopens PFOS for this workflow.
+```
 
-   The emitter loads Marin's `config.yaml` event block, builds an ADR-compliant payload (per `_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`), and POSTs to PFOS `/api/silos/skills/agent-event`. Successful runs print the inserted row UUID. Do not hand-write the event payload — the contract is enforced by `hermes/lib/agent_events.py`.
+   The Hermes local receipt records profile, skill slug, output path, status, and redacted counts only. Do not call the legacy PFOS emitter unless Alex explicitly reopens PFOS for this workflow.
 
 ## Output shape
 
@@ -78,7 +72,7 @@ Use the One-Page Weekly Readout table from `weekly-review-template.md`. Every ce
 
 Every factual claim in the readout must cite the vault file it came from (e.g. `Routes opened: 8 — source: message-outcome-ledger-v0.md`). No source = no claim.
 
-## Safe PFOS event shape
+## Safe Hermes receipt shape
 
 ```json
 {

@@ -47,6 +47,25 @@ Per `~/.claude/references/compound-engineering-policy.md`:
 - **SINE**: build only what moves the stated revenue/operating goal. Profile
   scope creep is a SINE violation.
 
+### 1% Engineering Standard
+
+Apply this standard to every `technical-review` and `coding-session-review`.
+Keep it operational and concise; cite only the principle that changes the
+verdict or next move.
+
+- **Karpathy**: prefer the smallest end-to-end slice with a falsifiable gate.
+  Throw away unclear v1s instead of polishing weak architecture. Promotion
+  requires real eval evidence, not confidence.
+- **VanClief**: one profile owns one job. Folder, docs, examples, and recent
+  outputs are part of the prompt. Authority boundaries must stay visible.
+- **Will**: start from repeated workflow, use existing tools first, and avoid
+  agent bloat. Orchestration earns its place only after real use.
+- **Compound engineering**: every completed slice should make the next slice
+  cheaper, safer, or clearer. Non-compounding work is a finding when it leaves
+  context, validation, or ownership worse than before.
+- **SINE / SOLID / DRY / KISS / YAGNI**: score all five silently; report only
+  failures that are load-bearing for risk, scope, or the next 1% move.
+
 ### Hidden authority creep
 
 Watch for surface-level innocent changes that grant new authority:
@@ -60,7 +79,7 @@ Any of these without a paired ADR is a `BLOCK` finding.
 
 ### Event contract conformance
 
-Per `_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`:
+Per `Hermes-local proposal/receipt contract`:
 
 - Every write-tool contract must declare an `event:` block with `type`,
   `status`, `surface`, `cwd_project`, `skill_slug`, `silo_slug`.
@@ -90,7 +109,7 @@ DB writes, or production traffic must have an explicit margin of safety:
 
 - A kill-switch path (`touch PAUSED` or equivalent).
 - A rollback procedure (git revert + redeploy).
-- A monitoring signal (PFOS row, log line, alert) that fires when the change
+- A monitoring signal (Hermes local receipt, log line, alert) that fires when the change
   misbehaves.
 
 Missing any of these on a TYPE-1 change is `BLOCK`.
@@ -121,7 +140,7 @@ critique says so plainly. Do not manufacture findings.
 
 - `~/.claude/references/compound-engineering-policy.md` — DRY/KISS/YAGNI/SOLID/SINE
 - `_meta/decisions/2026-05-18-agent-shape-11-file-contract.md` — agent shape
-- `_meta/decisions/2026-05-18-hermes-pfos-event-contract.md` — event contract
+- `Hermes-local proposal/receipt contract` — event contract
 - `_meta/decisions/2026-05-20-reserve-codex-for-tool-use-technical-operator-profile.md` — boundary
 - Bezos one-way/two-way door — 2016 Amazon shareholder letter
 - Buffett/Munger inversion — Berkshire annual meetings

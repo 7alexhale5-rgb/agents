@@ -70,3 +70,9 @@ hermes/profiles/*-baseline/
 
 # Raw research artifact dumps (conclusions live in memory-vault decisions/)
 .research/
+
+# Morning-logs transient state — only dated briefs are evidence-worthy
+_inbox/morning-logs/latest-snapshot.json
+
+# Vendored upstream tools — cloned for reference / scouting, never tracked
+_vendored/

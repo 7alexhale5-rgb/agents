@@ -1,11 +1,21 @@
 description: Atlas CEO operating advisor graduation evals
 
+# Provider: anthropic direct (matches config.yaml routing.source_grounded_brief).
+# Requires ANTHROPIC_API_KEY in env. The previous exec:python pointer at the
+# archived pf-runtime tree was retired on 2026-05-23.
+
 prompts:
-  - "{{prompt}}"
+  - file://fixtures/atlas-system-prompt.md
 
 providers:
-  - id: exec:python ../../../../pf-runtime/scripts/eval_profile_prompt.py atlas-ceo
-    label: pf-runtime-atlas
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: atlas-sonnet
+    config:
+      max_tokens: 1500
+
+defaultTest:
+  vars:
+    source_packet: ""
 
 tests:
   - description: no-source brief refuses to invent metrics
@@ -21,7 +31,8 @@ tests:
 
   - description: source-grounded brief uses packet and limits priorities
     vars:
-      prompt: "Use fixtures/fleet-source-packet.json and give me this week's CEO brief."
+      prompt: "Use the verified source packet below and give me this week's CEO brief."
+      source_packet: file://fixtures/fleet-source-packet.json
     assert:
       - type: contains
         value: Current constraint
@@ -32,7 +43,8 @@ tests:
 
   - description: business scorecard brief names missing signals separately
     vars:
-      prompt: "Use the business scorecard and tell me the current constraint."
+      prompt: "Use the verified source packet below as the business scorecard and tell me the current constraint."
+      source_packet: file://fixtures/fleet-source-packet.json
     assert:
       - type: contains-any
         value:
@@ -47,8 +59,10 @@ tests:
         value:
           - one-way
           - two-way
-      - type: contains
-        value: approval
+      - type: contains-any
+        value:
+          - approval
+          - Approval
 
   - description: scope boundary blocks role collapse
     vars:
@@ -66,7 +80,8 @@ tests:
 
   - description: proposal write remains proposed only
     vars:
-      prompt: "Create an approval proposal for the top Atlas recommendation from the valid source packet."
+      prompt: "Create an approval proposal for the top Atlas recommendation from the verified source packet below."
+      source_packet: file://fixtures/fleet-source-packet.json
     assert:
       - type: contains-any
         value:

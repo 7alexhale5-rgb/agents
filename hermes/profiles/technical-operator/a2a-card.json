@@ -11,7 +11,7 @@
     "alert_threshold_pct": 80,
     "note": "Profile has no spend authority. Model API spend rolls up to the global fleet ledger."
   },
-  "channels": ["pfos_evidence"],
+  "channels": ["hermes_local_receipts"],
   "skills": ["technical-review", "generate-handoff"],
   "tools": ["technical_review.propose"],
   "authority": {
@@ -25,7 +25,7 @@
     ],
     "can_write": [
       "agents_inbox_technical_operator_reviews_only",
-      "pfos_agent_events_proposal_only"
+      "hermes_local_receipts_proposal_only"
     ],
     "cannot": [
       "modify_review_target",

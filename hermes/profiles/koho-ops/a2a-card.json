@@ -1,0 +1,29 @@
+{
+  "schema": "a2a/v1+ext",
+  "agent_id": "koho-ops",
+  "version": "0.3.1",
+  "description": "Koho-related project awareness profile. Read-only, source-grounded, no workflow actions.",
+  "tier": "rung_1_read_only_scaffold",
+  "side_effects": ["read"],
+  "eval_suite_uri": "eval/promptfoo.yaml",
+  "cost_envelope": {
+    "budget_usd_per_day": 5,
+    "alert_threshold_pct": 80
+  },
+  "channels": [],
+  "skills": ["consultops-pulse", "source-freshness-checklist"],
+  "tools": ["koho_context.read"],
+  "authority": {
+    "mode": "read_only",
+    "can_read": ["koho_source_vault"],
+    "can_write": [],
+    "cannot": [
+      "dispatch_agents",
+      "execute_actions",
+      "send_external_messages",
+      "spend_money",
+      "modify_profiles",
+      "publish_client_facing_output"
+    ]
+  }
+}

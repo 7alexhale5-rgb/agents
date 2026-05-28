@@ -2,7 +2,7 @@
 name: technical-review
 description: Procedural engineering review of one target artifact (skill file, build script, ADR, .planning/ plan, or PR diff). Returns one critique with verdict, findings, inversion, and approval gate.
 input: required `target:` path or PR ref. Optional `scope:` (full/diff/risk), optional `compare:` for diff context.
-output: markdown to ~/Projects/agents/_inbox/technical-operator-reviews/{YYYY-MM-DD}-review-{slug}.md plus paired PFOS event
+output: markdown to ~/Projects/agents/_inbox/technical-operator-reviews/{YYYY-MM-DD}-review-{slug}.md plus Hermes local receipt
 ---
 
 # Skill: technical-review
@@ -26,7 +26,7 @@ This skill is the only profile-local skill in `technical-operator` at rung 1. It
 4. **Doctrine canon**:
    - `~/.claude/references/compound-engineering-policy.md` (DRY/KISS/YAGNI/SOLID/SINE)
    - `_meta/decisions/2026-05-18-agent-shape-11-file-contract.md`
-   - `_meta/decisions/2026-05-18-hermes-pfos-event-contract.md`
+   - `Hermes-local proposal/receipt contract`
    - `_meta/decisions/2026-05-20-reserve-codex-for-tool-use-technical-operator-profile.md`
 
 If any required input is missing or unreadable, halt and return a structured `blocked` output naming the missing input. Do not invent context.
@@ -38,6 +38,10 @@ If any required input is missing or unreadable, halt and return a structured `bl
 3. **Apply the doctrine canon to the artifact**:
    - Surgical-change test: do all changes trace to the stated intent?
    - DRY/KISS/YAGNI/SOLID/SINE checks: any violations?
+   - Karpathy gate: is the slice small enough and falsifiable?
+   - VanClief boundary: does one profile/folder own one job with visible context?
+   - Will workflow fit: does this come from repeated work and avoid agent bloat?
+   - Compound value: does this make the next slice cheaper, safer, or clearer?
    - Hidden authority creep: new tool? new channel? new MCP write? new write_scope outside the profile?
    - Event contract conformance: every emit-tool has a complete `event:` block with matching `CLAUDE.md` reference?
    - Eval coverage: any new code path without a fixture?
@@ -49,7 +53,7 @@ If any required input is missing or unreadable, halt and return a structured `bl
    - No findings or only `SHIP-RISK-LOW` findings → verdict `SHIP-RISK-LOW`.
 6. **Name the approval gate**: what specific evidence (file change, test added, ADR written, kill-switch wired) would flip the verdict to `SHIP-RISK-LOW`?
 7. **Write the critique** to `~/Projects/agents/_inbox/technical-operator-reviews/{YYYY-MM-DD}-review-{slug}.md` using the output contract below.
-8. **Emit the PFOS event** via the canonical emitter (see § Emit safe event summary).
+8. **Write the Hermes local receipt** via the local receipt writer (see § Write safe receipt summary).
 
 ## Decision rules
 
@@ -82,7 +86,7 @@ findings_count:
   block: <N>
   medium: <N>
   low: <N>
-pfos_event_id: <UUID filled after emit, or "pending" if dry-run>
+receipt_id: <UUID filled after emit, or "pending" if dry-run>
 ---
 
 # Technical Review: <one-line summary of target>
@@ -100,6 +104,7 @@ Door: <TYPE-1 | TYPE-2>. <One sentence justifying the door classification.>
 ### F1 — <short title> [<BLOCK | SHIP-RISK-MEDIUM | SHIP-RISK-LOW>]
 
 - **Evidence:** `<file:line>` or `<evidence path>`
+- **Failure type:** <correctness risk | authority creep | context rot | missing validation | non-compounding work>
 - **Risk:** <what could go wrong, plain English>
 - **Fix shape:** <what kind of change would address this; not the patched code>
 
@@ -133,25 +138,15 @@ If verdict is already `SHIP-RISK-LOW`, this section reads: `_No flip needed; ver
 - Do not reference the artifact author. Critique the artifact.
 - State missing inputs (return `blocked` output) instead of inventing context.
 
-## Emit safe event summary
+## Write safe receipt summary
 
-After the critique file is written, run the canonical emitter so PFOS records the inbox entry:
+After the critique file is written, write or verify the local Hermes receipt so Hermes records the inbox entry locally:
 
-```bash
-source ~/.config/prettyfly-marketing/hermes-tokens.env
-test -f ~/Projects/agents/scripts/emit-agent-event.py || {
-  echo "blocked: emitter script missing at ~/Projects/agents/scripts/emit-agent-event.py" >&2
-  exit 1
-}
-python3 ~/Projects/agents/scripts/emit-agent-event.py \
-  --profile technical-operator \
-  --tool technical_review.propose \
-  --readout-path "_inbox/technical-operator-reviews/<YYYY-MM-DD>-review-<slug>.md" \
-  --decision "<BLOCK | SHIP-RISK-MEDIUM | SHIP-RISK-LOW>" \
-  --extra-json '{"target_path":"<target>","door_classification":"<TYPE-1|TYPE-2>","findings_count_block":<N>,"findings_count_medium":<N>,"findings_count_low":<N>}'
+```text
+Write or verify the Hermes local receipt for the inbox artifact. Do not call the legacy PFOS emitter unless Alex explicitly reopens PFOS for this workflow.
 ```
 
-The emitter derives `agent_slug=technical-operator` from `config.profile`. The event lands with `type=technical_operator.review.proposed`, `cwd_project=agents`, `skill_slug=technical-review`. Capture the row UUID printed to stdout and patch the critique file's frontmatter `pfos_event_id:` field before considering the invocation complete.
+The receipt metadata derives `agent_slug=technical-operator` from `config.profile`. The receipt records `type=technical_operator.review.proposed`, `cwd_project=agents`, `skill_slug=technical-review`. Capture the receipt ID printed to stdout and patch the critique file's frontmatter `receipt_id:` field before considering the invocation complete.
 
 ## Validation
 
@@ -159,5 +154,5 @@ The emitter derives `agent_slug=technical-operator` from `config.profile`. The e
 - The verdict is one of the three allowed values; no "it depends."
 - The inversion section names a specific probable cause; not "I don't know."
 - The approval gate is concrete (specific files, specific tests, specific ADRs); not "more review."
-- The PFOS row exists in `public.agent_events` (verify via SQL).
-- The frontmatter `pfos_event_id:` matches the UUID printed by the emitter.
+- The Hermes local receipt exists next to or inside the inbox artifact.
+- The frontmatter `receipt_id:` matches the UUID recorded in the receipt.

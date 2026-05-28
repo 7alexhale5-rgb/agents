@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Morning Logs v0.1 — read-only Hermes operational briefing.
 
-Collects dashboard/runtime truth, writes one local Markdown report, and emits
-one safe Hermes -> PFOS event. No write actions, no approval execution, no
-token edits, no process control.
+Collects dashboard/runtime truth and writes one local Markdown report plus a
+redacted snapshot. PFOS emission is opt-in via --emit (deprecated path — see
+_meta/decisions/2026-05-23-deprecate-pfos-emitter-from-profile-doctrine.md).
+No write actions, no approval execution, no token edits, no process control.
 """
 
 from __future__ import annotations
@@ -50,6 +51,23 @@ def redact(value: str) -> str:
     for pattern in SECRET_PATTERNS:
         redacted = pattern.sub("[redacted]", redacted)
     return redacted
+
+
+_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def _validate_date(value: str) -> str:
+    """Argparse type-callable: reject any --date that isn't YYYY-MM-DD.
+
+    Prevents path traversal via manual invocation
+    (e.g. --date "../../etc/cron.d/pwn"). Launchd never passes --date so
+    the production path is unaffected.
+    """
+    if not _DATE_RE.match(value):
+        raise argparse.ArgumentTypeError(
+            f"--date must be YYYY-MM-DD, got {value!r}"
+        )
+    return value
 
 
 def dashboard_token() -> str | None:
@@ -621,7 +639,12 @@ def write_outputs(snapshot: dict[str, Any], report: str, report_path: Path) -> N
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(report)
     state_path = report_path.parent / "latest-snapshot.json"
-    state_path.write_text(json.dumps(snapshot, indent=2, sort_keys=True) + "\n")
+    # Defensive: snapshot contains raw Hermes API responses. Today no real
+    # secrets surface there (operationIds + OpenAPI schemas only), but the
+    # surface is undefended — pipe through redact() so any future Hermes
+    # response that embeds a token lands as "[redacted]" on disk.
+    serialized = json.dumps(snapshot, indent=2, sort_keys=True)
+    state_path.write_text(redact(serialized) + "\n")
 
 
 def emit_summary(summary: dict[str, Any], report_path: Path, *, dry_run: bool) -> dict[str, Any]:
@@ -665,7 +688,7 @@ def emit_summary(summary: dict[str, Any], report_path: Path, *, dry_run: bool) -
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run Morning Logs v0.1.")
-    parser.add_argument("--date", help="YYYY-MM-DD report date; defaults to today local time")
+    parser.add_argument("--date", type=_validate_date, help="YYYY-MM-DD report date; defaults to today local time")
     parser.add_argument(
         "--emit",
         action="store_true",

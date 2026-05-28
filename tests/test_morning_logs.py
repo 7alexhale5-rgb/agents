@@ -319,6 +319,50 @@ class TestMorningLogsSummary(unittest.TestCase):
                 self.assertEqual(morning_logs.os.environ["HERMES_AGENT_EVENTS_TOKEN"], "fake-token")
                 self.assertEqual(morning_logs.os.environ["HERMES_AGENT_EVENTS_URL"], "https://example.test")
 
+    def test_write_outputs_redacts_tokens_in_snapshot(self) -> None:
+        """Snapshot on disk must not carry sk-/xox-/token=value patterns
+        even if a Hermes response embeds one. Closes the audit yellow on
+        latest-snapshot.json being undefended."""
+        with tempfile.TemporaryDirectory() as tmp:
+            report_path = Path(tmp) / "2026-05-28-morning-logs.md"
+            snapshot = {
+                "dashboard": {
+                    "value": {
+                        "hint": "token=secret-xyz-abc123 and sk-aaaaaaaaaaaaaaaa here",
+                        "slack": "xoxb-987654321012-deadbeef",
+                    },
+                },
+                "fleet": {"ok": True, "value": {"normal": "non-secret-payload"}},
+            }
+            morning_logs.write_outputs(snapshot, "report body", report_path)
+
+            state_path = report_path.parent / "latest-snapshot.json"
+            contents = state_path.read_text()
+            # Secrets are gone.
+            self.assertNotIn("secret-xyz-abc123", contents)
+            self.assertNotIn("sk-aaaaaaaaaaaaaaaa", contents)
+            self.assertNotIn("xoxb-987654321012-deadbeef", contents)
+            self.assertIn("[redacted]", contents)
+            # Non-secret content survives.
+            self.assertIn("non-secret-payload", contents)
+            # Report file itself is unaffected (only the snapshot is redacted).
+            self.assertEqual(report_path.read_text(), "report body")
+
+    def test_date_argument_rejects_path_traversal(self) -> None:
+        """--date must match YYYY-MM-DD; argparse refuses anything else
+        before any path is constructed. Closes the audit yellow on
+        unvalidated --date input."""
+        # _validate_date raises argparse.ArgumentTypeError on bad input.
+        import argparse as _argparse
+        with self.assertRaises(_argparse.ArgumentTypeError):
+            morning_logs._validate_date("../../etc/passwd")
+        with self.assertRaises(_argparse.ArgumentTypeError):
+            morning_logs._validate_date("not-a-date")
+        with self.assertRaises(_argparse.ArgumentTypeError):
+            morning_logs._validate_date("2026/05/28")
+        # Valid dates round-trip unchanged.
+        self.assertEqual(morning_logs._validate_date("2026-05-28"), "2026-05-28")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

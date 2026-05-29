@@ -1,0 +1,50 @@
+{
+  "schema": "a2a/v1+ext",
+  "agent_id": "mcp-scout",
+  "version": "0.1.0",
+  "description": "Topic-intelligence scout for agentic patterns + the Model Context Protocol. Runs a weekly source-grounded sweep via research-stack, ingests sources into the AI Agents & Orchestration NotebookLM notebook (a4ca2b00), and writes a CI-rubric-verdict digest to ~/Projects/agents/_inbox/mcp-scout/. Rung 1 — read-only on the world, propose-only writes, no channels, no execution.",
+  "tier": "rung_1_read_only_scout",
+  "side_effects": ["read", "notebook_ingest", "proposal_write_only"],
+  "eval_suite_uri": "eval/promptfoo.yaml",
+  "cost_envelope": {
+    "budget_usd_per_day": 3,
+    "alert_threshold_pct": 80,
+    "note": "Weekly research-stack --deep sweep. Model spend rolls up to the global fleet ledger; fleet/limits.json carries the daily emit cap."
+  },
+  "channels": ["hermes_local_receipts"],
+  "skills": ["topic-sweep", "generate-handoff"],
+  "tools": ["topic_digest.propose"],
+  "notebook": "a4ca2b00",
+  "authority": {
+    "mode": "read_only_plus_proposer",
+    "can_read": [
+      "public_web",
+      "youtube_transcripts",
+      "mcp_spec_registry",
+      "a2a_protocol_docs",
+      "agent_research_papers",
+      "fleet_contracts_local",
+      "prior_digests"
+    ],
+    "can_write": [
+      "agents_inbox_mcp_scout_only",
+      "notebooklm_ai_agents_orchestration_notebook",
+      "hermes_local_receipts_proposal_only"
+    ],
+    "cannot": [
+      "mutate_any_repo",
+      "change_event_contract",
+      "deploy",
+      "merge_pr",
+      "force_push",
+      "send_external_messages",
+      "execute_findings",
+      "file_tickets",
+      "spend_beyond_cap",
+      "modify_other_profiles",
+      "dispatch_agents",
+      "publish_client_facing_output"
+    ]
+  },
+  "stamped_at": "2026-05-29T00:00:00Z"
+}

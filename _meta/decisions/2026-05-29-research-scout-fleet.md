@@ -84,3 +84,40 @@ untouched. The NotebookLM keep-alive launchd is independently useful and stays.
 Weekly `/research-stack --deep` per scout. Capped via `fleet/limits.json`
 (hermes-scout = 2/day) + the CI 10-ingestions/day ceiling. Weekly (not daily)
 deep sweeps keep spend bounded.
+
+---
+
+## Status update — Phase 2 complete (2026-05-29)
+
+Phase 1 (`hermes-scout`) shipped earlier today (commits `11bd57f`, `6678e5e`).
+Phase 2 cloned the reference to the other three scouts; each cleared its rung-1
+gate via a v1 bootstrap digest:
+
+| Scout | Notebook | v1 digest | Sources ingested | lint | Verdicts |
+| --- | --- | --- | --- | --- | --- |
+| `cc-scout` | `988d6e87` | `_inbox/cc-scout/2026-05-29-digest.md` | 2 (CC changelog, Anthropic newsroom) | PASS | INTEGRATE 1 · AUDIT 2 · DOCUMENT 1 · WAIT 1 |
+| `mcp-scout` | `a4ca2b00` | `_inbox/mcp-scout/2026-05-29-digest.md` | 2 (MCP RC blog, A2A v1.0) | PASS | INTEGRATE 1 · AUDIT 2 · DOCUMENT 2 |
+| `pkm-scout` | `f181b42e` | `_inbox/pkm-scout/2026-05-29-digest.md` | 2 (NotebookLM Enterprise API docs, Karpathy LLM-wiki gist) | PASS | INSTALL 1 · INTEGRATE 1 · AUDIT 1 · DOCUMENT 1 · WAIT 1 |
+
+`lint-profile.sh --all` = 12/12 PASS. Each scout: 11-file Atlas contract, one
+`topic-sweep` skill, `fleet/limits.json` cap (2/day each), and a weekly cron
+staggered after hermes-scout — `cc-scout` Sat 6:05, `mcp-scout` Sat 6:10,
+`pkm-scout` Sat 6:15 (hermes-scout Sat 6:00). Runtime mirrors created via
+`sync-profile.sh push`.
+
+### Notable v1 findings worth Alex's eye
+
+- **cc-scout F1:** Opus 4.8 shipped 2026-05-28 (this session already runs it) — the env-global `opus-4-7-operating-notes.md` + `[OPUS-4-7]` CARL block are stale. **DOCUMENT** (no behavior change at rung 1).
+- **pkm-scout F5:** `notebooklm-py` shipped a `--browser-cookies chrome` auth path (RFC #233) that reuses the logged-in Chrome session — a low-risk lever to cut the cookie/Playwright fragility. **INSTALL → research-vault automation.**
+- **mcp-scout F1/F3:** MCP RC goes stateless (SEP-2575) before 2026-07-28; A2A hit v1.0/v1.2 (LF governance, signed agent cards) — the latter is the trust primitive for the PFOS `NEXT_PUBLIC_ENABLE_A2A_DISCOVERY` Gate-B unblock. **AUDIT / INTEGRATE.**
+
+### Incidental fix — `wire-fleet-cron.sh` idempotency
+
+`cronjob(action='create')` does **not** error on a duplicate name (the script's
+original assumption); it silently appends a second job. And `cronjob(action='list')`
+is origin-scoped (returns only the current session's jobs), so it can't be used to
+check global existence. The script now reads the global store
+(`$HERMES_HOME/cron/jobs.json`) directly before each create and skips when the
+name already exists. Pre-existing duplicate jobs accumulated by prior runs
+(atlas/quill/stet/fleet/marketing-inbox at 2–3×) were collapsed to exactly-once;
+the store went 41 → 18 unique jobs. Backup at `~/.hermes/cron/jobs.json.bak-2026-05-29-predupe`.

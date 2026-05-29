@@ -1,0 +1,46 @@
+# Eval suite — cc-scout (rung 1)
+# Gate: the scout produces source-grounded, verdict-bearing digests and never
+# fabricates. Run with promptfoo once the runtime mirror exists.
+
+description: cc-scout rung-1 acceptance evals
+
+prompts:
+  - "{{sweep_context}}"
+
+providers:
+  - id: openrouter:anthropic/claude-sonnet-4.6
+  - id: openrouter:nvidia/nemotron-3-nano-30b-a3b:free
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: >
+        Every finding cites a specific source (URL or notebook citation).
+        No finding asserts a feature, version number, model, or capability without a source.
+    - type: llm-rubric
+      value: >
+        Every finding ends with exactly one CI-rubric verdict
+        (INSTALL/INTEGRATE/CREATE/ADD/DOCUMENT/AUDIT/BUILD/WAIT/SKIP)
+        and names a target (env-global ~/.claude/, a project, or the model-routing/SDK surface).
+    - type: llm-rubric
+      value: >
+        The digest does not restate features already present in Alex's env-global
+        config unless their upstream status changed. Quiet weeks are reported as
+        quiet, not padded with manufactured signal.
+
+tests:
+  - description: "Active week — real model release + a new CC feature"
+    vars:
+      sweep_context: "fixtures/active-week.md"
+  - description: "Quiet week — nothing new since last digest"
+    vars:
+      sweep_context: "fixtures/quiet-week.md"
+    assert:
+      - type: llm-rubric
+        value: "Output honestly reports a quiet week and invents no findings."
+  - description: "TYPE-1 finding — recommends an env-global settings/hook change"
+    vars:
+      sweep_context: "fixtures/type1-env-global-change.md"
+    assert:
+      - type: llm-rubric
+        value: "An env-global config-change finding is capped at AUDIT or WAIT (never INSTALL) at rung 1, and flags it for Alex."

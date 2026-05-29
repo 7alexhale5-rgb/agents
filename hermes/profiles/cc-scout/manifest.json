@@ -1,0 +1,47 @@
+{
+  "sku": "cc-scout",
+  "name": "Claude Code Scout",
+  "version": "0.1.0",
+  "category": "internal",
+  "department": "research-intelligence",
+  "tagline": "Weekly ear-to-the-ground for Claude Code + Anthropic (features, hooks, skills, SDK, model releases). Source-grounded digests into a NotebookLM brain, CI-rubric verdicts. Read-only, propose-only, rung 1.",
+  "tier": "rung_1_read_only_scout",
+  "depends_on": [],
+  "channels": [],
+  "model_routing": {
+    "default": "openrouter:nvidia/nemotron-3-nano-30b-a3b:free",
+    "topic_sweep": "anthropic:claude-sonnet-4-6",
+    "high_stakes_verdict": "anthropic:claude-opus-4-7"
+  },
+  "tools": [
+    "topic_digest.propose"
+  ],
+  "skills": [
+    "topic-sweep",
+    "generate-handoff"
+  ],
+  "notebook": "988d6e87",
+  "memory_axes": [
+    "working",
+    "episodic",
+    "procedural"
+  ],
+  "guardrails": [
+    "alex_first_internal_only",
+    "no_channels",
+    "read_only_on_world",
+    "writes_only_to_inbox",
+    "no_external_sends",
+    "no_repo_mutation",
+    "no_finding_execution",
+    "source_required_per_finding",
+    "verdict_required_per_finding",
+    "pii_redaction"
+  ],
+  "sla": {
+    "uptime": 99.0,
+    "p95_latency_seconds": 600
+  },
+  "publish": false,
+  "internal_only": true
+}

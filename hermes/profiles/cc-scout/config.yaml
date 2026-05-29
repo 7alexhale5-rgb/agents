@@ -1,0 +1,77 @@
+profile: cc-scout
+
+agent:
+  max_iterations: 32
+  iteration_budget_tokens: 200000
+
+model:
+  # PF Runtime and Hermes loaders read `default` and `provider`.
+  default: nvidia/nemotron-3-nano-30b-a3b:free
+  provider: openrouter
+  routing:
+    smoke_test: nvidia/nemotron-3-nano-30b-a3b:free
+    topic_sweep: openrouter:anthropic/claude-sonnet-4.6
+    high_stakes_verdict: anthropic:claude-opus-4-7
+
+tools:
+  builtin:
+    - topic_digest.propose
+  contracts:
+    topic_digest.propose:
+      authority: proposed_write_only
+      write_scope: ~/Projects/agents/_inbox/cc-scout/
+      event:
+        type: cc_scout.digest.proposed
+        status: pending
+        surface: cli
+        cwd_project: agents
+        skill_slug: topic-sweep
+        silo_slug: skills
+        private_payload_redacted: true
+        data_runtime: hermes
+        data_proposal_status: proposed
+
+memory:
+  built_in:
+    enabled: true
+    fts5_enabled: true
+  honcho:
+    enabled: false
+
+mcp_servers: {}
+skills:
+  install: []
+  global: []
+  shared:
+    - generate-handoff
+
+channels:
+  # cc-scout has no external channels at rung 1. Slack is earned at
+  # rung 2+ via a dated ADR amendment to the gateway policy.
+  slack:
+    enabled: false
+
+approval:
+  mode: propose_only
+  outbound_channels: []
+  pii_redaction: true
+  proposals:
+    enabled: true
+    execute: false
+    write_target: ~/Projects/agents/_inbox/cc-scout/
+
+guardrails:
+  # Model API spend rolls up to the global fleet ledger; cap is the
+  # per-profile back-pressure number in fleet/limits.json.
+  spend_cap_per_day_usd: 3
+  alert_threshold_pct: 80
+  forbid_external_sends: true
+  forbid_repo_mutation: true
+  forbid_deploy_or_merge: true
+  forbid_finding_execution: true
+  require_source_per_finding: true
+  require_verdict_per_finding: true
+
+logging:
+  trajectory_jsonl: true
+  langfuse_project: hermes-cc-scout

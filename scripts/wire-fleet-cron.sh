@@ -51,15 +51,29 @@ if "$workdir":
 if "$DRY_RUN":
     print(f"DRY-RUN: {json.dumps(kwargs, indent=2)}")
 else:
-    try:
+    # Real idempotency: cronjob(action='create') does NOT error on a duplicate
+    # name — it appends a second job. So we must check existence ourselves and
+    # skip the create when a job of this name already exists. (Without this
+    # guard, every re-run of this script silently doubles every job.)
+    #
+    # We read the global store file directly rather than cronjob(action='list'),
+    # because list is ORIGIN-SCOPED: it only returns jobs created in the current
+    # session context, so it cannot see jobs registered by earlier sessions and
+    # the guard would wrongly re-create them.
+    import os
+    names = set()
+    store_path = os.path.join("$HERMES_HOME", "cron", "jobs.json")
+    if os.path.exists(store_path):
+        with open(store_path) as fh:
+            store = json.load(fh)
+        for j in store.get("jobs", []):
+            if isinstance(j, dict) and j.get("name"):
+                names.add(j["name"])
+    if "$name" in names:
+        print(f"OK (already registered): $name")
+    else:
         result = cronjob(**kwargs)
         print(result)
-    except Exception as exc:
-        # Idempotent: if job already exists, treat as success
-        if "already exists" in str(exc).lower() or "duplicate" in str(exc).lower():
-            print(f"OK (already registered): $name")
-        else:
-            raise
 PYEOF
 }
 
@@ -79,6 +93,30 @@ create_cron_job \
   "0 6 * * 6" \
   "Run topic-sweep per the skill. Check notebooklm auth liveness, sweep the Hermes-runtime sources via /research-stack --deep --youtube --vault --notebook 771c0174 since the last digest, dedup against the capability roadmap + prior digests, write a CI-rubric-verdict digest to ~/Projects/agents/_inbox/hermes-scout/, ingest sources into notebook 771c0174, emit hermes_scout.digest.proposed." \
   "hermes-scout" \
+  "topic-sweep"
+
+# cc-scout: weekly Claude Code + Anthropic topic sweep (Saturdays 6:05am)
+create_cron_job \
+  "cc-scout-weekly-sweep" \
+  "5 6 * * 6" \
+  "Run topic-sweep per the skill. Check notebooklm auth liveness, sweep the Claude Code + Anthropic sources via /research-stack --deep --youtube --vault --notebook 988d6e87 since the last digest, dedup against the env-global config (~/.claude/) + prior digests, write a CI-rubric-verdict digest to ~/Projects/agents/_inbox/cc-scout/, ingest sources into notebook 988d6e87, emit cc_scout.digest.proposed." \
+  "cc-scout" \
+  "topic-sweep"
+
+# mcp-scout: weekly agentic-patterns + MCP topic sweep (Saturdays 6:10am)
+create_cron_job \
+  "mcp-scout-weekly-sweep" \
+  "10 6 * * 6" \
+  "Run topic-sweep per the skill. Check notebooklm auth liveness, sweep the agentic-patterns + MCP sources via /research-stack --deep --youtube --vault --notebook a4ca2b00 since the last digest, dedup against the fleet contracts (_meta/decisions/ + .mcp.json) + prior digests, write a CI-rubric-verdict digest to ~/Projects/agents/_inbox/mcp-scout/, ingest sources into notebook a4ca2b00, emit mcp_scout.digest.proposed." \
+  "mcp-scout" \
+  "topic-sweep"
+
+# pkm-scout: weekly NotebookLM + PKM topic sweep (Saturdays 6:15am)
+create_cron_job \
+  "pkm-scout-weekly-sweep" \
+  "15 6 * * 6" \
+  "Run topic-sweep per the skill. Check notebooklm auth liveness, sweep the NotebookLM + PKM sources via /research-stack --deep --youtube --vault --notebook f181b42e since the last digest, dedup against the memory-vault wiki + prior digests, write a CI-rubric-verdict digest to ~/Projects/agents/_inbox/pkm-scout/, ingest sources into notebook f181b42e, emit pkm_scout.digest.proposed. A recurring notebooklm auth failure is itself a reportable finding." \
+  "pkm-scout" \
   "topic-sweep"
 
 # Marin: weekly marketing readout (Mondays 8am)

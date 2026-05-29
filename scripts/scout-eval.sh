@@ -41,34 +41,39 @@ RUNS=1
 SMOKE=""
 JSON=""
 LIVE=""
+ANTHROPIC=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --runs) RUNS="$2"; shift 2 ;;
     --smoke) SMOKE=1; shift ;;
     --json) JSON=1; shift ;;
     --live) LIVE=1; shift ;;
+    --anthropic) ANTHROPIC=1; shift ;;
     *) echo "unknown arg: $1" >&2; exit 2 ;;
   esac
 done
 
 case "$SCOUT" in
   hermes-scout|cc-scout|mcp-scout|pkm-scout) ;;
-  *) echo "Usage: $0 <hermes-scout|cc-scout|mcp-scout|pkm-scout> [--runs N] [--smoke] [--json] [--live]" >&2; exit 2 ;;
+  *) echo "Usage: $0 <hermes-scout|cc-scout|mcp-scout|pkm-scout> [--runs N] [--smoke] [--json] [--live] [--anthropic]" >&2; exit 2 ;;
 esac
 
 CONFIG="$PROFILES_DIR/$SCOUT/eval/promptfoo.yaml"
 [ -f "$CONFIG" ] || { echo "error: no promptfoo config at $CONFIG" >&2; exit 2; }
 
-# OpenRouter is the scouts' real runtime provider; promptfoo reads the key from
-# the environment. The live value lives in the hermes runtime env files.
-if [ -z "${OPENROUTER_API_KEY:-}" ]; then
+# load_key NAME — read an API key value from the hermes runtime env files.
+load_key() {
+  local name="$1"
+  local cur; cur="$(printenv "$name" || true)"
+  [ -n "$cur" ] && { printf '%s' "$cur"; return; }
   for envf in "$HOME/.hermes/litellm/.env" "$HOME/.hermes/.env"; do
     [ -f "$envf" ] || continue
-    OPENROUTER_API_KEY="$(python3 - "$envf" <<'PY'
+    local v; v="$(python3 - "$envf" "$name" <<'PY'
 import sys
+name = sys.argv[2]
 for line in open(sys.argv[1], encoding="utf-8"):
     line = line.strip()
-    if line.startswith("#") or not line.startswith("OPENROUTER_API_KEY="):
+    if line.startswith("#") or not line.startswith(name + "="):
         continue
     val = line.split("=", 1)[1].strip().strip('"').strip("'")
     if val:
@@ -76,13 +81,26 @@ for line in open(sys.argv[1], encoding="utf-8"):
     break
 PY
 )"
-    [ -n "${OPENROUTER_API_KEY:-}" ] && break
+    [ -n "$v" ] && { printf '%s' "$v"; return; }
   done
-  export OPENROUTER_API_KEY
-fi
-if [ -z "${OPENROUTER_API_KEY:-}" ]; then
-  echo "error: OPENROUTER_API_KEY not found (checked env, ~/.hermes/litellm/.env, ~/.hermes/.env)" >&2
-  exit 2
+}
+
+# Provider path. Default: OpenRouter (the scouts' real runtime provider).
+# --anthropic: Anthropic-direct on the same Sonnet/Haiku models (fallback when
+# OpenRouter credits are dry); a swapped config is generated in eval/.
+CONFIG_RUN="$CONFIG"
+if [ -n "$ANTHROPIC" ]; then
+  ANTHROPIC_API_KEY="$(load_key ANTHROPIC_API_KEY)"; export ANTHROPIC_API_KEY
+  [ -n "${ANTHROPIC_API_KEY:-}" ] || { echo "error: ANTHROPIC_API_KEY not found (checked env, ~/.hermes/litellm/.env)" >&2; exit 2; }
+  CONFIG_RUN="$PROFILES_DIR/$SCOUT/eval/.promptfoo.anthropic.yaml"
+  # Swap OpenRouter provider + grader ids to Anthropic-direct equivalents.
+  # nemotron stays in the file but is filtered out below unless --smoke.
+  sed -e 's#openrouter:anthropic/claude-sonnet-4.6#anthropic:claude-sonnet-4-6#g' \
+      -e 's#openrouter:anthropic/claude-haiku-4.5#anthropic:claude-haiku-4-5#g' \
+      "$CONFIG" > "$CONFIG_RUN"
+else
+  OPENROUTER_API_KEY="$(load_key OPENROUTER_API_KEY)"; export OPENROUTER_API_KEY
+  [ -n "${OPENROUTER_API_KEY:-}" ] || { echo "error: OPENROUTER_API_KEY not found (checked env, ~/.hermes/litellm/.env, ~/.hermes/.env)" >&2; exit 2; }
 fi
 
 # ---------------------------------------------------------------------------
@@ -116,7 +134,7 @@ mkdir -p "$RUNS_DIR"
 TS="$(date -u +%Y%m%dT%H%M%SZ)"
 OUT="$RUNS_DIR/${SCOUT}-${TS}.json"
 
-PF_ARGS=(eval -c "$CONFIG" --repeat "$RUNS" --no-cache --output "$OUT")
+PF_ARGS=(eval -c "$CONFIG_RUN" --repeat "$RUNS" --no-cache --output "$OUT")
 if [ -z "$SMOKE" ]; then
   # Drop the free smoke model from the under-test set unless --smoke.
   PF_ARGS+=(--filter-providers '^(?!.*nemotron).*$')

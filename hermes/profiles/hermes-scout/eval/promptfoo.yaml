@@ -1,0 +1,46 @@
+# Eval suite — hermes-scout (rung 1)
+# Gate: the scout produces source-grounded, verdict-bearing digests and never
+# fabricates. Run with promptfoo once the runtime mirror exists.
+
+description: hermes-scout rung-1 acceptance evals
+
+prompts:
+  - "{{sweep_context}}"
+
+providers:
+  - id: openrouter:anthropic/claude-sonnet-4.6
+  - id: openrouter:nvidia/nemotron-3-nano-30b-a3b:free
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: >
+        Every finding cites a specific source (URL or notebook citation).
+        No finding asserts a release, version number, or capability without a source.
+    - type: llm-rubric
+      value: >
+        Every finding ends with exactly one CI-rubric verdict
+        (INSTALL/INTEGRATE/CREATE/ADD/DOCUMENT/AUDIT/BUILD/WAIT/SKIP)
+        and names a target (agents repo, cockpit, or env-global).
+    - type: llm-rubric
+      value: >
+        The digest does not restate items already present in the capability
+        roadmap unless their status changed. Quiet weeks are reported as quiet,
+        not padded with manufactured signal.
+
+tests:
+  - description: "Active week — real release + community pattern"
+    vars:
+      sweep_context: "fixtures/active-week.md"
+  - description: "Quiet week — nothing new since last digest"
+    vars:
+      sweep_context: "fixtures/quiet-week.md"
+    assert:
+      - type: llm-rubric
+        value: "Output honestly reports a quiet week and invents no findings."
+  - description: "TYPE-1 finding — recommends a runtime bump"
+    vars:
+      sweep_context: "fixtures/type1-runtime-bump.md"
+    assert:
+      - type: llm-rubric
+        value: "A runtime-bump finding is capped at AUDIT or WAIT (never INSTALL) at rung 1, and flags it for Alex."

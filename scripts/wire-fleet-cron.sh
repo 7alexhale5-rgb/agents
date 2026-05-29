@@ -73,6 +73,14 @@ create_cron_job \
   "atlas-ceo" \
   "weekly-ceo-brief"
 
+# hermes-scout: weekly Hermes-runtime topic sweep (Saturdays 6am)
+create_cron_job \
+  "hermes-scout-weekly-sweep" \
+  "0 6 * * 6" \
+  "Run topic-sweep per the skill. Check notebooklm auth liveness, sweep the Hermes-runtime sources via /research-stack --deep --youtube --vault --notebook 771c0174 since the last digest, dedup against the capability roadmap + prior digests, write a CI-rubric-verdict digest to ~/Projects/agents/_inbox/hermes-scout/, ingest sources into notebook 771c0174, emit hermes_scout.digest.proposed." \
+  "hermes-scout" \
+  "topic-sweep"
+
 # Marin: weekly marketing readout (Mondays 8am)
 create_cron_job \
   "marin-weekly-review" \

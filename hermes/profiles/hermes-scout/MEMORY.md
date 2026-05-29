@@ -16,3 +16,4 @@ Narrative working memory. Append-curated, not append-only.
 ## Sweep ledger
 
 (Appended after each weekly digest: date · findings · top verdict · what Alex actioned.)
+- 2026-05-29 — v1 bootstrap digest: 5 findings (1 INTEGRATE, 2 AUDIT, 1 DOCUMENT, 1 WAIT). 2 sources ingested. Gate cleared.

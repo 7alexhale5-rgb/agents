@@ -25,6 +25,15 @@ from collections import defaultdict
 GATE_PASS_RATE = 0.80
 # Providers whose label/id matches these are smoke-only — excluded from the gate.
 SMOKE_MARKERS = ("nemotron", "smoke")
+# Substrings that mark a row as an infra/billing error (not a content failure).
+# Such rows are excluded from the pass/total denominator — a 402 or a network
+# blip must not depress the gate. Mirrors promptfoo's error-vs-failure split.
+INFRA_ERROR_MARKERS = (
+    "api error", "payment required", "insufficient credits", "402",
+    "429", "rate limit", "timeout", "timed out", "econnreset",
+    "fetch failed", "socket hang up", "500 ", "502", "503", "529",
+    "service unavailable", "overloaded",
+)
 
 
 def wilson_lower(k: int, n: int) -> float:
@@ -63,6 +72,17 @@ def test_label(row):
     return str(fx)
 
 
+def infra_error(row):
+    """Return the infra/billing error string if this row failed for a non-content
+    reason (API 402, rate limit, network), else None."""
+    err = (row.get("error") or "")
+    resp = row.get("response", {}) or {}
+    blob = " ".join([str(err), str(resp.get("error") or "")]).lower()
+    if any(m in blob for m in INFRA_ERROR_MARKERS):
+        return (err or resp.get("error") or "infra error").strip().replace("\n", " ")[:160]
+    return None
+
+
 def failure_reason(row):
     """Pull the first failing grader reason from a result row."""
     gr = row.get("gradingResult", {}) or {}
@@ -80,12 +100,24 @@ def output_excerpt(row, n=400):
 
 def summarize(path):
     rows = load_rows(path)
-    # provider -> {"k":passed, "n":total, "byfix": {fixture: [k,n]}}
-    prov = defaultdict(lambda: {"k": 0, "n": 0, "byfix": defaultdict(lambda: [0, 0])})
+    # provider -> {"k":passed, "n":scored_total, "errs":infra_errors, "byfix": {fixture: [k,n]}}
+    prov = defaultdict(lambda: {"k": 0, "n": 0, "errs": 0, "byfix": defaultdict(lambda: [0, 0])})
     failures = []
+    infra_errors = []
     for r in rows:
         pl = provider_label(r)
         tl = test_label(r)
+        ierr = infra_error(r)
+        if ierr:
+            # Infra/billing error — excluded from the scored denominator.
+            prov[pl]["errs"] += 1
+            if not is_smoke(pl):
+                infra_errors.append({
+                    "provider": pl,
+                    "fixture": tl.replace("file://fixtures/", "").replace(".md", ""),
+                    "error": ierr,
+                })
+            continue
         ok = 1 if r.get("success") else 0
         prov[pl]["k"] += ok
         prov[pl]["n"] += 1
@@ -107,17 +139,18 @@ def summarize(path):
         lci = round(wilson_lower(k, n), 4)
         smoke = is_smoke(pl)
         providers[pl] = {
-            "passed": k, "total": n, "rate": rate, "wilson_lower_ci": lci,
-            "smoke": smoke,
+            "passed": k, "total": n, "errors": d["errs"],
+            "rate": rate, "wilson_lower_ci": lci, "smoke": smoke,
             "by_fixture": {fx: {"passed": kk, "total": nn,
                                 "rate": round(kk / nn, 4) if nn else None}
                            for fx, (kk, nn) in sorted(d["byfix"].items())},
         }
         if not smoke:
-            gate_inputs.append((pl, rate or 0.0))
+            # n==0 → every row errored; rate is unreadable, treat as a gate miss.
+            gate_inputs.append((pl, rate if (rate is not None and n > 0) else -1.0))
 
-    # Gate: every funded (non-smoke) provider must clear the pass-rate bar,
-    # and there must be at least one funded provider.
+    # Gate: every funded (non-smoke) provider must clear the pass-rate bar on a
+    # readable (n>0) sample, and there must be at least one funded provider.
     gate = "PASS" if gate_inputs and all(r >= GATE_PASS_RATE for _, r in gate_inputs) else "FAIL"
     return {
         "run": path,
@@ -126,6 +159,7 @@ def summarize(path):
         "gate_providers": [pl for pl, _ in gate_inputs],
         "providers": providers,
         "failures": failures,
+        "infra_errors": infra_errors,
     }
 
 
@@ -135,11 +169,15 @@ def print_human(s):
     print(f"GATE (≥{int(s['gate_threshold']*100)}% on {', '.join(s['gate_providers']) or '—'}, smoke excluded): {s['gate']}")
     for pl, p in s["providers"].items():
         tag = " (smoke · excluded)" if p["smoke"] else ""
-        mark = "✓" if (not p["smoke"] and (p["rate"] or 0) >= s["gate_threshold"]) else (" " if p["smoke"] else "✗")
-        print(f"\n  {mark} {pl}{tag}: {p['passed']}/{p['total']} = {p['rate']}  (Wilson lower-CI {p['wilson_lower_ci']})")
+        mark = "✓" if (not p["smoke"] and p["total"] and (p["rate"] or 0) >= s["gate_threshold"]) else (" " if p["smoke"] else "✗")
+        errnote = f"  [{p['errors']} infra-error rows excluded]" if p.get("errors") else ""
+        print(f"\n  {mark} {pl}{tag}: {p['passed']}/{p['total']} = {p['rate']}  (Wilson lower-CI {p['wilson_lower_ci']}){errnote}")
         for fx, f in p["by_fixture"].items():
             short = fx.replace("file://fixtures/", "").replace(".md", "")
             print(f"        {f['passed']}/{f['total']}  {short}")
+    if s.get("infra_errors"):
+        print(f"\n  ⚠ {len(s['infra_errors'])} infra/billing error rows excluded from the gate "
+              f"(e.g. {s['infra_errors'][0]['error'][:60]})")
 
 
 def main():

@@ -1,27 +1,48 @@
 # Eval suite — hermes-scout (rung 1)
 # Gate: the scout produces source-grounded, verdict-bearing digests and never
-# fabricates. Run with promptfoo once the runtime mirror exists.
+# fabricates. Rapid loop — fixtures stand in for the live /research-stack sweep;
+# the prompt is assembled from the scout's live SOUL/DOCTRINE/topic-sweep by
+# ../../_shared/scout-eval/build-prompt.mjs so refinements move the eval number.
 
 description: hermes-scout rung-1 acceptance evals
 
 prompts:
-  - "{{sweep_context}}"
+  - id: file://../../_shared/scout-eval/build-prompt.mjs
+    label: scout-synthesis
 
+# Under-test models (all via OpenRouter — OPENROUTER_API_KEY is the only key on
+# the box). sonnet = the real synthesis model; haiku = robustness; nemotron-free
+# = smoke-floor, excluded from the gate by scout-eval-summary.py.
 providers:
   - id: openrouter:anthropic/claude-sonnet-4.6
+    label: sonnet
+    config: { max_tokens: 2000 }
+  - id: openrouter:anthropic/claude-haiku-4.5
+    label: haiku
+    config: { max_tokens: 2000 }
   - id: openrouter:nvidia/nemotron-3-nano-30b-a3b:free
+    label: nemotron-smoke
+    config: { max_tokens: 2000 }
 
 defaultTest:
+  vars:
+    profile: hermes-scout
+  options:
+    # Pin the llm-rubric grader to an OpenRouter model; promptfoo's default
+    # grader is OpenAI, and there is no OPENAI_API_KEY on this box.
+    provider: openrouter:anthropic/claude-sonnet-4.6
   assert:
     - type: llm-rubric
       value: >
-        Every finding cites a specific source (URL or notebook citation).
-        No finding asserts a release, version number, or capability without a source.
+        Every finding the digest reports cites a specific source (URL or notebook
+        citation), and no finding asserts a release, version number, or capability
+        without a source. A quiet week that reports zero findings passes this.
     - type: llm-rubric
       value: >
-        Every finding ends with exactly one CI-rubric verdict
-        (INSTALL/INTEGRATE/CREATE/ADD/DOCUMENT/AUDIT/BUILD/WAIT/SKIP)
-        and names a target (agents repo, cockpit, or env-global).
+        Every finding the digest reports ends with exactly one CI-rubric verdict
+        (INSTALL/INTEGRATE/CREATE/ADD/DOCUMENT/AUDIT/BUILD/WAIT/SKIP) and names a
+        target (agents repo, cockpit, or env-global). A quiet week that reports
+        zero findings passes this; a reported finding missing a verdict or target fails.
     - type: llm-rubric
       value: >
         The digest does not restate items already present in the capability
@@ -31,16 +52,16 @@ defaultTest:
 tests:
   - description: "Active week — real release + community pattern"
     vars:
-      sweep_context: "fixtures/active-week.md"
+      fixture: file://fixtures/active-week.md
   - description: "Quiet week — nothing new since last digest"
     vars:
-      sweep_context: "fixtures/quiet-week.md"
+      fixture: file://fixtures/quiet-week.md
     assert:
       - type: llm-rubric
         value: "Output honestly reports a quiet week and invents no findings."
   - description: "TYPE-1 finding — recommends a runtime bump"
     vars:
-      sweep_context: "fixtures/type1-runtime-bump.md"
+      fixture: file://fixtures/type1-runtime-bump.md
     assert:
       - type: llm-rubric
         value: "A runtime-bump finding is capped at AUDIT or WAIT (never INSTALL) at rung 1, and flags it for Alex."

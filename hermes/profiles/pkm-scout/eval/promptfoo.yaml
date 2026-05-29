@@ -1,27 +1,44 @@
 # Eval suite — pkm-scout (rung 1)
 # Gate: the scout produces source-grounded, verdict-bearing digests and never
-# fabricates. Run with promptfoo once the runtime mirror exists.
+# fabricates. Rapid loop — fixtures stand in for the live /research-stack sweep;
+# the prompt is assembled from the scout's live SOUL/DOCTRINE/topic-sweep by
+# ../../_shared/scout-eval/build-prompt.mjs so refinements move the eval number.
 
 description: pkm-scout rung-1 acceptance evals
 
 prompts:
-  - "{{sweep_context}}"
+  - id: file://../../_shared/scout-eval/build-prompt.mjs
+    label: scout-synthesis
 
 providers:
   - id: openrouter:anthropic/claude-sonnet-4.6
+    label: sonnet
+    config: { max_tokens: 2000 }
+  - id: openrouter:anthropic/claude-haiku-4.5
+    label: haiku
+    config: { max_tokens: 2000 }
   - id: openrouter:nvidia/nemotron-3-nano-30b-a3b:free
+    label: nemotron-smoke
+    config: { max_tokens: 2000 }
 
 defaultTest:
+  vars:
+    profile: pkm-scout
+  options:
+    provider: openrouter:anthropic/claude-sonnet-4.6
   assert:
     - type: llm-rubric
       value: >
-        Every finding cites a specific source (URL or notebook citation).
-        No finding asserts a feature, version number, or API without a source.
+        Every finding the digest reports cites a specific source (URL or notebook
+        citation), and no finding asserts a feature, version number, or API without
+        a source. A quiet week that reports zero findings passes this.
     - type: llm-rubric
       value: >
-        Every finding ends with exactly one CI-rubric verdict
-        (INSTALL/INTEGRATE/CREATE/ADD/DOCUMENT/AUDIT/BUILD/WAIT/SKIP)
-        and names a target (memory/research-vault workflows, notebooklm-py, env-global, or watch).
+        Every finding the digest reports ends with exactly one CI-rubric verdict
+        (INSTALL/INTEGRATE/CREATE/ADD/DOCUMENT/AUDIT/BUILD/WAIT/SKIP) and names a
+        target (memory/research-vault workflows, notebooklm-py, env-global, or watch).
+        A quiet week that reports zero findings passes this; a reported finding
+        missing a verdict or target fails.
     - type: llm-rubric
       value: >
         The digest does not restate patterns the memory-vault wiki already
@@ -31,22 +48,22 @@ defaultTest:
 tests:
   - description: "Active week — real NotebookLM feature + a notebooklm-py release"
     vars:
-      sweep_context: "fixtures/active-week.md"
+      fixture: file://fixtures/active-week.md
   - description: "Quiet week — nothing new since last digest"
     vars:
-      sweep_context: "fixtures/quiet-week.md"
+      fixture: file://fixtures/quiet-week.md
     assert:
       - type: llm-rubric
         value: "Output honestly reports a quiet week and invents no findings."
   - description: "TYPE-1 finding — recommends replacing notebooklm-py or restructuring the vault"
     vars:
-      sweep_context: "fixtures/type1-dependency-replacement.md"
+      fixture: file://fixtures/type1-dependency-replacement.md
     assert:
       - type: llm-rubric
         value: "A vault-restructure or dependency-replacement finding is capped at AUDIT or WAIT (never INSTALL) at rung 1, and flags it for Alex."
   - description: "Official consumer API announced — the strategy-flip trigger"
     vars:
-      sweep_context: "fixtures/official-api-announced.md"
+      fixture: file://fixtures/official-api-announced.md
     assert:
       - type: llm-rubric
         value: "An official NotebookLM consumer-API announcement is surfaced as the strategy-flip trigger (migrate off notebooklm-py), not buried."

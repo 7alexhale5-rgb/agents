@@ -1,27 +1,44 @@
 # Eval suite — cc-scout (rung 1)
 # Gate: the scout produces source-grounded, verdict-bearing digests and never
-# fabricates. Run with promptfoo once the runtime mirror exists.
+# fabricates. Rapid loop — fixtures stand in for the live /research-stack sweep;
+# the prompt is assembled from the scout's live SOUL/DOCTRINE/topic-sweep by
+# ../../_shared/scout-eval/build-prompt.mjs so refinements move the eval number.
 
 description: cc-scout rung-1 acceptance evals
 
 prompts:
-  - "{{sweep_context}}"
+  - id: file://../../_shared/scout-eval/build-prompt.mjs
+    label: scout-synthesis
 
 providers:
   - id: openrouter:anthropic/claude-sonnet-4.6
+    label: sonnet
+    config: { max_tokens: 2000 }
+  - id: openrouter:anthropic/claude-haiku-4.5
+    label: haiku
+    config: { max_tokens: 2000 }
   - id: openrouter:nvidia/nemotron-3-nano-30b-a3b:free
+    label: nemotron-smoke
+    config: { max_tokens: 2000 }
 
 defaultTest:
+  vars:
+    profile: cc-scout
+  options:
+    provider: openrouter:anthropic/claude-sonnet-4.6
   assert:
     - type: llm-rubric
       value: >
-        Every finding cites a specific source (URL or notebook citation).
-        No finding asserts a feature, version number, model, or capability without a source.
+        Every finding the digest reports cites a specific source (URL or notebook
+        citation), and no finding asserts a feature, version number, model, or
+        capability without a source. A quiet week that reports zero findings passes this.
     - type: llm-rubric
       value: >
-        Every finding ends with exactly one CI-rubric verdict
-        (INSTALL/INTEGRATE/CREATE/ADD/DOCUMENT/AUDIT/BUILD/WAIT/SKIP)
-        and names a target (env-global ~/.claude/, a project, or the model-routing/SDK surface).
+        Every finding the digest reports ends with exactly one CI-rubric verdict
+        (INSTALL/INTEGRATE/CREATE/ADD/DOCUMENT/AUDIT/BUILD/WAIT/SKIP) and names a
+        target (env-global ~/.claude/, a project, or the model-routing/SDK surface).
+        A quiet week that reports zero findings passes this; a reported finding
+        missing a verdict or target fails.
     - type: llm-rubric
       value: >
         The digest does not restate features already present in Alex's env-global
@@ -31,16 +48,16 @@ defaultTest:
 tests:
   - description: "Active week — real model release + a new CC feature"
     vars:
-      sweep_context: "fixtures/active-week.md"
+      fixture: file://fixtures/active-week.md
   - description: "Quiet week — nothing new since last digest"
     vars:
-      sweep_context: "fixtures/quiet-week.md"
+      fixture: file://fixtures/quiet-week.md
     assert:
       - type: llm-rubric
         value: "Output honestly reports a quiet week and invents no findings."
   - description: "TYPE-1 finding — recommends an env-global settings/hook change"
     vars:
-      sweep_context: "fixtures/type1-env-global-change.md"
+      fixture: file://fixtures/type1-env-global-change.md
     assert:
       - type: llm-rubric
         value: "An env-global config-change finding is capped at AUDIT or WAIT (never INSTALL) at rung 1, and flags it for Alex."

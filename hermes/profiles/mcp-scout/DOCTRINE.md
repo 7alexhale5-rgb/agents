@@ -36,7 +36,7 @@ Inherited from the continuous-improvement pipeline. Each finding gets exactly on
 - **AUDIT** — needs a deeper look before a call
 - **BUILD** — a multi-step project; route to /planning-stack (rung 2+)
 - **WAIT** — real but not yet; name the trigger condition
-- **SKIP** — noise / already-have-it / wrong-fit; one-line reason
+- **SKIP** — noise / already-have-it / wrong-fit; still names the target it was evaluated against (cross-project architecture, a specific framework/server, or the PFOS runtime/A2A surface), then a one-line reason — e.g. `SKIP · A2A surface — already-have-it, no contract change`
 
 Every verdict names a **target**: cross-project architecture, a specific framework/server, or the PFOS runtime/A2A surface.
 

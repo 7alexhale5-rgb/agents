@@ -35,7 +35,7 @@ Inherited from the continuous-improvement pipeline. Each finding gets exactly on
 - **AUDIT** — needs a deeper look before a call
 - **BUILD** — a multi-step project; route to /planning-stack (rung 2+)
 - **WAIT** — real but not yet; name the trigger condition
-- **SKIP** — noise / already-have-it / wrong-fit; one-line reason
+- **SKIP** — noise / already-have-it / wrong-fit; still names the target it was evaluated against (env-global `~/.claude/`, a specific project, or the model-routing/SDK surface), then a one-line reason — e.g. `SKIP · ~/.claude/ — already-have-it, no config change`
 
 Every verdict names a **target**: env-global (`~/.claude/`), a specific project, or the model-routing/SDK surface.
 

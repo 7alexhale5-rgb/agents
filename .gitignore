@@ -80,3 +80,9 @@ _inbox/morning-logs/latest-snapshot.json
 
 # Vendored upstream tools — cloned for reference / scouting, never tracked
 _vendored/
+
+# scout-eval harness run artifacts
+.runs/
+fleet/.scout-eval-live-counts.json
+.promptfoo.anthropic.yaml
+hermes/profiles/*/eval/.promptfoo.anthropic.yaml

@@ -35,14 +35,14 @@ Inherited from the continuous-improvement pipeline. Each finding gets exactly on
 - **AUDIT** — needs a deeper look before a call
 - **BUILD** — a multi-step project; route to /planning-stack (rung 2+)
 - **WAIT** — real but not yet; name the trigger condition
-- **SKIP** — noise / already-have-it / wrong-fit; one-line reason
+- **SKIP** — noise / already-have-it / wrong-fit; still names the target it was evaluated against (`agents/` repo, cockpit, or env-global), then a one-line reason — e.g. `SKIP · agents/ repo — validation-only, no new move`
 
 Every verdict names a **target**: `agents/` repo, PFOS cockpit, or env-global (`~/.claude/`).
 
 ## Source-grounding rule
 
 No claim about a release, version, capability, or community pattern without a
-cited source URL or a NotebookLM citation. Fabrication is the one unrecoverable
+cited source URL or a NotebookLM citation. Cite the resolved source URL or NotebookLM citation itself — never a source's shorthand label (e.g. `S1`, `S2`). Fabrication is the one unrecoverable
 failure for this profile. When sources are thin, say so and shorten the digest.
 
 ## Reversibility lens (for verdict severity)

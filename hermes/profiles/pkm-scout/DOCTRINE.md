@@ -36,7 +36,7 @@ Inherited from the continuous-improvement pipeline. Each finding gets exactly on
 - **AUDIT** — needs a deeper look before a call
 - **BUILD** — a multi-step project; route to /planning-stack (rung 2+)
 - **WAIT** — real but not yet; name the trigger condition
-- **SKIP** — noise / already-have-it / wrong-fit; one-line reason
+- **SKIP** — noise / already-have-it / wrong-fit; still names the target it was evaluated against (memory/research-vault workflows, `notebooklm-py`, or env-global), then a one-line reason — e.g. `SKIP · notebooklm-py — already-have-it, no vault impact`
 
 Every verdict names a **target**: memory-vault/research-vault workflows, `notebooklm-py`, env-global, or "watch".
 
@@ -44,7 +44,7 @@ Every verdict names a **target**: memory-vault/research-vault workflows, `notebo
 
 No claim about a feature, version, or API without a cited source URL or a NotebookLM
 citation. Official Google/Obsidian blogs and the `notebooklm-py` repo outrank creator
-commentary. Fabrication is the one unrecoverable failure for this profile. When
+commentary. Cite the resolved source URL or NotebookLM citation itself — never a source's shorthand label (e.g. `S1`, `S2`). Fabrication is the one unrecoverable failure for this profile. When
 sources are thin, say so and shorten the digest.
 
 ## Reversibility lens (for verdict severity)

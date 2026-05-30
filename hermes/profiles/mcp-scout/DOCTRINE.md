@@ -36,7 +36,7 @@ Inherited from the continuous-improvement pipeline. Each finding gets exactly on
 - **AUDIT** — needs a deeper look before a call
 - **BUILD** — a multi-step project; route to /planning-stack (rung 2+)
 - **WAIT** — real but not yet; name the trigger condition
-- **SKIP** — noise / already-have-it / wrong-fit; one-line reason
+- **SKIP** — noise / already-have-it / wrong-fit; still names the target it was evaluated against (cross-project architecture, a specific framework/server, or the PFOS runtime/A2A surface), then a one-line reason — e.g. `SKIP · A2A surface — already-have-it, no contract change`
 
 Every verdict names a **target**: cross-project architecture, a specific framework/server, or the PFOS runtime/A2A surface.
 
@@ -44,7 +44,7 @@ Every verdict names a **target**: cross-project architecture, a specific framewo
 
 No claim about a spec change, version, or capability without a cited source URL or
 a NotebookLM citation. Specs, registry entries, and papers outrank secondhand
-threads. Fabrication is the one unrecoverable failure for this profile. When
+threads. Cite the resolved source URL or NotebookLM citation itself — never a source's shorthand label (e.g. `S1`, `S2`). Fabrication is the one unrecoverable failure for this profile. When
 sources are thin, say so and shorten the digest.
 
 ## Reversibility lens (for verdict severity)

@@ -35,7 +35,7 @@ Inherited from the continuous-improvement pipeline. Each finding gets exactly on
 - **AUDIT** — needs a deeper look before a call
 - **BUILD** — a multi-step project; route to /planning-stack (rung 2+)
 - **WAIT** — real but not yet; name the trigger condition
-- **SKIP** — noise / already-have-it / wrong-fit; one-line reason
+- **SKIP** — noise / already-have-it / wrong-fit; still names the target it was evaluated against (env-global `~/.claude/`, a specific project, or the model-routing/SDK surface), then a one-line reason — e.g. `SKIP · ~/.claude/ — already-have-it, no config change`
 
 Every verdict names a **target**: env-global (`~/.claude/`), a specific project, or the model-routing/SDK surface.
 
@@ -43,7 +43,7 @@ Every verdict names a **target**: env-global (`~/.claude/`), a specific project,
 
 No claim about a feature, version, model, or capability without a cited source URL
 or a NotebookLM citation. Anthropic's own changelog/docs outrank secondhand tweets.
-Fabrication is the one unrecoverable failure for this profile. When sources are thin,
+Cite the resolved source URL or NotebookLM citation itself — never a source's shorthand label (e.g. `S1`, `S2`). Fabrication is the one unrecoverable failure for this profile. When sources are thin,
 say so and shorten the digest.
 
 ## Reversibility lens (for verdict severity)

@@ -26,13 +26,26 @@ GATE_PASS_RATE = 0.80
 # Providers whose label/id matches these are smoke-only — excluded from the gate.
 SMOKE_MARKERS = ("nemotron", "smoke")
 # Substrings that mark a row as an infra/billing error (not a content failure).
-# Such rows are excluded from the pass/total denominator — a 402 or a network
-# blip must not depress the gate. Mirrors promptfoo's error-vs-failure split.
-INFRA_ERROR_MARKERS = (
-    "api error", "payment required", "insufficient credits", "402",
-    "429", "rate limit", "timeout", "timed out", "econnreset",
-    "fetch failed", "socket hang up", "500 ", "502", "503", "529",
-    "service unavailable", "overloaded",
+# Such rows are excluded from the pass/total denominator — a 402, an exhausted
+# credit balance, or a network blip must not depress the gate. Mirrors
+# promptfoo's error-vs-failure split.
+#
+# BILLING_MARKERS are high-specificity phrases safe to match anywhere, including
+# the grader's natural-language reason: an llm-rubric reason never legitimately
+# contains them. "api call error" is promptfoo's prefix when the grading call
+# itself fails (e.g. the Anthropic-direct grader runs out of credits while the
+# model-under-test responded fine); "credit balance"/"insufficient" are billing-
+# exhaustion text. INFRA_ERROR_MARKERS adds lower-specificity HTTP/network codes
+# that are only trusted in the provider/grader *error* fields (infra-origin),
+# never in graded prose, to avoid false positives on numbers in a digest.
+BILLING_MARKERS = (
+    "api call error", "credit balance", "insufficient", "payment required",
+    "rate limit", "too many requests", "service unavailable", "overloaded",
+)
+INFRA_ERROR_MARKERS = BILLING_MARKERS + (
+    "api error", "402", "401", "429", "unauthorized",
+    "timeout", "timed out", "econnreset", "fetch failed", "socket hang up",
+    "500 ", "502", "503", "529",
 )
 
 
@@ -54,7 +67,8 @@ def is_smoke(label: str) -> bool:
 
 
 def load_rows(path):
-    data = json.load(open(path, encoding="utf-8"))
+    with open(path, encoding="utf-8") as fh:
+        data = json.load(fh)
     return data.get("results", {}).get("results", []) or []
 
 
@@ -72,14 +86,43 @@ def test_label(row):
     return str(fx)
 
 
+def grading_reasons(row):
+    """Every grader reason on a row (top-level + per-component), joined."""
+    gr = row.get("gradingResult", {}) or {}
+    parts = [gr.get("reason") or ""]
+    parts += [c.get("reason") or "" for c in (gr.get("componentResults") or [])]
+    return " ".join(p for p in parts if p)
+
+
 def infra_error(row):
-    """Return the infra/billing error string if this row failed for a non-content
-    reason (API 402, rate limit, network), else None."""
+    """Return an infra/billing error string if this row failed for a non-content
+    reason — an API 402/401/429, an exhausted credit balance, a network blip, or
+    a grader call that itself errored — else None. Such rows are excluded from the
+    pass/total denominator.
+
+    Covers both failure surfaces seen with the Anthropic-direct provider when the
+    account is out of credits: the model-under-test erroring (empty output, error
+    on the response, failureReason=2) AND the llm-rubric grader erroring (the
+    billing string surfaces in row.error / the grader reason while the model
+    output is fine, failureReason=1)."""
     err = (row.get("error") or "")
     resp = row.get("response", {}) or {}
-    blob = " ".join([str(err), str(resp.get("error") or "")]).lower()
-    if any(m in blob for m in INFRA_ERROR_MARKERS):
-        return (err or resp.get("error") or "infra error").strip().replace("\n", " ")[:160]
+    resp_err = resp.get("error") or ""
+    reasons = grading_reasons(row)
+    err_blob = " ".join([str(err), str(resp_err)]).lower()
+    # Numeric/network codes only in the infra-origin error fields; billing
+    # phrases additionally in the grader's reason (where 402-style numbers could
+    # be legitimate digest content, so they are kept out of the reason scan).
+    if any(m in err_blob for m in INFRA_ERROR_MARKERS) or \
+       any(m in reasons.lower() for m in BILLING_MARKERS):
+        return (err or resp_err or reasons or "infra error").strip().replace("\n", " ")[:160]
+    # No recognizable signature, but the row produced no gradable signal: the
+    # provider response errored or the output is empty AND the grader returned a
+    # blank reason. That is an infra/grading breakdown, not a content judgement.
+    out = str(resp.get("output") or "").strip()
+    if not row.get("success") and (resp_err or not out) and not reasons.strip():
+        msg = (err or resp_err or "empty output / grader error").strip().replace("\n", " ")[:160]
+        return msg or "empty output / grader error"
     return None
 
 
@@ -132,7 +175,8 @@ def summarize(path):
             })
 
     providers = {}
-    gate_inputs = []
+    funded = []      # all non-smoke providers in the suite
+    scorable = []    # (provider, rate) for funded providers with ≥1 gradable row
     for pl, d in sorted(prov.items()):
         k, n = d["k"], d["n"]
         rate = round(k / n, 4) if n else None
@@ -146,17 +190,27 @@ def summarize(path):
                            for fx, (kk, nn) in sorted(d["byfix"].items())},
         }
         if not smoke:
-            # n==0 → every row errored; rate is unreadable, treat as a gate miss.
-            gate_inputs.append((pl, rate if (rate is not None and n > 0) else -1.0))
+            funded.append(pl)
+            if n > 0:
+                scorable.append((pl, rate))
 
-    # Gate: every funded (non-smoke) provider must clear the pass-rate bar on a
-    # readable (n>0) sample, and there must be at least one funded provider.
-    gate = "PASS" if gate_inputs and all(r >= GATE_PASS_RATE for _, r in gate_inputs) else "FAIL"
+    # Gate: every funded (non-smoke) provider with a gradable sample must clear
+    # the pass-rate bar. A provider whose rows were ALL infra/billing errors
+    # contributes no signal — it neither passes nor fails. If no funded provider
+    # produced a gradable row (e.g. the whole run hit a credit outage), the gate
+    # is "NO FUNDABLE ROWS": an infra problem, not a content regression — never a
+    # false FAIL. A suite with no funded provider at all is a misconfiguration.
+    if not funded:
+        gate = "FAIL"
+    elif not scorable:
+        gate = "NO FUNDABLE ROWS"
+    else:
+        gate = "PASS" if all((r or 0) >= GATE_PASS_RATE for _, r in scorable) else "FAIL"
     return {
         "run": path,
         "gate": gate,
         "gate_threshold": GATE_PASS_RATE,
-        "gate_providers": [pl for pl, _ in gate_inputs],
+        "gate_providers": [pl for pl, _ in scorable],
         "providers": providers,
         "failures": failures,
         "infra_errors": infra_errors,
@@ -169,7 +223,14 @@ def print_human(s):
     print(f"GATE (≥{int(s['gate_threshold']*100)}% on {', '.join(s['gate_providers']) or '—'}, smoke excluded): {s['gate']}")
     for pl, p in s["providers"].items():
         tag = " (smoke · excluded)" if p["smoke"] else ""
-        mark = "✓" if (not p["smoke"] and p["total"] and (p["rate"] or 0) >= s["gate_threshold"]) else (" " if p["smoke"] else "✗")
+        if p["smoke"]:
+            mark = " "
+        elif not p["total"]:
+            mark = "∅"  # no gradable rows — infra/billing outage, not a content fail
+        elif (p["rate"] or 0) >= s["gate_threshold"]:
+            mark = "✓"
+        else:
+            mark = "✗"
         errnote = f"  [{p['errors']} infra-error rows excluded]" if p.get("errors") else ""
         print(f"\n  {mark} {pl}{tag}: {p['passed']}/{p['total']} = {p['rate']}  (Wilson lower-CI {p['wilson_lower_ci']}){errnote}")
         for fx, f in p["by_fixture"].items():

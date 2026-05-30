@@ -37,7 +37,13 @@ const RUN_SCHEMA = {
   required: ["scout", "gate", "providers", "failures"],
   properties: {
     scout: { type: "string" },
-    gate: { type: "string", enum: ["PASS", "FAIL"] },
+    gate: {
+      type: "string",
+      enum: ["PASS", "FAIL", "NO FUNDABLE ROWS"],
+      description:
+        "NO FUNDABLE ROWS = every funded row was an infra/billing error (e.g. a " +
+        "credit outage); the scout could not be judged. Not a content FAIL.",
+    },
     providers: {
       type: "array",
       items: {
@@ -96,7 +102,14 @@ const SYNTH_SCHEMA = {
   type: "object",
   required: ["fleet_gate", "variance", "ranked_clusters", "next_move"],
   properties: {
-    fleet_gate: { type: "string", enum: ["PASS", "FAIL"], description: "PASS only if every scout's gate is PASS" },
+    fleet_gate: {
+      type: "string",
+      enum: ["PASS", "FAIL", "NO FUNDABLE ROWS"],
+      description:
+        "PASS only if every judged scout's gate is PASS. NO FUNDABLE ROWS if no " +
+        "scout could be judged (all rows were infra/billing errors). FAIL if any " +
+        "judged scout fails on content.",
+    },
     variance: {
       type: "array",
       description: "one row per scout × provider",
@@ -144,8 +157,10 @@ const perScout = await pipeline(
         `(keys: gate, gate_threshold, gate_providers, providers, failures). Parse that ` +
         `JSON and return it mapped to the schema: scout="${scout}", gate, a providers[] ` +
         `array (label/rate/wilson_lower_ci/smoke from the providers object), and the ` +
-        `failures[] array (provider/fixture/reason). If the command errors, return ` +
-        `gate="FAIL" with an empty providers/failures and the error in a failure reason.`,
+        `failures[] array (provider/fixture/reason). Pass gate through verbatim — if ` +
+        `it is "NO FUNDABLE ROWS" (every row hit an infra/billing error), keep that, ` +
+        `do not coerce it to FAIL. If the command itself errors, return gate="FAIL" ` +
+        `with an empty providers/failures and the error in a failure reason.`,
       { label: `run:${scout}`, phase: "Run", schema: RUN_SCHEMA },
     ),
   (run, scout) => {
@@ -169,7 +184,9 @@ phase("Synthesize");
 const synth = await agent(
   `Synthesize the Research Scout Fleet eval run (N=${N} repeats per fixture).\n\n` +
     `Per-scout results + failure clusters:\n${JSON.stringify(perScout, null, 2)}\n\n` +
-    `Produce: fleet_gate (PASS only if every scout gate is PASS); a variance table ` +
+    `Produce: fleet_gate (PASS only if every judged scout gate is PASS; ` +
+    `"NO FUNDABLE ROWS" if no scout could be judged — all rows were infra/billing ` +
+    `errors — never a content FAIL in that case); a variance table ` +
     `(one row per scout×provider with rate, wilson_lower_ci, and whether it clears ` +
     `the 80% bar); ranked_clusters across the whole fleet (highest-impact first, ` +
     `each naming the editable surface + recommended_edit); and the single ` +

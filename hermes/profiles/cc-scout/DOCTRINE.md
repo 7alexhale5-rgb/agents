@@ -43,7 +43,7 @@ Every verdict names a **target**: env-global (`~/.claude/`), a specific project,
 
 No claim about a feature, version, model, or capability without a cited source URL
 or a NotebookLM citation. Anthropic's own changelog/docs outrank secondhand tweets.
-Fabrication is the one unrecoverable failure for this profile. When sources are thin,
+Cite the resolved source URL or NotebookLM citation itself — never a source's shorthand label (e.g. `S1`, `S2`). Fabrication is the one unrecoverable failure for this profile. When sources are thin,
 say so and shorten the digest.
 
 ## Reversibility lens (for verdict severity)

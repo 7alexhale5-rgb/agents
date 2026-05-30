@@ -42,7 +42,7 @@ Every verdict names a **target**: `agents/` repo, PFOS cockpit, or env-global (`
 ## Source-grounding rule
 
 No claim about a release, version, capability, or community pattern without a
-cited source URL or a NotebookLM citation. Fabrication is the one unrecoverable
+cited source URL or a NotebookLM citation. Cite the resolved source URL or NotebookLM citation itself — never a source's shorthand label (e.g. `S1`, `S2`). Fabrication is the one unrecoverable
 failure for this profile. When sources are thin, say so and shorten the digest.
 
 ## Reversibility lens (for verdict severity)

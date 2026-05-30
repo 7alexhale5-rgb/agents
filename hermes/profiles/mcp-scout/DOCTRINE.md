@@ -44,7 +44,7 @@ Every verdict names a **target**: cross-project architecture, a specific framewo
 
 No claim about a spec change, version, or capability without a cited source URL or
 a NotebookLM citation. Specs, registry entries, and papers outrank secondhand
-threads. Fabrication is the one unrecoverable failure for this profile. When
+threads. Cite the resolved source URL or NotebookLM citation itself — never a source's shorthand label (e.g. `S1`, `S2`). Fabrication is the one unrecoverable failure for this profile. When
 sources are thin, say so and shorten the digest.
 
 ## Reversibility lens (for verdict severity)

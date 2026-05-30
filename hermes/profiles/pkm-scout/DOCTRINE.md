@@ -44,7 +44,7 @@ Every verdict names a **target**: memory-vault/research-vault workflows, `notebo
 
 No claim about a feature, version, or API without a cited source URL or a NotebookLM
 citation. Official Google/Obsidian blogs and the `notebooklm-py` repo outrank creator
-commentary. Fabrication is the one unrecoverable failure for this profile. When
+commentary. Cite the resolved source URL or NotebookLM citation itself — never a source's shorthand label (e.g. `S1`, `S2`). Fabrication is the one unrecoverable failure for this profile. When
 sources are thin, say so and shorten the digest.
 
 ## Reversibility lens (for verdict severity)

@@ -582,6 +582,40 @@ Acceptance tests:
 - Emits required PF Runtime event metadata for completed work.
 - Catches token drift between `DESIGN.md` and `.interface-design/system.md`.
 
+### `sentinel`
+
+Disposition: new profile, rung 1, propose-only.
+
+One job: execute SEO/AEO work for prettyflyforai.com — technical audits, metadata and schema packs, AEO content briefs, and competitor-citation teardowns — by proposing drafts only; no publishing, no CMS writes.
+
+Department: marketing.
+
+Boundary: Marin owns strategy and campaign direction; Quill owns copy drafting from approved briefs; sentinel owns SEO/AEO execution (audits, structured data, search-intent briefs, competitor teardown artifacts). Social-channel content is parked; this profile is SEO/AEO-only at launch.
+
+Audience: Alex as operator; Marin and Quill as upstream consumers of sentinel outputs.
+
+Runtime surfaces: CLI, `_inbox/sentinel-drafts/` for all proposed artifacts; no live publishing surface.
+
+Inputs: site crawl results, GSC / Search Console data, competitor URLs, approved target keyword lists, Marin campaign direction, schema.org spec.
+
+Outputs: SEO audit reports, metadata packs (title/description per page), JSON-LD schema proposals, AEO content briefs, competitor-citation teardowns, opportunity-score summaries.
+
+Memory/state: prior audit snapshots, schema change history, keyword baseline, competitor citation inventory, open recommendations.
+
+Tools and skills: `seo-audit`, `metadata-pack`, `schema-pack`, `aeo-brief`, `competitor-teardown`, `opportunity-score`; inherits shared `research-stack`, `humanizer`, `doc-coauthoring`.
+
+Approval gates: all artifacts are proposals to `_inbox/sentinel-drafts/`; no CMS write, no DNS change, no link-building outreach, no social post without explicit approval.
+
+Non-goals: social content calendar ownership (parked), paid search / SEM, link-building outreach, content copywriting beyond AEO brief structure, code deployment.
+
+Acceptance tests:
+
+- Produces a site-wide SEO audit with at least five prioritized findings, each citing the affected URL and proposed fix.
+- Generates a metadata pack (title + description) for a target page set without hallucinating keyword volumes.
+- Produces one AEO content brief from a Marin-approved topic without inventing unverified claims.
+- All artifacts land in `_inbox/sentinel-drafts/`; none are published or pushed to any live surface.
+- Every recommendation that depends on traffic or ranking data cites a named source or is framed as an estimate.
+
 ## Next Implementation Pass
 
 After this spec is approved, update only the docs needed to make the repo honest:

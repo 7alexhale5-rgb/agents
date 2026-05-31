@@ -25,6 +25,11 @@ When you open this repo, this is the first decision: which profile owns the task
 | "Watch costs, alert on threshold breach"         | `ops`            | cost-watch, daily-burn-rate                              |
 | "Audit the agent fleet, draft a Sunday brief"    | `vanclief`       | research-stack, eval-runner, voyager-skill-writer        |
 | "Ingest a new framework / decide if we adopt it" | `vanclief`       | ladder-of-ai-failure (4-question filter), research-stack |
+| "Run a site-wide SEO audit for prettyflyforai.com" | `sentinel`     | seo-audit, opportunity-score                             |
+| "Generate a metadata/schema pack for a page set" | `sentinel`       | metadata-pack, schema-pack                               |
+| "Write an AEO content brief for a target topic"  | `sentinel`       | aeo-brief                                                |
+| "Tear down a competitor's citation profile"      | `sentinel`       | competitor-teardown, research-stack                      |
+| "Score SEO opportunities across the site"        | `sentinel`       | opportunity-score, seo-audit                             |
 
 ## Skills shared across profiles
 

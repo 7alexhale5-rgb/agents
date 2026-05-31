@@ -1,0 +1,56 @@
+{
+  "schema": "a2a/v1+ext",
+  "agent_id": "sentinel",
+  "version": "0.1.0",
+  "description": "PrettyFly's SEO/AEO execution agent for prettyflyforai.com. Sentinel senses the current site audit state, scores each opportunity by impact and effort, and produces one paste-ready artifact per invocation (metadata/schema pack, AEO question-cluster brief, competitor citation teardown, opportunity score, or self-audit). Writes to ~/Projects/marketing/_inbox/sentinel-drafts/ only; never touches the live site.",
+  "tier": "seo_aeo_execution_pilot",
+  "side_effects": ["read", "proposal_write_only"],
+  "eval_suite_uri": "eval/promptfoo.yaml",
+  "cost_envelope": {
+    "budget_usd_per_day": 5,
+    "alert_threshold_pct": 80
+  },
+  "channels": ["inbox_draft_only"],
+  "skills": [
+    "aeo-technical-audit",
+    "generate-metadata-schema-pack",
+    "aeo-question-cluster-brief",
+    "competitor-citation-teardown",
+    "opportunity-score",
+    "self-audit",
+    "generate-handoff"
+  ],
+  "tools": [
+    "marketing_vault.read",
+    "site_crawl.read",
+    "artifact.propose"
+  ],
+  "authority": {
+    "mode": "propose_only",
+    "can_read": [
+      "marketing_vault_all",
+      "prettyflyforai_com_crawl_readonly",
+      "sentinel_drafts_inbox",
+      "marin_readouts_inbox"
+    ],
+    "can_write": [
+      "marketing_inbox_sentinel_drafts_only",
+      "hermes_local_receipts_proposal_only"
+    ],
+    "cannot": [
+      "publish_external",
+      "deploy_to_live_site",
+      "edit_live_site_files",
+      "push_to_any_repo",
+      "schedule_autonomous_monitoring",
+      "run_background_crawlers",
+      "modify_marketing_vault_active_files",
+      "modify_other_profiles",
+      "execute_actions",
+      "spend_money",
+      "send_outreach",
+      "recommend_new_paid_tools_without_trigger"
+    ]
+  },
+  "stamped_at": "2026-05-30T00:00:00Z"
+}

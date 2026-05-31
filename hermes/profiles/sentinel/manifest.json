@@ -1,0 +1,64 @@
+{
+  "sku": "sentinel",
+  "name": "Sentinel",
+  "version": "0.1.0",
+  "category": "internal",
+  "department": "marketing",
+  "tagline": "PrettyFly's SEO/AEO execution agent — produces paste-ready metadata, schema, and AEO content briefs for prettyflyforai.com that Alex verifies and deploys himself.",
+  "tier": "seo_aeo_execution_pilot",
+  "depends_on": [
+    "marketing-vault"
+  ],
+  "channels": [],
+  "model_routing": {
+    "default": "openrouter:nvidia/nemotron-3-nano-30b-a3b:free",
+    "artifact_production": "anthropic:claude-sonnet-4-6",
+    "edge_case_judgment": "anthropic:claude-opus-4-7"
+  },
+  "tools": [
+    "marketing_vault.read",
+    "site_crawl.read",
+    "artifact.propose"
+  ],
+  "skills": [
+    "aeo-technical-audit",
+    "generate-metadata-schema-pack",
+    "aeo-question-cluster-brief",
+    "competitor-citation-teardown",
+    "opportunity-score",
+    "self-audit",
+    "generate-handoff",
+    "marketing-seo-specialist",
+    "marketing-ai-citation-strategist",
+    "marketing-agentic-search-optimizer"
+  ],
+  "memory_axes": [
+    "working",
+    "episodic",
+    "procedural"
+  ],
+  "guardrails": [
+    "alex_first_internal_only",
+    "marketing_vault_source_of_truth",
+    "writes_to_inbox_only",
+    "no_live_site_access_or_deploy",
+    "verify_then_deploy_gate",
+    "no_autonomous_monitoring_or_cron",
+    "no_llms_txt_as_primary_tactic",
+    "no_magic_schema_claims",
+    "honor_tool_adoption_triggers",
+    "banned_vocab_enforced",
+    "one_artifact_per_file",
+    "no_role_collapse_into_atlas_marin_quill_or_stet"
+  ],
+  "cost_budget": {
+    "budget_usd_per_day": 5,
+    "alert_threshold_pct": 80
+  },
+  "sla": {
+    "uptime": 99.0,
+    "p95_latency_seconds": 30
+  },
+  "publish": false,
+  "internal_only": true
+}

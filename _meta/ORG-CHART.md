@@ -16,6 +16,7 @@ The 13-profile fleet, organized as a real org. Each agent has a single specializ
 | ----------------------- | ------------------ | ----------------------------------------------------------------------- |
 | Sales                   | `viper-outreach`   | Prospector / Qualifier / Outreach / Follow-Up / Proposal-Writer         |
 | Marketing               | `quill-content`    | Calendar / Draft / Repurpose / Schedule / Reply-Inbox                   |
+| Marketing (SEO/AEO)     | `sentinel`         | SEO-Auditor / Metadata-Pack / Schema-Pack / AEO-Brief / Competitor-Teardown |
 | Engineering             | `codex`            | Scaffold / Implement / Reviewer / Tester / PR-Writer / Docs-Updater     |
 | Finance                 | `ops` (ledger sub) | Spend-Watcher / Invoice-Triage / Expense-Coder / Runway / Cost-Optimize |
 | Customer Experience     | `consultops`       | Friction-Finder / Unreasonable-Builder / Onboarding-Concierge           |

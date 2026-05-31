@@ -8,7 +8,7 @@
 
 You've opened the consolidated Hermes monorepo. This file is the Layer-1 router (per JEVanClief's folder-as-workspace pattern). Use it to decide which profile to descend into.
 
-## Active roster — 7 profiles
+## Active roster — 8 profiles
 
 | Task                                                                                                | Descend to                                     |
 | --------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
@@ -16,6 +16,7 @@ You've opened the consolidated Hermes monorepo. This file is the Layer-1 router 
 | Weekly campaign decision + ICP + content direction + revenue-loop review                            | `hermes/profiles/marin/CLAUDE.md` (Phase 2)      |
 | Content drafting from approved positioning (drafts to `_inbox/quill-drafts/`, never publishes)      | `hermes/profiles/quill/CLAUDE.md`              |
 | Pre-launch pressure-test on campaigns, claims, positioning (critiques to `_inbox/stet-critiques/`) | `hermes/profiles/stet/CLAUDE.md`              |
+| PrettyFly SEO/AEO execution — audits, metadata/schema packs, AEO content briefs, competitor-citation teardowns (propose-only to `_inbox/sentinel-drafts/`) | `hermes/profiles/sentinel/CLAUDE.md` (Rung 1) |
 | Koho / ConsultOps project awareness; read-only ear-to-ground status, no delivery or actions         | `hermes/profiles/koho-ops/CLAUDE.md` (Phase 5) |
 | Technical governance, review, and release-risk notes; propose-only, no deploy/merge authority       | `hermes/profiles/technical-operator/CLAUDE.md` |
 | Daily Hermes operations brief; gateway/Fleet/Labyrinth/repo health; propose-only next action        | `hermes/profiles/morning-logs/CLAUDE.md`       |
